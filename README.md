@@ -12,9 +12,15 @@ It contains configurations and examples for the following components:
     - [Coroot](observability/coroot)
 
 ## Launch DevContainer
-There are 2 ways to start the environment:
-- Local with VS Code
-- GitHub CodeSpace
+
+> 📌 **The only prerequisite is to have Docker installed on your workstation**
+
+To start the environment :
+1. Clone this repo : `git clone https://github.com/nzuguem/kubernetes-sandbox-environment.git`
+2. Open it in VS Code
+3. `Shift`+ `Cmd` + `p`
+    - Type : *`open in container`*
+    - Choose ***`Dev Containers: Reopen in Container`***
 
 ## Manage cluster in DevContainer
 ### [Kind][kind-doc]
