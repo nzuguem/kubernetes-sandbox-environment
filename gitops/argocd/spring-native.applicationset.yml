@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: spring-native-applicationset
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      - namespace: dev
+      - namespace: staging
+      - namespace: prod
+  template:
+    metadata:
+      name: spring-native-applicationset-{{namespace}}
+    spec:
+      project: default
+      source:
+        path: 03-springboot/k8s
+        repoURL: https://github.com/nzuguem/java-native-compilation-workshop
+        targetRevision: main
+      destination:
+        namespace: spring-native-applicationset-{{namespace}}
+        server: 'https://kubernetes.default.svc'
+      syncPolicy:
+        automated:
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

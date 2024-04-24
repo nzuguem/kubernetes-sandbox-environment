@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaegertracing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaegertracing
+  template:
+    metadata:
+      name: jaegertracing
+      labels:
+        app: jaegertracing
+      annotations:
+        sidecar.opentelemetry.io/inject: "true"
+    spec:
+      containers:
+      - name: jaegertracing
+        image: jaegertracing/vertx-create-span:operator-e2e-tests
+        ports:
+        - containerPort: 8080
+          name: http
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaegertracing
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app: jaegertracing
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jaegertracing
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: jaegertracing.127.0.0.1.nip.io
+      http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: jaegertracing
+                  port:
+                    number: 80

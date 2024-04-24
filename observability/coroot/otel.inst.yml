@@ -1,0 +1,21 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: otel-instrumentation-coroot
+spec:
+  exporter:
+    endpoint: http://localhost:4317
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+  sampler:
+    type: parentbased_always_on
+  java:
+    env:
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://localhost:4318
+      - name:  OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
+        value: http/protobuf
+      - name: OTEL_METRICS_EXPORTER
+        value: none

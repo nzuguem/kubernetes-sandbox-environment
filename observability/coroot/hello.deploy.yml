@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-coroot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-coroot
+  template:
+    metadata:
+      name: hello-coroot
+      labels:
+        app: hello-coroot
+      annotations:
+        sidecar.opentelemetry.io/inject: collector-sidecar-coroot
+        # The Instrumentation resource must be created first
+        instrumentation.opentelemetry.io/inject-java: otel-instrumentation-coroot
+    spec:
+      containers:
+      - name: hello-coroot
+        image: nzuguem/hello
+        ports:
+        - containerPort: 8080
+          name: http
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-coroot
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app: hello-coroot
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hello-coroot
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: hello-coroot.127.0.0.1.nip.io
+      http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: hello-coroot
+                  port:
+                    number: 80

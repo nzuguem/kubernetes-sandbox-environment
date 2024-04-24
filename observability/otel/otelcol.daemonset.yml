@@ -1,0 +1,46 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: collector-daemonset
+spec:
+  # Automatic resource update in the event of an operator update
+  upgradeStrategy: automatic
+  mode: daemonset
+  volumes:
+  - name: varlog
+    hostPath:
+      path: /var/log
+  volumeMounts:
+  - name: varlog
+    mountPath: /var/log
+    readOnly: true
+  config: |
+    receivers:
+      filelog:
+        include:
+          - /var/log/pods/*/jaegertracing/*.log
+        exclude:
+          # Exclude logs from all containers named otel-collector
+          - /var/log/pods/*/otel-collector/*.log
+      otlp:
+        protocols:
+          grpc:
+          http:
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+      batch:
+        send_batch_size: 10000
+        timeout: 10s
+
+    exporters:
+      debug:
+        verbosity: detailed
+
+    service:
+      pipelines:
+        logs:
+          receivers: [filelog]
+          exporters: [debug]

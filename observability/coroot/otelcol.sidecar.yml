@@ -1,0 +1,44 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: collector-sidecar-coroot
+spec:
+  # Automatic resource update in the event of an operator update
+  upgradeStrategy: automatic
+  mode: sidecar
+  env:
+  - name: COROOT_OTELCOL_ENDPOINT
+    value: http://coroot-opentelemetry-collector.coroot-system:4318
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_percentage: 75
+        spike_limit_percentage: 15
+      batch:
+        send_batch_size: 10000
+        timeout: 10s
+
+    exporters:
+      debug:
+        verbosity: normal
+      otlphttp:
+        endpoint: ${env:COROOT_OTELCOL_ENDPOINT}
+        traces_endpoint: ${env:COROOT_OTELCOL_ENDPOINT}/v1/traces
+        read_buffer_size: 123
+        write_buffer_size: 345
+        encoding: proto
+        tls:
+          insecure: true
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: []
+          exporters: [otlphttp, debug]

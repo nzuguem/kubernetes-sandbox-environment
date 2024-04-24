@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: spring-native-application
+  namespace: argocd
+spec:
+  destination:
+    namespace: spring-native-application
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: 03-springboot/k8s
+    repoURL: https://github.com/nzuguem/java-native-compilation-workshop
+    targetRevision: main
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
