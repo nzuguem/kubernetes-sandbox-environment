@@ -16,4 +16,6 @@ Visit http://nginx.127.0.0.1.nip.io
 ## Uninstall
 ```bash
 make ingress-nginx-uninstall
+
+kubectl delete -f ingress/nginx/nginx.yml
 ```

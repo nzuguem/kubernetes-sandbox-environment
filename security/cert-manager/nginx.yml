@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-cert-manager
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: nginx-cert-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-cert-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-cert-manager
+  template:
+    metadata:
+      labels:
+        app: nginx-cert-manager
+    spec:
+      containers:
+        - name: nginx-cert-manager
+          image: nginx
+          ports:
+            - name: http
+              containerPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-cert-manager
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - nginx-cert-manager.127.0.0.1.nip.io
+    secretName: nginx-cert-manager.127.0.0.1.nip.io-tls
+  rules:
+    - host: nginx-cert-manager.127.0.0.1.nip.io
+      http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: nginx-cert-manager
+                  port:
+                    number: 80

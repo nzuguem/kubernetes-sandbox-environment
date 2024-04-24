@@ -10,6 +10,8 @@ It contains configurations and examples for the following components:
 - Observability
     - [OpenTelemetry](observability/otel)
     - [Coroot](observability/coroot)
+- Security
+    - [Cert Manager](security/cert-manager)
 
 ## Launch DevContainer
 

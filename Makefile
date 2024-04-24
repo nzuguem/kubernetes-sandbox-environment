@@ -59,3 +59,14 @@ observability-coroot-install: ## Install Coroot Observability
 observability-coroot-uninstall: ## Uninstall Coroot Observability
 	@helm del -n coroot-system coroot
 	@kubectl delete -n coroot-system -f observability/coroot/coroot.ingress.yml
+
+security-cert-manager-install: ## Install Cert Manager
+	@helm repo add jetstack https://charts.jetstack.io
+	@helm repo update jetstack
+	@helm install cert-manager jetstack/cert-manager \
+		--create-namespace \
+		--namespace cert-manager-system \
+		--set installCRDs=true
+
+security-cert-manager-uninstall: ## Uninstall Cert Manager
+	@helm del -n cert-manager-system cert-manager
