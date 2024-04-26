@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: localstack
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: localstack.127.0.0.1.nip.io
+      http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: localstack
+                  port:
+                    number: 4566

@@ -12,6 +12,8 @@ It contains configurations and examples for the following components:
     - [Coroot](observability/coroot)
 - Security
     - [Cert Manager](security/cert-manager)
+- Plaform
+    - [Crossplane](platform/crossplane)
 
 ## Launch DevContainer
 

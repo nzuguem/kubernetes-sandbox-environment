@@ -1,6 +1,6 @@
 {
     "name": "kubernetes-stack",
-    "image" : "mcr.microsoft.com/devcontainers/base:ubuntu",
+    "build": {"dockerfile": "Dockerfile"},
     
     // https://containers.dev/features
     "features": {
@@ -12,7 +12,9 @@
         "ghcr.io/rio/features/k9s:1": {},
         "ghcr.io/rio/features/kustomize:1": {},
         "ghcr.io/rio/features/skaffold:2": {},
-        "ghcr.io/rio/features/k3d:1": {}
+        "ghcr.io/rio/features/k3d:1": {},
+        "ghcr.io/devcontainers/features/python:1": {},
+        "ghcr.io/devcontainers/features/aws-cli:1": {}
 	},
 
     "customizations": {

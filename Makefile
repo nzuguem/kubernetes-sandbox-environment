@@ -70,3 +70,26 @@ security-cert-manager-install: ## Install Cert Manager
 
 security-cert-manager-uninstall: ## Uninstall Cert Manager
 	@helm del -n cert-manager-system cert-manager
+
+platform-crossplane-install: ## Install Crossplane
+	@helm repo add crossplane-stable https://charts.crossplane.io/stable
+	@helm repo update crossplane-stable
+	@helm install crossplane \
+		--namespace crossplane-system \
+		--create-namespace crossplane-stable/crossplane
+
+platform-crossplane-uninstall: ## Install Crossplane
+	@helm del -n crossplane-system crossplane
+
+platform-localstack-install: ## Deploy LocalStack
+	@helm repo add localstack-charts https://localstack.github.io/helm-charts
+	@helm repo update localstack-charts
+	@helm install localstack \
+		--set service.type=ClusterIP \
+		localstack-charts/localstack
+	@kubectl apply -f platform/aws/localstack.ingress.yml
+
+platform-localstack-uninstall: ## Undeploy LocalStack
+	@helm del localstack
+	@kubectl delete -f platform/aws/localstack.ingress.yml
+
