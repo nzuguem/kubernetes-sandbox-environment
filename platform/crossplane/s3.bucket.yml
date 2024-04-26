@@ -3,6 +3,7 @@ kind: Bucket
 metadata:
   generateName: crossplane-bucket-
 spec:
+  deletionPolicy: Delete
   forProvider:
     region: eu-west-3
   providerConfigRef:

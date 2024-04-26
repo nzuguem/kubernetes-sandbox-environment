@@ -55,7 +55,25 @@ aws s3 ls --endpoint http://localstack.127.0.0.1.nip.io
 # 2024-04-26 09:02:03 crossplane-bucket-ltjlr
 ```
 
+The big difference with tools like **Terraform* is that Crossplane extends the Kubernetes reconciliation loop mechanism, providing a controller that will reconcile the current state with the desired state. And this state is stored in the ETCD.
+
+If I delete the S3 bucket from AWS, Crossplane will recreate it :
+
+```bash
+## Delete S3 Bucket from AWS
+aws s3api delete-bucket --bucket crossplane-bucket-ltjlr  --endpoint http://localstack.127.0.0.1.nip.io
+
+## ⏳⏳⏳ - Wait at least 10 min (this value can be configured on the crossplane controller)
+
+
+## Verify with AWS provider (LocalStack)
+aws s3 ls --endpoint http://localstack.127.0.0.1.nip.io
+# 2024-04-26 09:29:33 crossplane-bucket-p27z2
+```
+
 ### Delete a managed resource
+
+If you delete the resource from kubernetes, crossplane will delete it from the AWS provider. The deletion policy remains configurable (`deletionPolicy: <Delete | Orphan>`), however.
 
 ```bash
 ## Delete S3 Bucket
