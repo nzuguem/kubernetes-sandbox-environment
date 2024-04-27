@@ -10,6 +10,7 @@ It contains configurations and examples for the following components:
 - Observability
     - [OpenTelemetry](observability/otel)
     - [Coroot](observability/coroot)
+    - [Prometheus](observability/prometheus)
 - Security
     - [Cert Manager](security/cert-manager)
 - Plaform

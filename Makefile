@@ -93,3 +93,18 @@ platform-localstack-uninstall: ## Undeploy LocalStack
 	@helm del localstack
 	@kubectl delete -f platform/aws/localstack.ingress.yml
 
+observability-prometheus-install: ## Install Prometheus Operator
+	@helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	@helm repo update prometheus-community
+	@helm install prometheus-operator \
+		prometheus-community/kube-prometheus-stack  \
+		--namespace monitoring \
+		--create-namespace \
+		-f observability/prometheus/helm.values.yml
+
+observability-prometheus-uninstall: ## Uninstall Prometheus Operator
+	@helm del -n monitoring prometheus-operator
+
+grafana-get-credentials: ## Get credentials of Grafana
+	@echo 'User=$(shell kubectl -n monitoring get secret prometheus-operator-grafana -o jsonpath="{.data.admin-user}" | base64 -d)'
+	@echo 'Password=$(shell kubectl -n monitoring get secret prometheus-operator-grafana -o jsonpath="{.data.admin-password}" | base64 -d)'

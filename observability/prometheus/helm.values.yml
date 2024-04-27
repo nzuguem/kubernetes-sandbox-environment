@@ -1,0 +1,28 @@
+prometheus:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - prometheus.127.0.0.1.nip.io
+    paths:
+      - /
+    pathType: Prefix
+
+grafana:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.127.0.0.1.nip.io
+
+alertmanager:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - alert-manager.127.0.0.1.nip.io
+    paths:
+      - /
+
+    
+    

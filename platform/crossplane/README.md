@@ -1,6 +1,6 @@
-# Platform - Crossplane
+# Platform - [Crossplane][crossplane-doc]
 ## Késako ?
-Crossplane is an open-source multi-cloud control plane. As an add-on to Kubernetes, Crossplane leverages the Kubernetes API. It lets you extend a Kubernetes cluster to provision, manage and orchestrate cloud infrastructure, services and applications.
+Crossplane is an open-source multi-cloud control plane. As an add-on to Kubernetes, Crossplane leverages the Kubernetes API. It lets you extend a Kubernetes cluster to provision, manage and orchestrate cloud infrastructure (AWS, GCP, Azure, etc...), services and applications.
 
 ## Install
 ```bash
@@ -98,3 +98,4 @@ make platform-crossplane-uninstall
 [crossplane-blog-devoteam]: https://france.devoteam.com/paroles-dexperts/crossplane/
 [crossplane-blog-wescale]: https://blog.wescale.fr/infra-as-code-depuis-kubernetes-avec-crossplane
 [upbound-marketplace]: https://marketplace.upbound.io/
+[crossplane-doc]:https://www.crossplane.io/

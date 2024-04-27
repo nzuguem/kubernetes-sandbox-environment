@@ -12,6 +12,7 @@ Visit http://argocd.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is
 
 
 ## Test
+
 ```bash
 ## Create ArgoCD Application
 kubectl apply -f gitops/argocd/spring-native.application.yml
@@ -29,6 +30,7 @@ Go to ArgoCD Web UI, access the application and force synchronization 🏆
 ℹ️ *Note that refreshing the repository does not imply reconciling the application. You'll need to activate the **auto-sync** option for this*.
 
 ## Uninstall
+
 ```bash
 make gitops-argocd-uninstall
 ```
