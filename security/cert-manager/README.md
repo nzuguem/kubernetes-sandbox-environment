@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-make security-cert-manager-install
+task security:cert-manager-install
 ```
 
 ## Deploy ClusterIssuer
@@ -30,7 +30,7 @@ Visit this URL https://nginx-cert-manager.127.0.0.1.nip.io (⚠️ Make sure the
 ## Uninstall
 
 ```bash
-make security-cert-manager-uninstall
+task security:cert-manager-uninstall
 
 kubectl delete -f security/cert-manager/self.clusterissuer.yml
 kubectl delete -f security/cert-manager/nginx.certificate.yml

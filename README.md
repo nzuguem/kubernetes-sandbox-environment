@@ -35,7 +35,7 @@ To start the environment :
 
 ```bash
 ## Deploy CLuster
-make cluster-kind-deploy
+task cluster-kind-deploy
 
 ## Assert 🎉🎉🎉
 kubectl cluster-info --context kind-kubernetes-stack 
@@ -46,7 +46,7 @@ kubectl cluster-info --context kind-kubernetes-stack
 > ℹ️ The DevContainer associated with this environment is deleted when the VS Code Dev Container mode is disconnected.
 
 ```bash
-make cluster-kind-undeploy
+task cluster-kind-undeploy
 ```
  
 <!-- Links -->

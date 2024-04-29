@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-make observability-coroot-install
+task observability:coroot-install
 ```
 
 Visit http://coroot.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is properly installed)
@@ -28,7 +28,7 @@ Visit this URL to generate Traces http://hello-coroot.127.0.0.1.nip.io/hello/Kev
 ## Uninstall
 
 ```bash
-make observability-coroot-uninstall
+task observability:coroot-uninstall
 
 kubectl delete -f observability/coroot/otelcol.sidecar.yml
 kubectl delete -f observability/coroot/otel.inst.yml

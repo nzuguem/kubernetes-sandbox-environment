@@ -4,10 +4,10 @@ Prometheus is a popular open-source monitoring and alerting solution, and has ov
 
 ## Install
 ```bash
-make observability-prometheus-install
+task observability:prometheus-install
 
 ## Get Grafana credentials
-make grafana-get-credentials
+task observability:grafana-get-credentials
 ```
 
 > ⚠️ Make sure the ingress controller is properly installed
@@ -21,7 +21,7 @@ Alert Manager Dashboard : http://alert-manager.127.0.0.1.nip.io
 ## Uninstall
 
 ```bash
-make observability-prometheus-uninstall
+task observability:prometheus-uninstall
 ```
 
 ## Resources

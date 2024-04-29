@@ -2,7 +2,7 @@
 
 ## Install
 ```bash
-make observability-opentelemetry-install
+task observability:opentelemetry-install
 ```
 
 ## Test
@@ -64,7 +64,7 @@ Visit this URL to generate Logs http://jaegertracing.127.0.0.1.nip.io (⚠️ Ma
 
 ## Uninstall
 ```bash
-make observability-opentelemetry-uninstall
+task observability:opentelemetry-uninstall
 
 kubectl delete -f observability/otel/otelcol.sidecar.yml
 kubectl delete -f observability/otel/jaegertracing.deploy.yml

@@ -2,7 +2,7 @@
 
 ## Install
 ```bash
-make ingress-nginx-install
+task ingress:nginx-install
 ```
 
 ## Test
@@ -15,7 +15,7 @@ Visit http://nginx.127.0.0.1.nip.io
 
 ## Uninstall
 ```bash
-make ingress-nginx-uninstall
+task ingress:nginx-uninstall
 
 kubectl delete -f ingress/nginx/nginx.yml
 ```

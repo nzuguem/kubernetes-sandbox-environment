@@ -1,0 +1,18 @@
+version: 3
+
+tasks:
+  nginx-install:
+    desc: Install Ingress Nginx.
+    silent: true
+    cmds:
+      - kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+      - kubectl wait -n ingress-nginx 
+        --for=condition=ready pod
+        --selector=app.kubernetes.io/component=controller
+        --timeout=90s
+
+  nginx-uninstall:
+    desc: Unistall Ingress Nginx
+    silent: true
+    cmds:
+      - kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml

@@ -2,10 +2,10 @@
 
 ## Install
 ```bash
-make gitops-argocd-install
+task gitops:argocd-install
 
 ## Get credentials
-make argocd-get-credentials
+task gitops:argocd-get-credentials
 ```
 
 Visit http://argocd.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is properly installed)
@@ -32,7 +32,7 @@ Go to ArgoCD Web UI, access the application and force synchronization 🏆
 ## Uninstall
 
 ```bash
-make gitops-argocd-uninstall
+task gitops:argocd-uninstall
 ```
 
 ## Resources

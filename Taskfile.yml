@@ -1,0 +1,42 @@
+version: 3
+
+includes:
+  ingress:
+    taskfile: ./ingress/tasks.yml
+    dir: ./ingress
+  gitops: 
+    taskfile: ./gitops/tasks.yml
+    dir: ./gitops
+  observability:
+    taskfile: ./observability/tasks.yml
+    dir: ./observability
+  security:
+    taskfile: ./security/tasks.yml
+    dir: ./security
+  platform:
+    taskfile: ./platform/tasks.yml
+    dir: ./platform
+    
+tasks:
+  default:
+    desc: Default Task.
+    silent: true
+    cmds:
+      - task: cluster-kind-deploy
+
+  cluster-kind-deploy:
+    desc: Create kubernetes cluster with Kind.
+    silent: true
+    internal: true
+    cmds:
+      - task: cluster-kind-undeploy
+      - kind create cluster --config kind.yml
+      - kubectl cluster-info --context kind-kubernetes-stack || exit 1
+    preconditions:
+      - test -f kind.yml
+  
+  cluster-kind-undeploy:
+    desc: Delete Kind kubernetes cluster.
+    silent: true
+    cmds:
+      - kind delete cluster --name kubernetes-stack

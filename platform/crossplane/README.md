@@ -4,10 +4,10 @@ Crossplane is an open-source multi-cloud control plane. As an add-on to Kubernet
 
 ## Install
 ```bash
-make platform-crossplane-install
+task platform:crossplane-install
 
 ## Deploy LocalStack to simulate the AWS provider
-make platform-localstack-install
+task platform:localstack-install
 ```
 
 The localstack access endpoint is http://localstack.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is properly installed)
@@ -85,8 +85,8 @@ aws s3 ls --endpoint http://localstack.127.0.0.1.nip.io
 
 ## Uninstall
 ```bash
-make platform-localstack-uninstall
-make platform-crossplane-uninstall
+task platform:localstack-uninstall
+task platform:crossplane-uninstall
 ```
 
 ## Resources

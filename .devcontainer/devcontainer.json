@@ -25,7 +25,8 @@
                 "ms-kubernetes-tools.kind-vscode",
                 "redhat.vscode-yaml",
                 "ms-vscode.makefile-tools",
-                "DavidAnson.vscode-markdownlint"
+                "DavidAnson.vscode-markdownlint",
+                "task.vscode-task"
             ]
 		}
 	},
