@@ -3,7 +3,6 @@ version: 3
 tasks:
   opentelemetry-install:
     desc: Install OTel Operator.
-    silent: true
     cmds:
       - helm repo add otel https://open-telemetry.github.io/opentelemetry-helm-charts
       - helm repo update otel
@@ -14,13 +13,10 @@ tasks:
   
   opentelemetry-uninstall:
     desc: Uninstall OTel Operator.
-    silent: true
-    cmds:
-      - helm del -n otel-system otel
+    cmd: helm del -n otel-system otel
   
   coroot-install:
     desc: Install Coroot Observability.
-    silent: true
     cmds:
       - helm repo add coroot https://coroot.github.io/helm-charts
       - helm repo update coroot
@@ -28,13 +24,10 @@ tasks:
   
   coroot-uninstall:
     desc: Uninstall Coroot Observability.
-    silent: true
-    cmds:
-      - helm del -n coroot-system coroot
+    cmd: helm del -n coroot-system coroot
   
   prometheus-install:
     desc: Install Prometheus Operator.
-    silent: true
     cmds:
       - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
       - helm repo update prometheus-community
@@ -43,20 +36,17 @@ tasks:
         --namespace monitoring
         --create-namespace
         -f observability/prometheus/helm.values.yml
+      - task: grafana-get-credentials
   
   prometheus-uninstall:
     desc:  Uninstall Prometheus Operator.
-    silent: true
-    cmds:
-      - helm del -n monitoring prometheus-operator
+    cmd: helm del -n monitoring prometheus-operator
   
   grafana-get-credentials:
     desc:  Uninstall Prometheus Operator.
-    silent: true
     vars:
       GRAFANA_USER:
         sh: kubectl -n monitoring get secret prometheus-operator-grafana -o jsonpath="{.data.admin-user}" | base64 -d
       GRAFANA_PASSWORD:
         sh: kubectl -n monitoring get secret prometheus-operator-grafana -o jsonpath="{.data.admin-password}" | base64 -d
-    cmds:
-      - 'echo "{{.GRAFANA_USER}}/{{.GRAFANA_PASSWORD}}"'
+    cmd: 'echo "{{.GRAFANA_USER}}/{{.GRAFANA_PASSWORD}}"'

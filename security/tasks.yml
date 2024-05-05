@@ -3,7 +3,6 @@ version: 3
 tasks:
   cert-manager-install:
     desc: Install Cert Manager.
-    silent: true
     cmds:
       - helm repo add jetstack https://charts.jetstack.io
       - helm repo update jetstack
@@ -14,6 +13,4 @@ tasks:
   
   cert-manager-uninstall:
     desc: Uninstall Cert Manager.
-    silent: true
-    cmds:
-      - helm del -n cert-manager-system cert-manager
+    cmd: helm del -n cert-manager-system cert-manager

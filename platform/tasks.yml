@@ -3,7 +3,6 @@ version: 3
 tasks:
   crossplane-install:
     desc: Install Crossplane Operator.
-    silent: true
     cmds:
       - helm repo add crossplane-stable https://charts.crossplane.io/stable
       - helm repo update crossplane-stable
@@ -13,13 +12,10 @@ tasks:
 
   crossplane-uninstall:
     desc: UnInstall Crossplane Operator.
-    silent: true
-    cmds:
-      - helm del -n crossplane-system crossplane
+    cmd: helm del -n crossplane-system crossplane
   
   localstack-install:
     desc: Install Localstack Operator.
-    silent: true
     cmds:
       - helm repo add localstack-charts https://localstack.github.io/helm-charts
       - helm repo update localstack-charts
@@ -27,6 +23,4 @@ tasks:
   
   localstack-uninstall:
     desc: Uninstall Localstack Operator.
-    silent: true
-    cmds:
-      - helm del localstack
+    cmd: helm del localstack

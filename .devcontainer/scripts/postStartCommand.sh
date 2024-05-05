@@ -1,3 +1,3 @@
 #!/bin/bash
 
-task
+task cluster-kind-deploy

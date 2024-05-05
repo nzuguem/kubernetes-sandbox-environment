@@ -1,5 +1,8 @@
 version: 3
 
+# Global Properties
+silent: true
+
 includes:
   ingress:
     taskfile: ./ingress/tasks.yml
@@ -22,24 +25,19 @@ includes:
     
 tasks:
   default:
-    desc: Default Task.
-    silent: true
-    cmds:
-      - task: cluster-kind-deploy
+    desc: List Tasks.
+    cmd: task -l
 
   cluster-kind-deploy:
     desc: Create kubernetes cluster with Kind.
-    silent: true
-    internal: true
     cmds:
       - task: cluster-kind-undeploy
       - kind create cluster --config kind.yml
       - kubectl cluster-info --context kind-kubernetes-stack || exit 1
     preconditions:
-      - test -f kind.yml
+      - sh: test -f kind.yml
+        msg: Kind's manisfest not provided
   
   cluster-kind-undeploy:
     desc: Delete Kind kubernetes cluster.
-    silent: true
-    cmds:
-      - kind delete cluster --name kubernetes-stack
+    cmd: kind delete cluster --name kubernetes-stack
