@@ -40,9 +40,35 @@ spec:
   tls:
   - hosts:
     - nginx-cert-manager.127.0.0.1.nip.io
+    # Must correspond to the secret entered in the "Certificate" object.
     secretName: nginx-cert-manager.127.0.0.1.nip.io-tls
   rules:
     - host: nginx-cert-manager.127.0.0.1.nip.io
+      http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: nginx-cert-manager
+                  port:
+                    number: 80
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-cert-manager-ingress-shim
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - nginx-cert-manager-ing-shim.127.0.0.1.nip.io
+    secretName: nginx-cert-manager-ing-shim.127.0.0.1.nip.io-tls
+  rules:
+    - host: nginx-cert-manager-ing-shim.127.0.0.1.nip.io
       http:
           paths:
             - path: /

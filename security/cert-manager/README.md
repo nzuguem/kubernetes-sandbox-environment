@@ -27,6 +27,14 @@ Visit this URL https://nginx-cert-manager.127.0.0.1.nip.io (⚠️ Make sure the
 > <br/> <br/>
 > You can consider **Let's Encrypt** as a Cluster Issuer, BUT you must have control of the DNS zone.
 
+If you don't want to create the certificate yourself for the domains in the ingress resource, you can delegate this task to CertManager. Simply use [the annotations][cert-manager-ingress-annotations] provided for this purpose : this function is provided by a CertManager sub-component called ***ingress-shim***
+
+```bash
+# Check that the certificate "nginx-cert-manager-ing-shim.127.0.0.1.nip.io-tls" has been created by ingress-shim
+kubectl get certificate
+```
+Visit this URL https://nginx-cert-manager-ing-shim.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is properly installed)
+
 ## Uninstall
 
 ```bash
@@ -40,6 +48,9 @@ kubectl delete  secret/nginx-cert-manager.127.0.0.1.nip.io-tls
 
 ## Resources
 - [Générez automatiquement vos certificats Let’s Encrypt dans Kubernetes][cert-manager-lets-encrypt-blog]
+- [Cert Manager - Ingress][cert-manager-ingress]
 
 <!-- Links -->
 [cert-manager-lets-encrypt-blog]: https://blog.zwindler.fr/2018/03/27/generez-automatiquement-vos-certificats-lets-encrypt-dans-kubernetes/
+[cert-manager-ingress]: https://cert-manager.io/docs/usage/ingress/
+[cert-manager-ingress-annotations]:https://cert-manager.io/docs/usage/ingress/#supported-annotations
