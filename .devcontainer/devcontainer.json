@@ -32,8 +32,10 @@
 	},
 
     "appPort": [
-        "80:80",
-        "443:443"
+        "80:80", // Ingress Controller Nginx - HTTP
+        "443:443", // Ingress Controller Nginx - HTTPS
+        "8080:8080", // Kourier for Knative - HTTP
+        "8443:8443" // Kourier for Knative - HTTPS
     ],
 
 	"postStartCommand": "/bin/bash -c .devcontainer/scripts/postStartCommand.sh"

@@ -9,10 +9,18 @@ nodes:
     kind: InitConfiguration
     nodeRegistration:
       kubeletExtraArgs:
-        node-labels: "ingress-ready=true"
+        node-labels: "ingress-ready=true,kourier-ready=true"
   extraPortMappings:
   - containerPort: 80
     hostPort: 80
+    protocol: TCP
+  # Knative : expose port 31080 of the node to port 8080 on the host, later to be use by kourier.
+  - containerPort: 31080
+    hostPort: 8080
+    protocol: TCP
+  # Knative : expose port 31443 of the node to port 8443 on the host, later to be use by kourier.
+  - containerPort: 31443
+    hostPort: 8443
     protocol: TCP
   - containerPort: 443
     hostPort: 443

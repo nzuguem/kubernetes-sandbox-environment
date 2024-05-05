@@ -1,0 +1,35 @@
+version: 3
+
+tasks:
+  knative-serving-install:
+    desc: Install Knative Serving Operator.
+    silent: true
+    cmds:
+      - kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-crds.yaml
+      - kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-core.yaml
+
+      # Install Network Layer
+      - kubectl apply -f knative/kourier.yml
+
+      - kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n kourier-system
+      - kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n knative-serving
+
+      # Configure Knative Serving to use Kourier by default
+      - kubectl patch configmap/config-network
+        --namespace knative-serving
+        --type merge
+        --patch '{"data":{"ingress-class":"kourier.ingress.networking.knative.dev"}}'
+      
+      # Configure DNS
+      - kubectl patch configmap/config-domain
+        --namespace knative-serving
+        --patch '{"data":{"127.0.0.1.nip.io":""}}'
+  
+  knative-serving-uninstall:
+    desc: Uninstall Knative Serving Operator.
+    silent: true
+    cmds:
+      - kubectl delete -f knative/kourier.yml
+      - kubectl delete -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-core.yaml
+      - kubectl delete -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-crds.yaml
+

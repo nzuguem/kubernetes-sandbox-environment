@@ -16,6 +16,9 @@ includes:
   platform:
     taskfile: ./platform/tasks.yml
     dir: ./platform
+  serverless:
+    taskfile: ./serverless/tasks.yml
+    dir: ./serverless
     
 tasks:
   default:

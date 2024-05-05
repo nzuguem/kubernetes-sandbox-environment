@@ -1,0 +1,63 @@
+# Serverless - Knative
+
+## Késako ?
+
+Knative is a Kubernetes-based platform to build deploy, and manage modern serverless workloads.
+
+It's a Google project, originally initiated for the Cloud Run service, and later opensourced so that anyone can run serverless on any Kubernetes distribution.
+
+Knative consists of 3 components :
+
+- Knative Serving : Serverless based on HTTP requests
+- Knative Eventing : Serverless based on EDA
+- Knative Build : Serverless Pipelines (*It's now a separate project called **Tekton***)
+
+## Knative Serving
+
+### Install
+
+```bash
+task serverless:knative-serving-install
+```
+
+### Test
+
+```bash
+# Deploy Knative Service
+kubectl apply -f serverless/knative/serving/hello.service.yml
+
+# Verify that the service is deployed and ready for use. (⚠️ Wait until Ready equals True)
+kubectl get ksvc -w
+# NAME    URL                                     LATESTCREATED   LATESTREADY   READY     REASON
+# hello   http://hello.default.127.0.0.1.nip.io   hello-00001     hello-00001   True
+```
+
+Visit this URL http://hello.default.127.0.0.1.nip.io:8080/hello/KnativeServing
+
+To observe the “Scale Up” and “Scale Down (To Zero)” properties
+```bash
+# Pods Watch
+watch kubectl get po
+
+# Execute this command in a different terminal and return to the watch terminal to observe the scaling action
+for i in {1..1000}; do curl http://hello.default.127.0.0.1.nip.io:8080/hello/KnativeServing & done; wait
+```
+
+By default, the PA (Pod Autoscaler) used is the one integrated into Knative Serving: KPA Autoscaler. It supports **concurrency** (*default metric*) and **rps** (*request per second*) [metrics][knative-serving-metrics-doc].
+
+> ℹ️ The soft limit linked to the [concurrency metric][knative-serving-metrics-concurrency-doc] is set to 100 by default
+
+### Uninstall
+
+```bash
+task serverless:knative-serving-uninstall
+```
+
+## Resources
+
+- [Knative Serving][knative-serving-doc]
+
+<!-- Links -->
+[knative-serving-doc]: https://knative.dev/docs/serving/
+[knative-serving-metrics-doc]: https://knative.dev/docs/serving/autoscaling/autoscaling-metrics/
+[knative-serving-metrics-concurrency-doc]:https://knative.dev/docs/serving/autoscaling/concurrency/
