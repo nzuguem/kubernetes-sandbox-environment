@@ -1,4 +1,4 @@
-# Secrets - [External Secrets Operator][eso-doc]
+# Security - [External Secrets Operator][eso-doc]
 
 ## Késako ?
 
