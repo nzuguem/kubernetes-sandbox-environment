@@ -37,6 +37,9 @@ kubectl get es,secret
 # NAME                                      TYPE                 DATA   AGE
 # secret/app-password                       Opaque               1      2m27s
 
+## Checking the contents of the Kubernes secret : "eso"
+kubectl get secret/app-password -o jsonpath="{.data.app-password}" | base64 -d
+
 ## 🎉🎉 Simply reference Secret Kubernetes in our Workloads.
 ```
 
