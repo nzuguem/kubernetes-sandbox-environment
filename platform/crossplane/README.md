@@ -5,25 +5,9 @@ Crossplane is an open-source multi-cloud control plane. As an add-on to Kubernet
 ## Install
 ```bash
 task platform:crossplane-install
-
-## Deploy LocalStack to simulate the AWS provider
-task platform:localstack-install
 ```
 
-The localstack access endpoint is http://localstack.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is properly installed)
-
-> ⚠️ To use this endpoint via the AWS CLI, AWS credentials (***Dummy***) must still be configured. \
->`export AWS_ACCESS_KEY_ID=foo` \
->`export AWS_SECRET_ACCESS_KEY=bar` \
->`export AWS_DEFAULT_REGION=eu-west-3`
-
-*Example of bucket creation in LocalStack :*
-```bash
-aws s3 mb s3://platform --endpoint http://localstack.127.0.0.1.nip.io
-
-## List Buckets 🎉🎉🎉
-aws s3 ls --endpoint http://localstack.127.0.0.1.nip.io
-```
+Our tests will use the AWS provider, and to simulate it, we'll use LocalStack. See this [guide to installing LocalStack in a Kubernetes cluster](../aws/INSTALL.md)
 
 ## Test
 
@@ -51,7 +35,7 @@ kubectl get buckets
 #crossplane-bucket-ltjlr   True     True    crossplane-bucket-ltjlr   77s
 
 ## Verify with AWS provider (LocalStack)
-aws s3 ls --endpoint http://localstack.127.0.0.1.nip.io
+aws s3 ls
 # 2024-04-26 09:02:03 crossplane-bucket-ltjlr
 ```
 
@@ -61,13 +45,13 @@ If I delete the S3 bucket from AWS, Crossplane will recreate it :
 
 ```bash
 ## Delete S3 Bucket from AWS
-aws s3api delete-bucket --bucket crossplane-bucket-ltjlr  --endpoint http://localstack.127.0.0.1.nip.io
+aws s3api delete-bucket --bucket crossplane-bucket-ltjlr
 
 ## ⏳⏳⏳ - Wait at least 10 min (this value can be configured on the crossplane controller)
 
 
 ## Verify with AWS provider (LocalStack)
-aws s3 ls --endpoint http://localstack.127.0.0.1.nip.io
+aws s3 ls
 # 2024-04-26 09:29:33 crossplane-bucket-p27z2
 ```
 
@@ -80,12 +64,12 @@ If you delete the resource from kubernetes, crossplane will delete it from the A
 kubectl delete bucket/crossplane-bucket-ltjlr
 
 ## Verify with AWS provider (LocalStack) - The S3 bucket should no longer be present
-aws s3 ls --endpoint http://localstack.127.0.0.1.nip.io
+aws s3 ls
 ```
 
 ## Uninstall
+
 ```bash
-task platform:localstack-uninstall
 task platform:crossplane-uninstall
 ```
 
