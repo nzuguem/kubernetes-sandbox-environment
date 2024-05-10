@@ -7,7 +7,7 @@ Crossplane is an open-source multi-cloud control plane. As an add-on to Kubernet
 task platform:crossplane-install
 ```
 
-Our tests will use the AWS provider, and to simulate it, we'll use LocalStack. See this [guide to installing LocalStack in a Kubernetes cluster](../aws/INSTALL.md)
+> ℹ️ Our tests will use the AWS provider, and to simulate it, we'll use LocalStack. See this [guide to installing LocalStack in a Kubernetes cluster](../aws/INSTALL.md)
 
 ## Test
 

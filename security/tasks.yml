@@ -14,3 +14,22 @@ tasks:
   cert-manager-uninstall:
     desc: Uninstall Cert Manager.
     cmd: helm del -n cert-manager-system cert-manager
+  
+  eso-install:
+    desc: Install External Secret Operator.
+    cmds:
+      - helm repo add external-secrets https://charts.external-secrets.io
+      - helm repo update external-secrets
+      - helm install external-secrets external-secrets/external-secrets 
+        --create-namespace
+        --namespace eso-system
+        --set installCRDs=true
+        -f ESO/helm.values.yml
+      - kubectl wait -n eso-system 
+        --for=condition=ready pod
+        --selector=app.kubernetes.io/instance=external-secrets
+        --timeout=90s
+  
+  eso-uninstall:
+    desc: Uninstall External Secret Operator.
+    cmd: helm del -n eso-system external-secrets

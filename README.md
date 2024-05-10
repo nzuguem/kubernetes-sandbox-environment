@@ -13,8 +13,11 @@ It contains configurations and examples for the following components:
     - [Prometheus](observability/prometheus)
 - Security
     - [Cert Manager](security/cert-manager)
+    - [External Secrets Operator](security/ESO)
 - Plaform
     - [Crossplane](platform/crossplane)
+- Serverless
+    - [Knative](serverless/knative)
 
 ## Launch DevContainer
 

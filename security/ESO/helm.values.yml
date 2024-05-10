@@ -1,0 +1,5 @@
+extraEnv:
+    # Custom Endpoint LocalStack
+    # https://external-secrets.io/latest/provider/aws-secrets-manager/#custom-endpoints
+    - name: AWS_SECRETSMANAGER_ENDPOINT
+      value: http://localstack.default.svc.cluster.local:4566
