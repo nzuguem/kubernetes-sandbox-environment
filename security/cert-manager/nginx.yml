@@ -55,6 +55,8 @@ spec:
                     number: 80
 
 ---
+# The certificate associated with this ingress must be generated automatically, using the “ingress-shim” component.
+# Annotation : "cert-manager.io/cluster-issuer: selfsigned-cluster-issuer"
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -65,8 +67,8 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - nginx-cert-manager-ing-shim.127.0.0.1.nip.io
-    secretName: nginx-cert-manager-ing-shim.127.0.0.1.nip.io-tls
+    - nginx-cert-manager-ing-shim.127.0.0.1.nip.io # DNS of generated Certifcate
+    secretName: nginx-cert-manager-ing-shim.127.0.0.1.nip.io-tls # SecretName to be created by the certificate
   rules:
     - host: nginx-cert-manager-ing-shim.127.0.0.1.nip.io
       http:
