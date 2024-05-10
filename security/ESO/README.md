@@ -54,10 +54,12 @@ task security:eso-uninstall
 
 ## Resources
 
-- [GESTION DES SECRET SUR KUBERNETES][k8s-secret-management-blog]
+- [GESTION DES SECRETS SUR KUBERNETES][k8s-secret-management-blog]
+- [Secrets store CSI driver vs external secrets in a nutshel][eso-vs-csi-secrets-store]
 
 
 <!-- Links -->
 [eso-doc]:https://external-secrets.io/latest/
 [k8s-secret-management-blog]: https://toungafranck.com/2024/05/09/gestion-des-secret-sur-kubernetes/
 [eso-aws-custom-endpoints]: https://external-secrets.io/latest/provider/aws-secrets-manager/#custom-endpoints
+[eso-vs-csi-secrets-store]: https://www.yuribacciarini.com/secrets-store-csi-driver-vs-external-secrets-in-a-nutshel/

@@ -17,13 +17,14 @@ It contains configurations and examples for the following components:
 - Plaform
     - [Crossplane](platform/crossplane)
 - Serverless
-    - [Knative](serverless/knative)
+    - [Knative](serverless/knative)
 
 ## Launch DevContainer
 
 > 📌 **The only prerequisite is to have Docker installed on your workstation**
 
 To start the environment :
+
 1. Clone this repo : `git clone https://github.com/nzuguem/kubernetes-sandbox-environment.git`
 2. Open it in VS Code
 3. `Shift`+ `Cmd` + `p`
@@ -32,6 +33,7 @@ To start the environment :
 
 ## Manage cluster in DevContainer
 ### [Kind][kind-doc]
+
 - Start cluster
 
 > ℹ️ Cluster deployed after devContainer startup
@@ -51,7 +53,7 @@ kubectl cluster-info --context kind-kubernetes-stack
 ```bash
 task cluster-kind-undeploy
 ```
- 
+
 <!-- Links -->
 [kind-doc]:https://kind.sigs.k8s.io/
 [vs-code-dev-container-doc]: https://code.visualstudio.com/docs/devcontainers/containers
