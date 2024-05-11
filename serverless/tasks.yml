@@ -31,3 +31,34 @@ tasks:
       - kubectl delete -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-core.yaml
       - kubectl delete -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-crds.yaml
 
+
+  knative-eventing-install:
+    desc: Install Knative Eventing Operator.
+    cmds:
+      # Install the required custom resource definitions (CRDs) 
+      - kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/eventing-crds.yaml
+      - kubectl wait --for=condition=Established --all crd
+
+      # Install the core components of Eventing
+      - kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/eventing-core.yaml
+      - kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n knative-eventing
+
+      # Install a default Channel (messaging) layer : In Memory
+      - kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/in-memory-channel.yaml
+      - kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n knative-eventing
+
+      # Install a Broker layer : MT Channel Based
+      - kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/mt-channel-broker.yaml
+      - kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n knative-eventing
+
+      # Install Default Broker
+      - kubectl apply -f knative/eventing/default.broker.yml
+  
+  knative-eventing-uninstall:
+    desc: Uninstall Knative Eventing Operator.
+    cmds:
+      - kubectl delete -f knative/eventing/default.broker.yml
+      - kubectl delete -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/mt-channel-broker.yaml
+      - kubectl delete -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/in-memory-channel.yaml
+      - kubectl delete -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/eventing-core.yaml
+      - kubectl delete -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/eventing-crds.yaml

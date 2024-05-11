@@ -1,0 +1,14 @@
+apiVersion: messaging.knative.dev/v1
+kind: Subscription
+metadata:
+  name: eventing-hello
+spec:
+  channel:
+    apiVersion: messaging.knative.dev/v1
+    kind: Channel
+    name: eventing-hello-ch
+  subscriber:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: eventing-hello-subs

@@ -1,0 +1,5 @@
+apiVersion: messaging.knative.dev/v1
+# The Channel object is an abstraction; the default Channel object (when installing Knative Eventing) is InMemoryChannel.
+kind: Channel
+metadata:
+  name: eventing-hello-ch
