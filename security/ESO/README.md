@@ -4,6 +4,8 @@
 
 External Secrets Operator is a Kubernetes operator that integrates external secret management systems like AWS Secrets Manager, HashiCorp Vault, Google Secrets Manager, Azure Key Vault, IBM Cloud Secrets Manager, CyberArk Conjur and many more. The operator reads information from external APIs and automatically injects the values into a Kubernetes Secret.
 
+![External Secret Operator](../images/eso.jpeg)
+
 ## Install
 
 ```bash

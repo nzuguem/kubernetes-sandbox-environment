@@ -6,4 +6,4 @@ spec:
   template:
     spec:
       containers:
-      - image: quay.io/rhdevelopers/eventinghello
+      - image: ghcr.io/nzuguem/cloudevents-handler

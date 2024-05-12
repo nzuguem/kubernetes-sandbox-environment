@@ -13,7 +13,7 @@ task serverless:knative-eventing-install
 
 ## Scenarios
 
-> ℹ️ Make sure you install Knative Service
+> ℹ️ Make sure you install [Knative Service](../serving/README.md)
 
 Only when an event occurs is the Service Knative scaled from Zero. So if there are no events, then Scale To Zero. You can use this command to observe scaling (Up/Down):
 
