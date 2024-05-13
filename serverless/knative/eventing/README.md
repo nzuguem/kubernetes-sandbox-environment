@@ -22,11 +22,11 @@ Only when an event occurs is the Service Knative scaled from Zero. So if there a
 kubectl get po -l serving.knative.dev/configuration=eventing-hello -w
 ```
 
-### 1. Simple Delivery
+### 1. Simple Delivery (Source To Service)
 
 #### Késako ?
 
-Source to Service provides the simplest getting started experience with Knative Eventing. It provides single Sink — that is, event receiving service --, with no queuing, backpressure, and filtering. The Source to Service does not support replies, which means the response from the Sink service is ignored.
+**Source to Service** provides the simplest getting started experience with Knative Eventing. It provides single Sink — that is, event receiving service --, with no queuing, backpressure, and filtering. The **Source to Service** does not support replies, which means the response from the Sink service is ignored.
 
 ![Simple Delivery](../../images/knative-source-sink.png)
 
@@ -77,6 +77,39 @@ kubectl apply -f serverless/knative/eventing/hello.subscription.yml
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
 kubectl logs po/<POD_NAME> -c user-container
+
+# 2024-05-13 16:18:02,063 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) CloudEvents : Binary Content mode
+# 2024-05-13 16:18:02,064 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-id=b4736812-5976-492a-ad02-fbae65ac9ab7
+# 2024-05-13 16:18:02,064 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-source=/apis/v1/namespaces/default/pingsources/event-greeter-ping-source
+# 2024-05-13 16:18:02,064 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-specversion=1.0
+# 2024-05-13 16:18:02,064 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-type=dev.knative.sources.ping
+# 2024-05-13 16:18:02,064 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Content-Type=null
+# 2024-05-13 16:18:02,064 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Revcieve Event : CloudEvent{ ...
+```
+
+This scenario (*Channel and Subscribers*) supports ***Reply***. The Consumer (Service) must respond to the HTTP POST request, with the **CloudEvents body (Binary Content Mode)**. This response can be transmitted to another **Channel**: ***this is Event Pipe***
+
+```bash
+## Deploy Channel (in which the "eventing-hello" subscription will push the Reply of its consumer)
+kubectl apply -f serverless/knative/eventing/hello-reply.channel.yml
+
+## Deploy Knative Service Consumer (Wait Service is Ready : kubectl get ksvc)
+kubectl apply -f serverless/knative/eventing/consumer-subs-reply.service.yml
+
+## Deploy Subscription on Channel Reply
+kubectl apply -f serverless/knative/eventing/hello-reply.subscription.yml
+
+## Check the logs and see the message sent (spec. CloudEvents) by PingSource
+## Observe the CloudEvents headers, you will see values with the "reply"
+kubectl logs po/<POD_NAME> -c user-container
+
+# 2024-05-13 16:18:02,238 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) CloudEvents : Binary Content mode
+# 2024-05-13 16:18:02,238 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-id=4a25f802-2c92-437d-b439-9ed13ece12eb
+# 2024-05-13 16:18:02,239 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-source=/events/example/reply
+# 2024-05-13 16:18:02,239 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-specversion=1.0
+# 2024-05-13 16:18:02,239 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-type=me.nzuguem.cloudevents.example.reply
+# 2024-05-13 16:18:02,239 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Content-Type=application/json
+# 2024-05-13 16:18:02,239 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Revcieve Event : CloudEvent{ ...
 ```
 
 ## Uninstall
