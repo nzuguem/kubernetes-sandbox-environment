@@ -3,6 +3,9 @@ version: 3
 # Global Properties
 silent: true
 
+dotenv:
+  - .env
+
 includes:
   ingress:
     taskfile: ./ingress/tasks.yml

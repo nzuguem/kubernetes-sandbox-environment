@@ -13,3 +13,22 @@ tasks:
   nginx-uninstall:
     desc: Unistall Ingress Nginx
     cmd: kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+  
+  ngrok-install:
+    desc: Install Ngrok Ingress Controller.
+    requires:
+      vars: 
+        - NGROK_API_KEY
+        - NGROK_AUTHTOKEN
+    cmds:
+      - helm repo add ngrok https://ngrok.github.io/kubernetes-ingress-controller
+      - helm repo update ngrok
+      - helm install ngrok-ingress-controller ngrok/kubernetes-ingress-controller
+        --namespace ngrok
+        --create-namespace
+        --set credentials.apiKey={{.NGROK_API_KEY}}
+        --set credentials.authtoken={{.NGROK_AUTHTOKEN}}
+  
+  ngrok-uninstall:
+    desc: Uninstall Ngrok Ingress Controller.
+    cmd: helm del -n ngrok ngrok-ingress-controller
