@@ -111,10 +111,102 @@ kubectl logs po/<POD_NAME> -c user-container
 # 2024-05-13 16:18:02,239 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Content-Type=application/json
 # 2024-05-13 16:18:02,239 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Revcieve Event : CloudEvent{ ...
 ```
+### 3. Broker and Trigger
+
+#### Késako ?
+The Broker and Trigger are similar to Channel and Subscription, except that they support filtering of events. Event filtering is a method that allows the subscribers to show an interest on certain set of messages that flows into the Broker. ***For each Broker, Knative Eventing will implicitly create a Knative Eventing Channel.***
+
+This is an implementation of the **[EIP Content-Based Router pattern][eip-content-based-router]**.
+
+![](../../images/brokers-triggers.png)
+
+#### Test
+
+> ℹ️ A default Brocker is created when the Knative Eventing operator is installed.
+
+```bash
+## Deploy Knative Eventing Source : Ping (Wait Source is Ready : kubectl get pingsources)
+kubectl apply -f serverless/knative/eventing/ping-broker.source.yml
+
+## Deploy Knative Service Consumer (Wait Service is Ready : kubectl get ksvc)
+kubectl apply -f serverless/knative/eventing/consumer-trigger.service.yml
+
+## Deploy Trigger object
+kubectl apply -f serverless/knative/eventing/hello.trigger.yml
+
+## Check the logs and see the message sent (spec. CloudEvents) by PingSource
+kubectl logs po/<POD_NAME> -c user-container
+
+# 2024-05-16 11:14:00,500 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Revcieve Event ID : 35e7a8f5-af86-473b-bbac-2ff685fec638
+# 2024-05-16 11:14:00,503 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) CloudEvents : Binary Content mode
+# 2024-05-16 11:14:00,503 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-id=35e7a8f5-af86-473b-bbac-2ff685fec638
+# 2024-05-16 11:14:00,504 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-source=/apis/v1/namespaces/default/pingsources/eventing-hello-ping-source-broker
+# 2024-05-16 11:14:00,504 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-specversion=1.0
+# 2024-05-16 11:14:00,504 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-type=dev.knative.sources.ping
+# 2024-05-16 11:14:00,504 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Content-Type=null
+# 2024-05-16 11:14:00,504 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Revcieve Event : CloudEvent{
+```
+
+The consumer replies in the broker in the form of CloudEvents. So we can have another consumer who only consumes these events
+
+```bash
+## Deploy Trigger object
+kubectl apply -f serverless/knative/eventing/hello-reply.trigger.yml
+
+## Deploy Knative Service Consumer (Wait Service is Ready : kubectl get ksvc)
+kubectl apply -f serverless/knative/eventing/consumer-trigger-reply.service.yml
+
+## Check the logs and see the message sent (spec. CloudEvents) by PingSource
+kubectl logs po/<POD_NAME> -c user-container
+
+# 2024-05-16 11:24:34,155 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-261) Revcieve Event ID : d075ed48-20e6-4806-828a-139195195aa4
+# 2024-05-16 11:24:34,157 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-261) CloudEvents : Binary Content mode
+# 2024-05-16 11:24:34,157 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-261) ce-id=d075ed48-20e6-4806-828a-139195195aa4
+# 2024-05-16 11:24:34,157 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-261) ce-source=/events/example/reply
+# 2024-05-16 11:24:34,157 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-261) ce-specversion=1.0
+# 2024-05-16 11:24:34,157 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-261) ce-type=me.nzuguem.cloudevents.example.reply
+# 2024-05-16 11:24:34,157 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-261) Content-Type=application/json
+# 2024-05-16 11:24:34,157 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-261) Revcieve Event : CloudEvent{
+```
+
+### 4. [SinkBinding][sinkbinding-doc]
+
+#### Késako ?
+
+Sink binding can be used to ***create new event sources using any of the familiar compute objects that Kubernetes makes available***. For example, *Deployment, Job, DaemonSet, or StatefulSet objects, or Knative abstractions, such as Service or Configuration objects, can be used*.
+
+Sink binding injects environment variables (`K_SINK`) into the **PodTemplateSpec** of the event sink, so that the application code does not need to interact directly with the Kubernetes API to locate the event destination.
+
+#### Test
+
+> ⚠️ Make sure the ingress controller is properly installed
+
+```bash
+## Deploy two Service (Consumer, Producer)
+kubectl apply -f serverless/knative/eventing/producer-sb.deploy.yml
+kubectl apply -f serverless/knative/eventing/consumer-sb.service.yml
+
+## Deploy SinkBinding, to link two Services
+kubectl apply -f serverless/knative/eventing/sinkbinding.yml
+
+## Send the request to producer
+curl -v http://producer-sb.127.0.0.1.nip.io \
+    -H "Content-Type: application/cloudevents+json" \
+    -d @serverless/knative/eventing/cloud-events-structured.example.json
+
+## Check the logs and see the message sent (spec. CloudEvents) by PingSource
+## Check the original message in the logs : "This is an example of structured Content Mode"
+kubectl logs po/<POD_NAME> -c user-container
+
+# 2024-05-16 12:17:49,224 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Revcieve Event ID : 1e997d37-6f62-47a2-93a1-3cfa8a6cb571
+# 2024-05-16 12:17:49,233 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) CloudEvents : Structured Content mode
+# 2024-05-16 12:17:49,234 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Revcieve Event : CloudEvent{id='1e997d37-6f62-47a2-93a1-3cfa8a6cb571', source=/events/example/reply, type='me.nzuguem.cloudevents.example.reply', datacontenttype='application/json', subject='reply', data=JsonCloudEventData{node={"message":"This is an example of structured Content Mode"}}, extensions={}}
+```
 
 ## Uninstall
 
 ```bash
+
 kubectl delete -f serverless/knative/eventing/ping-ksvc.source.yml
 kubectl delete -f serverless/knative/eventing/consumer.service.yml
 
@@ -123,9 +215,21 @@ kubectl delete -f serverless/knative/eventing/consumer-subs.service.yml
 kubectl delete -f serverless/knative/eventing/ping-channel.source.yml
 kubectl delete -f serverless/knative/eventing/hello.channel.yml
 
+kubectl delete -f serverless/knative/eventing/consumer-trigger-reply.service.yml
+kubectl delete -f serverless/knative/eventing/hello-reply.trigger.yml
+kubectl delete -f serverless/knative/eventing/ping-broker.source.yml
+kubectl delete -f serverless/knative/eventing/consumer-trigger.service.yml
+kubectl delete -f serverless/knative/eventing/hello.trigger.yml
+
+kubectl delete -f serverless/knative/eventing/sinkbinding.yml
+kubectl delete -f serverless/knative/eventing/producer-sb.deploy.yml
+kubectl delete -f serverless/knative/eventing/consumer-sb.service.yml
+
 task serverless:knative-eventing-uninstall
 ```
 
 <!-- Links -->
 [knative-eventing-doc]: https://knative.dev/docs/eventing/
 [cloudevents-specifications]: https://cloudevents.io/
+[eip-content-based-router]: https://www.enterpriseintegrationpatterns.com/patterns/messaging/ContentBasedRouter.html
+[sinkbinding-doc]: https://knative.dev/docs/eventing/custom-event-source/sinkbinding/

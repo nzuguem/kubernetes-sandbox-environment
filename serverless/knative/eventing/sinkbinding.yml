@@ -1,0 +1,16 @@
+apiVersion: sources.knative.dev/v1
+kind: SinkBinding
+metadata:
+  name: sinkbinding
+spec:
+  subject:
+    apiVersion: apps/v1
+    kind: Deployment
+    selector:
+      matchLabels:
+        app: producer-sb
+  sink:
+    ref:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: eventing-hello-service-sb

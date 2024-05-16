@@ -1,0 +1,11 @@
+{
+    "specversion" : "1.0",
+    "type" : "me.nzuguem.cloudevents.example",
+    "source": "/events/example",
+    "id": "536808d3-88be-4077-9d7a-a3f162705f78",
+    "datacontenttype": "application/json",
+    "subject": "example-structured.json",
+    "data" : {
+        "message": "This is an example of structured Content Mode"
+    }
+}

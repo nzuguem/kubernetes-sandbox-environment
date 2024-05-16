@@ -1,0 +1,12 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: eventing-hello-trigger-service
+spec:
+  template:
+    spec:
+      containers:
+      - image: ghcr.io/nzuguem/cloudevents-handler
+        env:
+          - name: TARGET_SERVICE_URL
+            value: http://broker-ingress.knative-eventing.svc.cluster.local/default/default

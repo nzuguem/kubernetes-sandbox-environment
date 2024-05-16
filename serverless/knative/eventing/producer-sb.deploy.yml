@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-sb
+  labels:
+    app: producer-sb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer-sb
+  template:
+    metadata:
+      name: producer-sb
+      labels:
+        app: producer-sb
+    spec:
+      containers:
+      - name: producer-sb
+        image: ghcr.io/nzuguem/cloudevents-handler
+        env:
+          - name: TARGET_SERVICE_KNATIVE_SINKBINDING_MODE
+            value: "true"
+        ports:
+        - containerPort: 8080
+          name: http
+          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: producer-sb
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app: producer-sb
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: producer-sb
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: producer-sb.127.0.0.1.nip.io
+      http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: producer-sb
+                  port:
+                    number: 80
