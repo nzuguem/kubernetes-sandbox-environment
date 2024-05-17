@@ -10,8 +10,6 @@ task observability:prometheus-install
 task observability:grafana-get-credentials
 ```
 
-> ⚠️ Make sure the ingress controller is properly installed
-
 Grafana : http://grafana.127.0.0.1.nip.io
 
 Prometheus Dashboard : http://prometheus.127.0.0.1.nip.io

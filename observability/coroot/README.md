@@ -6,7 +6,7 @@
 task observability:coroot-install
 ```
 
-Visit http://coroot.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is properly installed)
+Visit http://coroot.127.0.0.1.nip.io
 
 ## Deploy OTel Collector for Traces and Profiling Telemetry (for Clickhouse)
 

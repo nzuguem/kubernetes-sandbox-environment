@@ -7,7 +7,7 @@
 task platform:localstack-install
 ```
 
-The localstack access endpoint is http://localstack.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is properly installed)
+The localstack access endpoint is http://localstack.127.0.0.1.nip.io
 
 > ℹ️ The AWS CLI is configured to execute AWS commands on this LocalStack endpoint by default.
 

@@ -1,32 +1,39 @@
 version: 3 
 
+includes:
+  ingress:
+    taskfile: ../ingress/tasks.yml
+    dir: ../ingress
+
 tasks:
   argocd-install:
     desc: Install ArgoCD.
+    deps: 
+      - ingress:nginx-install
     cmds:
-      - kubectl create namespace argocd || true
-      - kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-      # To expose the ArgoCD service in an Ingress/HTTPRoute, you will certainly need to disable TLS
-      - |
-        kubectl patch configmap argocd-cmd-params-cm -n argocd --type merge --patch '{"data": {"server.insecure": "true"}}'
-      # Create Ingress Resources
-      - kubectl apply -n argocd -f argocd/argocd.ingress.yml
-      - kubectl wait -n argocd 
+      - helm repo add argocd https://argoproj.github.io/argo-helm
+      - helm repo update argocd
+      - helm upgrade --install argocd argocd/argo-cd
+        --create-namespace
+        --namespace argocd-system
+        -f argocd/helm.values.yml
+      
+      # Wait for ArgoCD to be ready.
+      - kubectl wait -n argocd-system 
         --for=condition=ready pod
         --selector=app.kubernetes.io/name=argocd-repo-server
         --timeout=90s
+
+      # Get Credentials of ArgoCD.
       - task: argocd-get-credentials
   
   argocd-uninstall:
     desc: Uninstall ArgoCD.
-    cmds:
-      - kubectl delete -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-      - kubectl delete -n argocd -f argocd/argocd.ingress.yml
-      - kubectl delete ns/argocd
+    cmd:  helm del argocd -n argocd-system
   
   argocd-get-credentials:
     desc: Get Credentials of ArgoCD.
     vars:
       ARGOCD_PASSWORD:
-        sh: kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+        sh: kubectl -n argocd-system get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
     cmd: 'echo "admin/{{.ARGOCD_PASSWORD}}"'

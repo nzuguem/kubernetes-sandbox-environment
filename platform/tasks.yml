@@ -1,5 +1,10 @@
 version: 3
 
+includes:
+  ingress:
+    taskfile: ../ingress/tasks.yml
+    dir: ../ingress
+
 tasks:
   crossplane-install:
     desc: Install Crossplane Operator.
@@ -16,6 +21,8 @@ tasks:
   
   localstack-install:
     desc: Install Localstack Operator.
+    deps:
+      - ingress:nginx-install
     cmds:
       - helm repo add localstack-charts https://localstack.github.io/helm-charts
       - helm repo update localstack-charts

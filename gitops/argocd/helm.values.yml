@@ -1,0 +1,13 @@
+configs:
+  params:
+    server.insecure: true # To expose the ArgoCD service in an Ingress/HTTPRoute, you will certainly need to disable TLS
+
+global:
+  domain: argocd.127.0.0.1.nip.io
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    pathType: Prefix
+    path: /

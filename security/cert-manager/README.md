@@ -27,7 +27,7 @@ kubectl apply -f security/cert-manager/nginx.certificate.yml
 kubectl apply -f security/cert-manager/nginx.yml
 ```
 
-Visit this URL https://nginx-cert-manager.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is properly installed)
+Visit this URL https://nginx-cert-manager.127.0.0.1.nip.io
 
 > ⚠️ It's normal for the browser to raise an alert. The certificate is self-signed.
 > <br/> <br/>
@@ -40,7 +40,7 @@ If you don't want to create the certificate yourself for the domains in the ingr
 kubectl get certificate
 ```
 
-Visit this URL https://nginx-cert-manager-ing-shim.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is properly installed)
+Visit this URL https://nginx-cert-manager-ing-shim.127.0.0.1.nip.io
 
 ## Uninstall
 

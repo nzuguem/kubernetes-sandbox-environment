@@ -1,5 +1,10 @@
 version: 3
 
+includes:
+  ingress:
+    taskfile: ../ingress/tasks.yml
+    dir: ../ingress
+
 tasks:
   knative-serving-install:
     desc: Install Knative Serving Operator.
@@ -34,6 +39,9 @@ tasks:
 
   knative-eventing-install:
     desc: Install Knative Eventing Operator.
+    deps:
+      - ingress:nginx-install
+      - knative-serving-install
     cmds:
       # Install the required custom resource definitions (CRDs) 
       - kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/eventing-crds.yaml

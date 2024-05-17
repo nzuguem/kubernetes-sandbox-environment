@@ -8,7 +8,7 @@ task gitops:argocd-install
 task gitops:argocd-get-credentials
 ```
 
-Visit http://argocd.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is properly installed)
+Visit http://argocd.127.0.0.1.nip.io
 
 
 ## Test

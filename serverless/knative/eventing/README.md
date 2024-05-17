@@ -13,8 +13,6 @@ task serverless:knative-eventing-install
 
 ## Scenarios
 
-> ℹ️ Make sure you install [Knative Service](../serving/README.md)
-
 Only when an event occurs is the Service Knative scaled from Zero. So if there are no events, then Scale To Zero. You can use this command to observe scaling (Up/Down):
 
 ```bash
@@ -178,8 +176,6 @@ Sink binding can be used to ***create new event sources using any of the familia
 Sink binding injects environment variables (`K_SINK`) into the **PodTemplateSpec** of the event sink, so that the application code does not need to interact directly with the Kubernetes API to locate the event destination.
 
 #### Test
-
-> ⚠️ Make sure the ingress controller is properly installed
 
 ```bash
 ## Deploy two Service (Consumer, Producer)

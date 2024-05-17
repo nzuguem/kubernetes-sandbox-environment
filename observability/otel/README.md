@@ -29,7 +29,7 @@ kubectl get pods -l app=jaegertracing -o jsonpath={.items[*].spec.containers[*].
 kubectl logs deploy/jaegertracing -c otc-container -f
 ```
 
-Visit this URL to generate telemetry http://jaegertracing.127.0.0.1.nip.io (⚠️ Make sure the ingress controller is properly installed)
+Visit this URL to generate telemetry http://jaegertracing.127.0.0.1.nip.io
 
 ### Workload Auto-Instrumentation
 ```bash
