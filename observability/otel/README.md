@@ -120,7 +120,9 @@ kubectl describe cm/collector-statefulset-targetallocator
 # ...
 ```
 
-> ℹ️ The TA component exposes a [Rest API][otel-target-allocator-endpoints] for consulting its configurations and actions
+> ℹ️ The TA component exposes a [Rest API][otel-target-allocator-endpoints] for consulting its configurations and actions.
+>
+> **The base URL in this workshop is : http://otel-ta.127.0.0.1.nip.io**
 
 Let's try scaling OTel Collector and observe the power of the TA component:
 
