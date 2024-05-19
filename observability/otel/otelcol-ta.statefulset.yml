@@ -1,0 +1,108 @@
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: collector-statefulset
+spec:
+  # Automatic resource update in the event of an operator update
+  upgradeStrategy: automatic
+  mode: statefulset
+  # This will enable the prometheus recievers to be rewritten (by OTel Operator) so that they point to the TA component (using the “http_sd_config” Discovery Service).
+  targetAllocator:
+    serviceAccount: opentelemetry-targetallocator-sa
+    enabled: true
+  config:
+    receivers:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: otel-collector
+              scrape_interval: 10s
+              static_configs:
+              # This target represents the OTel Collector metrics themselves
+              - targets: [ '0.0.0.0:8888' ]
+
+    exporters:
+      debug: {}
+
+    service:
+      pipelines:
+        metrics:
+          receivers: [prometheus]
+          processors: []
+          exporters: [debug]
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: opentelemetry-targetallocator-sa
+
+---
+
+# The role below will provide the minimum access required for the Target Allocator to query all the targets it needs based on any Prometheus configurations
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: opentelemetry-targetallocator-role
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/metrics
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+  - configmaps
+  verbs: ["get"]
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs: ["get", "list", "watch"]
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: opentelemetry-targetallocator-role-binding
+subjects:
+  - kind: ServiceAccount
+    name: opentelemetry-targetallocator-sa
+    namespace: default
+    apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: opentelemetry-targetallocator-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: collector-statefulset-targetallocator
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: otel-ta.127.0.0.1.nip.io
+      http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: collector-statefulset-targetallocator
+                  port:
+                    number: 80

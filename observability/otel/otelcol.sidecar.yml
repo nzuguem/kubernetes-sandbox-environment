@@ -1,4 +1,4 @@
-apiVersion: opentelemetry.io/v1alpha1
+apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: collector-sidecar
@@ -6,7 +6,7 @@ spec:
   # Automatic resource update in the event of an operator update
   upgradeStrategy: automatic
   mode: sidecar
-  config: |
+  config:
     receivers:
       jaeger:
         protocols:

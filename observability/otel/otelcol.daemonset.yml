@@ -1,4 +1,4 @@
-apiVersion: opentelemetry.io/v1alpha1
+apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: collector-daemonset
@@ -14,7 +14,7 @@ spec:
   - name: varlog
     mountPath: /var/log
     readOnly: true
-  config: |
+  config:
     receivers:
       filelog:
         include:
@@ -43,4 +43,5 @@ spec:
       pipelines:
         logs:
           receivers: [filelog]
+          processors: []
           exporters: [debug]
