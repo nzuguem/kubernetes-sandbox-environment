@@ -19,9 +19,9 @@ includes:
   security:
     taskfile: ./security/tasks.yml
     dir: ./security
-  platform:
-    taskfile: ./platform/tasks.yml
-    dir: ./platform
+  control-plane:
+    taskfile: ./control-plane/tasks.yml
+    dir: ./control-plane
   serverless:
     taskfile: ./serverless/tasks.yml
     dir: ./serverless
@@ -33,8 +33,9 @@ tasks:
 
   cluster-kind-deploy:
     desc: Create kubernetes cluster with Kind.
+    deps:
+      - cluster-kind-undeploy
     cmds:
-      - task: cluster-kind-undeploy
       - kind create cluster --config kind.yml
       - kubectl cluster-info --context kind-kubernetes-stack || exit 1
     preconditions:
@@ -44,3 +45,7 @@ tasks:
   cluster-kind-undeploy:
     desc: Delete Kind kubernetes cluster.
     cmd: kind delete cluster --name kubernetes-stack
+  
+  pre-commit-install:
+    desc: Install pre-commit
+    cmd: pre-commit install

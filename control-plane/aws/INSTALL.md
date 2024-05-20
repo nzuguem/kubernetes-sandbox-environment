@@ -4,7 +4,7 @@
 
 ```bash
 ## Deploy LocalStack to simulate the AWS provider
-task platform:localstack-install
+task control-plane:localstack-install
 ```
 
 The localstack access endpoint is http://localstack.127.0.0.1.nip.io
@@ -23,5 +23,5 @@ aws s3 ls
 ## Uninstall
 
 ```bash
-task platform:localstack-uninstall
+task control-plane:localstack-uninstall
 ```

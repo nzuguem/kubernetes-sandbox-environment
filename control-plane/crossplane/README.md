@@ -1,10 +1,10 @@
-# Platform - [Crossplane][crossplane-doc]
+# Control Plane - [Crossplane][crossplane-doc]
 ## Késako ?
 Crossplane is an open-source multi-cloud control plane. As an add-on to Kubernetes, Crossplane leverages the Kubernetes API. It lets you extend a Kubernetes cluster to provision, manage and orchestrate cloud infrastructure (AWS, GCP, Azure, etc...), services and applications.
 
 ## Install
 ```bash
-task platform:crossplane-install
+task control-plane:crossplane-install
 ```
 
 > ℹ️ Our tests will use the AWS provider, and to simulate it, we'll use LocalStack. See this [guide to installing LocalStack in a Kubernetes cluster](../aws/INSTALL.md)
@@ -17,17 +17,17 @@ task platform:crossplane-install
 
 ```bash
 ## Install Provider
-kubectl apply -f platform/crossplane/s3.provider.yml
+kubectl apply -f control-plane/crossplane/s3.provider.yml
 
 ## Configure AWS Provider (LocalStack)
-kubectl apply -f platform/crossplane/localstack.providerconfig.yml
+kubectl apply -f control-plane/crossplane/localstack.providerconfig.yml
 ```
 
 ### Create a managed resource
 
 ```bash
 ## Create S3 Bucket
-kubectl create -f platform/crossplane/s3.bucket.yml
+kubectl create -f control-plane/crossplane/s3.bucket.yml
 
 ## Check that it has been properly created (SYNCHED = True, READY = True)
 kubectl get buckets
