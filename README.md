@@ -15,7 +15,7 @@ It contains configurations and examples for the following components:
 - Security
     - [Cert Manager](security/cert-manager)
     - [External Secrets Operator](security/ESO)
-- Plaform
+- Control Plane
     - [Crossplane](platform/crossplane)
 - Serverless
     - [Knative](serverless/knative)

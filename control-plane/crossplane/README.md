@@ -70,7 +70,7 @@ aws s3 ls
 ## Uninstall
 
 ```bash
-task platform:crossplane-uninstall
+task control-plane:crossplane-uninstall
 ```
 
 ## Resources
