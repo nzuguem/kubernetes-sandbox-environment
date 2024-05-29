@@ -15,7 +15,8 @@
         "ghcr.io/rio/features/k3d:1": {},
         "ghcr.io/devcontainers/features/python:1": {},
         "ghcr.io/devcontainers/features/aws-cli:1": {},
-        "ghcr.io/devcontainers-contrib/features/pre-commit:2": {}
+        "ghcr.io/devcontainers-contrib/features/pre-commit:2": {},
+        "ghcr.io/gickis/devcontainer-features/kubeseal:1": {}
 	},
 
     "customizations": {

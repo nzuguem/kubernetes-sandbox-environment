@@ -13,11 +13,11 @@ tasks:
     cmds:
       - helm repo add otel https://open-telemetry.github.io/opentelemetry-helm-charts
       - helm repo update otel
-      - helm upgrade --install --version 0.58.0
+      - helm upgrade --install --version 0.60.0
         --create-namespace
         --namespace otel-system otel otel/opentelemetry-operator
         --set admissionWebhooks.certManager.enabled=false
-        --set manager.collectorImage.repository=otel/opentelemetry-collector-k8s
+        --set manager.collectorImage.repository=otel/opentelemetry-collector-contrib
   
   opentelemetry-uninstall:
     desc: Uninstall OTel Operator.

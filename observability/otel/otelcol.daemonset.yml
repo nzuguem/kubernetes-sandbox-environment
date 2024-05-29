@@ -7,18 +7,25 @@ spec:
   upgradeStrategy: automatic
   mode: daemonset
   volumes:
-  - name: varlog
+  - name: varlogpods
     hostPath:
-      path: /var/log
+      path: /var/log/pods
+  - name: varlibdockercontainers
+  hostPath:
+    path: /var/lib/docker/containers
   volumeMounts:
-  - name: varlog
-    mountPath: /var/log
+  - name: varlogpods
+    mountPath: /var/log/pods
+    readOnly: true
+  - name: varlibdockercontainers
+    mountPath: /var/lib/docker/containers
     readOnly: true
   config:
     receivers:
       filelog:
+        include_file_path: true
         include:
-          - /var/log/pods/*/jaegertracing/*.log
+          - /var/log/pods/*/*/*.log
         exclude:
           # Exclude logs from all containers named otel-collector
           - /var/log/pods/*/otel-collector/*.log

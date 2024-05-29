@@ -1,1 +1,3 @@
 .camel*
+*.pem
+**/*/sealed-secret-key.yaml

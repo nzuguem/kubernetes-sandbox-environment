@@ -40,3 +40,19 @@ tasks:
   eso-uninstall:
     desc: Uninstall External Secret Operator.
     cmd: helm del -n eso-system external-secrets
+  
+  sealed-secrets-install:
+    desc: Install Sealed Secret Operator.
+    deps:
+      - ingress:nginx-install
+    cmds:
+      - helm repo add bitnami-labs https://bitnami-labs.github.io/sealed-secrets
+      - helm repo update bitnami-labs
+      - helm upgrade --install sealed-secrets bitnami-labs/sealed-secrets
+        --version 2.15.4
+        --namespace kube-system
+        -f sealed-secret/helm.values.yml
+  
+  sealed-secrets-uninstall:
+    desc: Uninstall Sealed Secret Operator.
+    cmd: helm del -n kube-system sealed-secrets
