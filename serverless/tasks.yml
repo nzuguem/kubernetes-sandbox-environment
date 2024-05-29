@@ -13,7 +13,7 @@ tasks:
       - kubectl apply -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-core.yaml
 
       # Install Network Layer
-      - kubectl apply -f knative/kourier.yml
+      - kubectl apply -f knative/serving/kourier.yml
 
       - kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n kourier-system
       - kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n knative-serving
@@ -32,7 +32,7 @@ tasks:
   knative-serving-uninstall:
     desc: Uninstall Knative Serving Operator.
     cmds:
-      - kubectl delete -f knative/kourier.yml
+      - kubectl delete -f knative/serving/kourier.yml
       - kubectl delete -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-core.yaml
       - kubectl delete -f https://github.com/knative/serving/releases/download/knative-v1.13.1/serving-crds.yaml
 

@@ -11,6 +11,8 @@ tasks:
         --namespace ingress-nginx-system
         --create-namespace
         --values https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/hack/manifest-templates/provider/kind/values.yaml
+      ## Wait for Nginx controller deployment to be Ready
+      - kubectl rollout status -n ingress-nginx-system deploy/ingress-nginx-controller --timeout 90s
 
   nginx-uninstall:
     desc: Unistall Ingress Nginx
