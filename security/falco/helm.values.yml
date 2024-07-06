@@ -1,0 +1,64 @@
+tty: true
+
+falcosidekick:
+  enabled: true
+  webui:
+    enabled: true
+    replicaCount: 1
+    # -- User in format <login>:<password>
+    user: "admin:admin"
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hosts:
+        - host: falcosidekick-ui.127.0.0.1.nip.io
+          paths:
+            - path: /
+
+customRules:
+  {}
+
+falco:
+  json_output: true
+  # -- Redirect logs to standard output.
+  stdout_output:
+    enabled: true
+  # -- Plugins to install
+  load_plugins:
+    # Need config kube-apiserver to send Audit Logs to Falco Embedded WebServer
+    # Doc : https://sysdig.com/blog/kubernetes-audit-log-falco/
+    - k8saudit 
+    - json
+  # -- Rules are loaded by the engine
+  rules_file:
+    - /etc/falco/k8s_audit_rules.yaml
+    - /etc/falco/falco_rules.yaml
+    - /etc/falco/falco_rules.local.yaml
+    # -- Rules defined in .customRules:
+    - /etc/falco/rules.d
+
+falcoctl:
+  artifact:
+    install:
+      enabled: true
+    follow:
+      enabled: true
+  config:
+    indexes:
+      - name: falcosecurity
+        url: https://falcosecurity.github.io/falcoctl/index.yaml
+    artifact:
+      install:
+        refs: 
+          - falco-rules:3
+          - k8saudit-rules:0
+          - k8saudit:0 
+          - json:0
+      follow:
+        every: 1h
+        refs:
+          - falco-rules:3
+          - k8saudit-rules:0
+          - k8saudit:0
+          - json:0
+

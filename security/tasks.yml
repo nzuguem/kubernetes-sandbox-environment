@@ -73,3 +73,24 @@ tasks:
   neuvector-uninstall:
     desc: Uninstall NeuVector Operator.
     cmd: helm del -n neuvector-system  neuvector
+
+  falco-install:
+    desc: Install Falco Operator.
+    cmds:
+      - helm repo add falcosecurity https://falcosecurity.github.io/charts
+      - helm repo update falcosecurity
+      - helm upgrade --install falco falcosecurity/falco
+        --version 4.6.0
+        --create-namespace
+        --namespace falco-system 
+        -f falco/helm.values.yml
+      
+      # Wait for Falco to be ready.
+      - kubectl wait -n falco-system 
+        --for=condition=ready pod
+        --selector=app.kubernetes.io/instance=falco
+        --timeout=90s
+  
+  falco-uninstall:
+    desc: Uninstall Falco Operator.
+    cmd: helm del -n falco-system  falco

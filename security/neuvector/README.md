@@ -21,7 +21,7 @@ task security:neuvector-uninstall
 
 ## Alternatives
 
-- Falco
+- [Falco](../falco)
 
 ## Resources
 
