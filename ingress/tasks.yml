@@ -20,18 +20,14 @@ tasks:
   
   ngrok-install:
     desc: Install Ngrok Ingress Controller.
-    requires:
-      vars: 
-        - NGROK_API_KEY
-        - NGROK_AUTHTOKEN
     cmds:
       - helm repo add ingress-ngrok https://ngrok.github.io/kubernetes-ingress-controller
       - helm repo update ingress-ngrok
-      - helm install ngrok-ingress-controller ingress-ngrok/kubernetes-ingress-controller
+      - helm upgrade --install ngrok-ingress-controller ingress-ngrok/kubernetes-ingress-controller
         --namespace ingress-ngrok-system
         --create-namespace
-        --set credentials.apiKey={{.NGROK_API_KEY}}
-        --set credentials.authtoken={{.NGROK_AUTHTOKEN}}
+        --set credentials.apiKey=$NGROK_API_KEY
+        --set credentials.authtoken=$NGROK_AUTHTOKEN
   
   ngrok-uninstall:
     desc: Uninstall Ngrok Ingress Controller.

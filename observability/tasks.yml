@@ -1,15 +1,8 @@
 version: 3
 
-includes:
-  ingress:
-    taskfile: ../ingress/tasks.yml
-    dir: ../ingress
-
 tasks:
   opentelemetry-install:
     desc: Install OTel Operator.
-    deps:
-      - ingress:nginx-install
     cmds:
       - helm repo add otel https://open-telemetry.github.io/opentelemetry-helm-charts
       - helm repo update otel
@@ -25,12 +18,10 @@ tasks:
   
   coroot-install:
     desc: Install Coroot Observability.
-    deps:
-      - ingress:nginx-install
     cmds:
       - helm repo add coroot https://coroot.github.io/helm-charts
       - helm repo update coroot
-      - helm install --namespace coroot-system --create-namespace coroot coroot/coroot -f coroot/helm.values.yml
+      - helm upgrade --install --namespace coroot-system --create-namespace coroot coroot/coroot -f coroot/helm.values.yml
   
   coroot-uninstall:
     desc: Uninstall Coroot Observability.
@@ -38,16 +29,14 @@ tasks:
   
   prometheus-install:
     desc: Install Prometheus Operator.
-    deps:
-      - ingress:nginx-install
     cmds:
       - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
       - helm repo update prometheus-community
-      - helm install prometheus-operator
+      - helm upgrade --install prometheus-operator
         prometheus-community/kube-prometheus-stack
         --namespace monitoring
         --create-namespace
-        -f observability/prometheus/helm.values.yml
+        -f prometheus/helm.values.yml
       - task: grafana-get-credentials
   
   prometheus-uninstall:

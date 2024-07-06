@@ -49,3 +49,8 @@ tasks:
   pre-commit-install:
     desc: Install pre-commit
     cmd: pre-commit install
+  
+  platform-install:
+    desc: Install all the components required for the kubernetes platform.
+    deps:
+      - ingress:nginx-install

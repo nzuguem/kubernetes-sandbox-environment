@@ -1,19 +1,12 @@
 version: 3
 
-includes:
-  ingress:
-    taskfile: ../ingress/tasks.yml
-    dir: ../ingress
-
 tasks:
   cert-manager-install:
     desc: Install Cert Manager.
-    deps:
-      - ingress:nginx-install
     cmds:
       - helm repo add jetstack https://charts.jetstack.io
       - helm repo update jetstack
-      - helm install cert-manager jetstack/cert-manager 
+      - helm upgrade --install cert-manager jetstack/cert-manager 
         --create-namespace
         --namespace cert-manager-system
         --set installCRDs=true
@@ -43,8 +36,6 @@ tasks:
   
   sealed-secrets-install:
     desc: Install Sealed Secret Operator.
-    deps:
-      - ingress:nginx-install
     cmds:
       - helm repo add bitnami-labs https://bitnami-labs.github.io/sealed-secrets
       - helm repo update bitnami-labs
@@ -56,3 +47,29 @@ tasks:
   sealed-secrets-uninstall:
     desc: Uninstall Sealed Secret Operator.
     cmd: helm del -n kube-system sealed-secrets
+
+  neuvector-install:
+    desc: Install NeuVector Operator.
+    deps:
+      - cert-manager-install
+    cmds:
+      - kubectl apply -f neuvector/self.clusterissuer.yml
+      - helm repo add neuvector https://neuvector.github.io/neuvector-helm/
+      - helm repo update neuvector
+      - helm upgrade --install neuvector neuvector/core
+        --version 2.7.7
+        --create-namespace
+        --namespace neuvector-system
+        -f neuvector/helm.values.yml
+      
+      # Wait for NeuVector to be ready.
+      - kubectl wait -n neuvector-system 
+        --for=condition=ready pod
+        --selector=release=neuvector
+        --timeout=90s
+      
+      - echo "Credentials -> admin/admin"
+  
+  neuvector-uninstall:
+    desc: Uninstall NeuVector Operator.
+    cmd: helm del -n neuvector-system  neuvector

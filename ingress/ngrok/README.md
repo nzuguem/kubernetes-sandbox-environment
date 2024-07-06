@@ -18,12 +18,10 @@ task ingress:ngrok-install
 
 ## Test
 
-> ℹ️ From your Ngrok dashboard, create an [Edge domain][ngrok-dashboard-edge-domain]. Set it as an environment variable (e.g: `NGROK_EDGE_HOST_DOMAIN=evolved-pheasant-modern.ngrok-free.app`)
+> ℹ️ From your Ngrok dashboard, create an [Edge domain][ngrok-dashboard-edge-domain]. Set it in `.env` file (e.g: `NGROK_EDGE_HOST_DOMAIN=evolved-pheasant-modern.ngrok-free.app`)
 
 ```bash
 ## Deploy the popular 2048 game
-export NGROK_EDGE_HOST_DOMAIN="evolved-pheasant-modern.ngrok-free.app"
-
 cat ingress/ngrok/game-2048.yml | envsubst | kubectl apply -f -
 ```
 
