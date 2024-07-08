@@ -1,3 +1,6 @@
+# Attach the Falco process to a tty inside the container. 
+# Needed to flush Falco logs as soon as they are emitted. 
+# Set it to "true" when you need the Falco logs to be immediately displayed.
 tty: true
 
 falcosidekick:
@@ -18,6 +21,16 @@ falcosidekick:
 customRules:
   {}
 
+services:
+  # The Kubernetes Audit Log is now supported via the built-in k8saudit plugin. 
+  # It is entirely up to you to set up the webhook backend of the Kubernetes API server to forward the Audit Log event to the Falco listening port.
+  - name: k8saudit-webhook
+    type: NodePort
+    ports:
+     - port: 9765 # See plugin open_params
+       nodePort: 30007
+       protocol: TCP
+
 falco:
   json_output: true
   # -- Redirect logs to standard output.
@@ -29,6 +42,24 @@ falco:
     # Doc : https://sysdig.com/blog/kubernetes-audit-log-falco/
     - k8saudit 
     - json
+  # -- Customize subsettings for each enabled plugin. These settings will only be
+  # applied when the corresponding plugin is enabled using the `load_plugins`
+  # option.
+  plugins:
+    - name: k8saudit
+      library_path: libk8saudit.so
+      init_config:
+      #   maxEventSize: 262144
+      #   webhookMaxBatchSize: 12582912
+      #   sslCertificate: /etc/falco/falco.pem
+      open_params: "http://:9765/k8s-audit"
+    - name: cloudtrail
+      library_path: libcloudtrail.so
+      # see docs for init_config and open_params:
+      # https://github.com/falcosecurity/plugins/blob/master/plugins/cloudtrail/README.md
+    - name: json
+      library_path: libjson.so
+      init_config: ""
   # -- Rules are loaded by the engine
   rules_file:
     - /etc/falco/k8s_audit_rules.yaml
@@ -36,6 +67,12 @@ falco:
     - /etc/falco/falco_rules.local.yaml
     # -- Rules defined in .customRules:
     - /etc/falco/rules.d
+  # Falco supports an embedded webserver that runs within the Falco process, 
+  # providing a lightweight and efficient way to expose web-based functionalities without the need for an external web server.
+  # It will be particularly important for the k8s_audit plugin, as it will expose the ":8765/k8s_audit" webhook via this webserver.
+  webserver:
+    enabled: true
+    listen_port: 8765
 
 falcoctl:
   artifact:

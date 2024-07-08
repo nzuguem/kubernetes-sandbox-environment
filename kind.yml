@@ -3,13 +3,43 @@ apiVersion: kind.x-k8s.io/v1alpha4
 name: kubernetes-stack
 nodes:
 - role: control-plane
-  image: kindest/node:v1.29.2
+  image: kindest/node:v1.30.2
+  # Need By Falco : https://gist.github.com/Issif/e17c9294b4e1a76a274db387fe58343c
+  extraMounts:
+    # Allow Falco to use devices provided by the kernel module
+  - hostPath: /dev
+    containerPath: /dev
+    # allow Falco to use the Docker unix socket
+  - hostPath: /var/run/docker.sock
+    containerPath: /var/run/docker.sock
+    # mount config files for kind
+  - hostPath: security/falco/k8s-audit-config/webhook-config.yaml
+    containerPath: /etc/kubernetes/policies/webhook-config.yaml
+    readOnly: true
+  - hostPath: security/falco/k8s-audit-config/audit-policy.yaml
+    containerPath: /etc/kubernetes/policies/audit-policy.yaml
+    readOnly: true
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
     nodeRegistration:
       kubeletExtraArgs:
         node-labels: "ingress-ready=true,kourier-ready=true"
+  # Need By Falco : https://gist.github.com/Issif/e17c9294b4e1a76a274db387fe58343c
+  - |
+      kind: ClusterConfiguration
+      apiServer:
+          # enable auditing flags on the API server
+          extraArgs:
+            audit-webhook-config-file: /etc/kubernetes/policies/webhook-config.yaml
+            audit-policy-file: /etc/kubernetes/policies/audit-policy.yaml
+          # mount new files / directories on the control plane
+          extraVolumes:
+            - name: audit-policies
+              hostPath: /etc/kubernetes/policies
+              mountPath: /etc/kubernetes/policies
+              readOnly: true
+              pathType: "DirectoryOrCreate"
   extraPortMappings:
   # Nginx : expose port 80 (HostPort) of the node on which Nginx is deployed, to port 80 on the host (DevContainer).
   - containerPort: 80
@@ -27,6 +57,6 @@ nodes:
     hostPort: 443
     protocol: TCP
 - role: worker
-  image: kindest/node:v1.29.2
+  image: kindest/node:v1.30.2
 - role: worker
-  image: kindest/node:v1.29.2
+  image: kindest/node:v1.30.2

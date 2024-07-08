@@ -89,7 +89,7 @@ tasks:
       - kubectl wait -n falco-system 
         --for=condition=ready pod
         --selector=app.kubernetes.io/instance=falco
-        --timeout=90s
+        --timeout=180s
   
   falco-uninstall:
     desc: Uninstall Falco Operator.

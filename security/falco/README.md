@@ -33,7 +33,7 @@ The configuration of the artifacts to be managed by Falcoctl is defined in the [
 
 > ⚠️ You don't just need to install the artifacts, you also need to ask Falco to consider them: `falco.load_plugins` and `falco.rules_file`.
 
-The [plugins][falco-registed-plugins] and rules are maintained by the Falco community and maintainer. And a plugin is generally associated with a set of rules 
+The [plugins][falco-registed-plugins] and rules are maintained by the Falco community and maintainer. And a plugin is generally associated with a set of rules
 
 ## Test
 
@@ -63,6 +63,7 @@ task security:falco-uninstall
 
 ## Resources
 
+- [Faclco GitHub Chart Helm][falco-gh-chart-helm]
 - [Réagir à temps aux menaces dans Kubernetes avec Falco (Rachid Zarouali, Thomas Labarussias)][falco-youtube]
 - [Falco de A à Y][falco-blog-by-quentin-joly]
 
@@ -74,3 +75,4 @@ task security:falco-uninstall
 [falco-default-rules]: https://falco.org/docs/reference/rules/default-rules/
 [falcoctl-docs]: https://falco.org/blog/falcoctl-install-manage-rules-plugins/
 [falco-registed-plugins]: https://falco.org/docs/plugins/registered-plugins/
+[falco-gh-chart-helm]: https://github.com/falcosecurity/charts/blob/master/charts/falco/README.md 
