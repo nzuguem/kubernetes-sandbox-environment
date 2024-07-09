@@ -71,12 +71,51 @@ kubectl logs -l app.kubernetes.io/name=falco -n falco-system -c falco | grep Not
 
 Falco's output (*STDOUT and HTTP Falcosidekick*) is the result of rule [Terminal shell in container](https://github.com/falcosecurity/rules/blob/28b98b6f5f2fd1c1a82fc96c07bc844db33eb7cd/rules/falco_rules.yaml#L710)
 
+## [Falco Talon][falco-talon-doc] - React to Falco alerts
 
+We talked about Response Engine above, and this is code that is written and generally deployed on a FaaS to react to Falco alerts.
+
+Writing code for your Response Engine has advantages in terms of **control and flexibility**. BUT it requires a lot of **cognitive load** for the developer (*managing actions, logs, authentication, the complexity of SDKs, etc...*).
+
+In view of this cognitive load, the Falco Talon project is positioned as a **no-code** solution for creating a **fully customisable response engine** to work in pair with Falco, the runtime security component. \
+It allows you to run series of actions following the name, the priority, the tags, the fields and more of the received Falco events. Falco Talon comes with multiple [**pre-integrated actions**][falco-talon-predifined-actionners] allowing you to focus on your rules and parameters and not on writing code.
+
+![Falco Talon Architecture](../images/falco-talon-architecture.png)
+
+### Hello World Falco Talon
+
+> ℹ️ Previous FalcoSidekick integration configured to push alerts into Falco Talon
+> ```yaml
+> falcosidekick:
+>  config: 
+>    webhook:
+>      address: http://falco-talon:2803
+>```
+
+In this example, we will use the [default rules][falco-talon-default-rules] provided by Falco Talon. In particular, we'll trigger the **"Terminal shell in container"** rule (*its action consists of labelling a Pod as suspicious*)
+
+```bash
+## Install Falco Talon Instance
+task security:falco-talon-install
+
+## Shell into the running container and run the uptime command. This will trigger Falco to send an Alert.
+kubectl exec -it alpine -- sh -c "uptime"
+
+## Observing Falco Talon's actions. Label -> suspicious: "true"
+kubectl get po/alpine -o yaml
+#apiVersion: v1
+#kind: Pod
+#metadata:
+#  labels:
+#    run: alpine
+#    suspicious: "true"
+```
 
 ## Uninstall
 
 ```bash
 task security:falco-uninstall
+task security:falco-talon-uninstall
 ```
 
 ## Resources
@@ -99,3 +138,6 @@ task security:falco-uninstall
 [falcosidekick-doc]: https://falco.org/blog/extend-falco-outputs-with-falcosidekick/
 [falco-plugins-doc]: https://falco.org/docs/plugins/
 [falcosidekick-response-engine-blog]: https://falco.org/blog/falcosidekick-response-engine-part-1-kubeless/
+[falco-talon-doc]: https://docs.falco-talon.org/
+[falco-talon-predifined-actionners]: https://docs.falco-talon.org/docs/actionners/list/
+[falco-talon-default-rules]: https://github.com/falco-talon/falco-talon/blob/main/deployment/helm/rules.yaml

@@ -50,10 +50,7 @@ tasks:
 
   neuvector-install:
     desc: Install NeuVector Operator.
-    deps:
-      - cert-manager-install
     cmds:
-      - kubectl apply -f neuvector/self.clusterissuer.yml
       - helm repo add neuvector https://neuvector.github.io/neuvector-helm/
       - helm repo update neuvector
       - helm upgrade --install neuvector neuvector/core
