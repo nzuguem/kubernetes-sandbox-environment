@@ -82,15 +82,27 @@ tasks:
       - helm upgrade --install falco falcosecurity/falco
         --version 4.6.0
         --create-namespace
-        --namespace falco-system 
+        --namespace falco
         -f falco/helm.values.yml
       
       # Wait for Falco to be ready.
-      - kubectl wait -n falco-system 
+      - kubectl wait -n falco 
         --for=condition=ready pod
         --selector=app.kubernetes.io/instance=falco
         --timeout=180s
   
   falco-uninstall:
     desc: Uninstall Falco Operator.
-    cmd: helm del -n falco-system  falco
+    cmd: helm del -n falco  falco
+
+  falco-talon-install:
+    desc: Install Falco Talon.
+    cmds:
+      - git clone https://github.com/Falco-Talon/falco-talon.git || true
+      - |-
+        cd falco-talon/deployment/helm/
+        helm upgrade --install falco-talon . --namespace falco
+  
+  falco-talon-uninstall:
+    desc: Uninstall Falco Talon.
+    cmd: helm del -n falco  falco-talon

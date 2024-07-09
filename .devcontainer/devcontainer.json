@@ -30,7 +30,8 @@
                 "redhat.vscode-yaml",
                 "ms-vscode.makefile-tools",
                 "DavidAnson.vscode-markdownlint",
-                "task.vscode-task"
+                "task.vscode-task",
+                "golang.go"
             ]
 		}
 	},

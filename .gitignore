@@ -1,3 +1,4 @@
 .camel*
 *.pem
 **/*/sealed-secret-key.yaml
+**/*/falco-talon

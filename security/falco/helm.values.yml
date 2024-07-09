@@ -4,7 +4,12 @@
 tty: true
 
 falcosidekick:
+  # Activating FalcoSidekick means configuring the Falco HTTP output to the FalcoSideKick instance
   enabled: true
+  config:
+    #  
+    webhook:
+      address: http://falco-talon:2803
   webui:
     enabled: true
     replicaCount: 1
