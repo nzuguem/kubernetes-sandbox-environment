@@ -1,12 +1,12 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 # Sourcing of fzf
 echo "source <(fzf --bash)" >> /home/vscode/.bashrc
 
-task pre-commit-install
-
 task cluster-kind-deploy
 
 task platform-install
+
+task pre-commit-install

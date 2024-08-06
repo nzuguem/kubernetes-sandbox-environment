@@ -10,7 +10,7 @@ includes:
   ingress:
     taskfile: ./ingress/tasks.yml
     dir: ./ingress
-  gitops: 
+  gitops:
     taskfile: ./gitops/tasks.yml
     dir: ./gitops
   observability:
@@ -25,7 +25,7 @@ includes:
   serverless:
     taskfile: ./serverless/tasks.yml
     dir: ./serverless
-    
+
 tasks:
   default:
     desc: List Tasks.
@@ -33,28 +33,32 @@ tasks:
 
   cluster-kind-deploy:
     desc: Create kubernetes cluster with Kind.
-    deps:
-      - cluster-kind-undeploy
     cmds:
-      - kind create cluster --config kind.yml
+      - |-
+        count=$(docker ps --filter "name=kubernetes-stack" -q | wc -l)
+        if [ "$count" -ne 3 ]; then
+          echo "🆕 Creation of the Kind cluster ..."
+          kind create cluster --config kind.yml
+        else
+          echo "💚 Re-using the Kind cluster. Containers start up..."
+          sleep 10s
+        fi
       - kubectl cluster-info --context kind-kubernetes-stack || exit 1
     preconditions:
       - sh: test -f kind.yml
         msg: Kind's manisfest not provided
-  
+
   cluster-kind-undeploy:
     desc: Delete Kind kubernetes cluster.
     cmd: kind delete cluster --name kubernetes-stack
-  
+
   pre-commit-install:
     desc: Install pre-commit
     cmd: pre-commit install
-  
+
   platform-install:
     desc: Install all the components required for the kubernetes platform.
     deps:
-      - ingress:nginx-install
-      - security:cert-manager-install
-    cmds:
-      # Deploy Self Signed Cluster Issuer
-      - kubectl apply -f security/cert-manager/self.clusterissuer.yml
+      - task: ingress:nginx-install
+      - task: security:cert-manager-install
+    cmd: kubectl apply -f security/cert-manager/self.clusterissuer.yml

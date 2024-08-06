@@ -1,9 +1,5 @@
 version: 3
 
-includes:
-  ingress:
-    taskfile: ../ingress/tasks.yml
-    dir: ../ingress
 
 tasks:
   crossplane-install:
@@ -11,26 +7,24 @@ tasks:
     cmds:
       - helm repo add crossplane-stable https://charts.crossplane.io/stable
       - helm repo update crossplane-stable
-      - helm install crossplane
+      - helm upgrade --install crossplane
         --namespace crossplane-system
         --create-namespace crossplane-stable/crossplane
 
   crossplane-uninstall:
     desc: UnInstall Crossplane Operator.
     cmd: helm del -n crossplane-system crossplane
-  
+
   localstack-install:
     desc: Install Localstack Operator.
-    deps:
-      - ingress:nginx-install
     cmds:
       - helm repo add localstack-charts https://localstack.github.io/helm-charts
       - helm repo update localstack-charts
-      - helm install localstack  localstack-charts/localstack -f aws/helm.values.yml
+      - helm upgrade --install localstack  localstack-charts/localstack -f aws/helm.values.yml
       - mkdir -p $HOME/.aws && cp aws/config/* $HOME/.aws
-  
+
   localstack-uninstall:
     desc: Uninstall Localstack Operator.
-    cmds: 
+    cmds:
       - helm del localstack
       - rm -Rf $HOME/.aws
