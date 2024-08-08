@@ -9,6 +9,8 @@ It contains configurations and examples for the following components:
 - Ingress
   - [Nginx](ingress/nginx)
   - [Ngrok](ingress/ngrok)
+- Gateway
+  - [Nginx](gateway/nginx)
 - GitOps
   - [ArgoCD](gitops/argocd)
 - Observability

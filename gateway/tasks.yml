@@ -1,0 +1,26 @@
+version: 3
+
+tasks:
+  gateway-api-crd-experimental-channel-install:
+    internal: true
+    desc: |-
+      The experimental release channel includes everything in the standard release channel plus some experimental resources and fields.
+      This includes TCPRoute, TLSRoute, UDPRoute and GRPCRoute.
+    summary: Install Experimental Channel.
+    cmd: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/experimental-install.yaml
+
+  nginx-install:
+    desc: Install Nginx Gateway Farbic, the implementation of Kubernetes Gateway API Specification.
+    deps:
+      - gateway-api-crd-experimental-channel-install
+    cmd: >-
+      helm upgrade --install nginx-gateway oci://ghcr.io/nginxinc/charts/nginx-gateway-fabric
+      --create-namespace
+      -n nginx-gateway-system
+      -f nginx/helm.values.yml
+
+  nginx-uninstall:
+    desc: Uninstall Nginx Gateway Farbic.
+    cmds:
+      - helm del nginx-gateway -n nginx-gateway-system
+      - kubectl delete -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/experimental-install.yaml

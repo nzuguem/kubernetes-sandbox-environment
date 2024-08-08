@@ -25,6 +25,9 @@ includes:
   serverless:
     taskfile: ./serverless/tasks.yml
     dir: ./serverless
+  gateway:
+    taskfile: ./gateway/tasks.yml
+    dir: ./gateway
 
 tasks:
   default:

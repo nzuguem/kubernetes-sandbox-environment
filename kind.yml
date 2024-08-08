@@ -24,7 +24,7 @@ nodes:
     kind: InitConfiguration
     nodeRegistration:
       kubeletExtraArgs:
-        node-labels: "ingress-ready=true,kourier-ready=true"
+        node-labels: "ingress-ready=true,kourier-ready=true,gateway-ready=true"
   # Need By Falco : https://gist.github.com/Issif/e17c9294b4e1a76a274db387fe58343c
   - |
       kind: ClusterConfiguration
@@ -49,9 +49,17 @@ nodes:
   - containerPort: 31080
     hostPort: 8080
     protocol: TCP
+  # Nginx Gateway Fabric  : expose port 30080 (NodePort) of all k8s nodes, to port 9080 on the host (DevContainer), later to be use by kourier.
+  - containerPort: 30080
+    hostPort: 9080
+    protocol: TCP
   # Knative : expose port 31443 (NodePort) of all k8s nodes, to port 8443 on the host (DevContainer), later to be use by kourier.
   - containerPort: 31443
     hostPort: 8443
+    protocol: TCP
+  # Nginx Gateway Fabric : expose port 30443 (NodePort) of all k8s nodes, to port 9443 on the host (DevContainer), later to be use by kourier.
+  - containerPort: 30443
+    hostPort: 9443
     protocol: TCP
   - containerPort: 443
     hostPort: 443

@@ -47,7 +47,9 @@
     "80:80", // Ingress Controller Nginx - HTTP
     "443:443", // Ingress Controller Nginx - HTTPS
     "8080:8080", // Kourier for Knative - HTTP
-    "8443:8443" // Kourier for Knative - HTTPS
+    "8443:8443", // Kourier for Knative - HTTPS
+    "9080:9080", // Nginx Gateway Fabric - HTTP
+    "9443:9443" // Nginx Gateway Fabric - HTTPS
   ],
   "postStartCommand": "/bin/bash -c .devcontainer/scripts/postStartCommand.sh"
 }

@@ -1,0 +1,25 @@
+service:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+      nodePort: 30080
+    - port: 443
+      targetPort: 443
+      protocol: TCP
+      nodePort: 30443
+      name: https
+nginxGateway:
+  gwAPIExperimentalFeatures:
+    enable: true
+nodeSelector:
+    gateway-ready: "true"
+tolerations:
+  - key: "node-role.kubernetes.io/master"
+    operator: "Equal"
+    effect: "NoSchedule"
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Equal"
+    effect: "NoSchedule"
