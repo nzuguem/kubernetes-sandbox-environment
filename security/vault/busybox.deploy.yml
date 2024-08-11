@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox
+  labels:
+    app: busybox
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      annotations:
+         vault.hashicorp.com/agent-inject: 'true'
+         # Role of Kubernetes authentication method defined at Vault level
+         # It has been configured to be associated with the Kubenetes "serviceAccountName".
+         vault.hashicorp.com/role: aws-config-reader
+         # The secrets will be stored in "aws-config.env"
+         vault.hashicorp.com/agent-inject-secret-aws-config.env: nzuguem/data/cloud/config/aws
+        # The content of "aws-config.env" will conform to the template
+         vault.hashicorp.com/agent-inject-template-aws-config.env: |
+            {{- with secret "nzuguem/data/cloud/config/aws" -}}
+              export AWS_ACCESS_KEY_ID={{ .Data.data.access_key_id }}
+              export AWS_SECRET_ACCESS_KEY={{ .Data.data.access_secret_key }}
+            {{- end -}}
+
+      labels:
+        app: busybox
+    spec:
+      serviceAccountName: aws-config-reader
+      containers:
+      - name: busybox
+        image: busybox
+        command:
+          - sh
+          - -c
+        args:
+          - source /vault/secrets/aws-config.env && env
+        ports:
+        - containerPort: 80
+          name: http

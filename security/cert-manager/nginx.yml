@@ -66,9 +66,9 @@ metadata:
 spec:
   ingressClassName: nginx
   tls:
-  - hosts:
+  - secretName: nginx-cert-manager-ing-shim.127.0.0.1.nip.io-tls # SecretName to be created by the certificate
+    hosts:
     - nginx-cert-manager-ing-shim.127.0.0.1.nip.io # DNS of generated Certifcate
-    secretName: nginx-cert-manager-ing-shim.127.0.0.1.nip.io-tls # SecretName to be created by the certificate
   rules:
     - host: nginx-cert-manager-ing-shim.127.0.0.1.nip.io
       http:

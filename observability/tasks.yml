@@ -11,22 +11,22 @@ tasks:
         --namespace otel-system otel otel/opentelemetry-operator
         --set admissionWebhooks.certManager.enabled=false
         --set manager.collectorImage.repository=otel/opentelemetry-collector-contrib
-  
+
   opentelemetry-uninstall:
     desc: Uninstall OTel Operator.
     cmd: helm del -n otel-system otel
-  
+
   coroot-install:
     desc: Install Coroot Observability.
     cmds:
       - helm repo add coroot https://coroot.github.io/helm-charts
       - helm repo update coroot
       - helm upgrade --install --namespace coroot-system --create-namespace coroot coroot/coroot -f coroot/helm.values.yml
-  
+
   coroot-uninstall:
     desc: Uninstall Coroot Observability.
     cmd: helm del -n coroot-system coroot
-  
+
   prometheus-install:
     desc: Install Prometheus Operator.
     cmds:
@@ -34,15 +34,16 @@ tasks:
       - helm repo update prometheus-community
       - helm upgrade --install prometheus-operator
         prometheus-community/kube-prometheus-stack
+        --version 61.8.0
         --namespace monitoring
         --create-namespace
         -f prometheus/helm.values.yml
       - task: grafana-get-credentials
-  
+
   prometheus-uninstall:
     desc:  Uninstall Prometheus Operator.
     cmd: helm del -n monitoring prometheus-operator
-  
+
   grafana-get-credentials:
     desc:  Uninstall Prometheus Operator.
     vars:

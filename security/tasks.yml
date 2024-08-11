@@ -6,34 +6,34 @@ tasks:
     cmds:
       - helm repo add jetstack https://charts.jetstack.io
       - helm repo update jetstack
-      - helm upgrade --install cert-manager jetstack/cert-manager 
+      - helm upgrade --install cert-manager jetstack/cert-manager
         --create-namespace
         --namespace cert-manager-system
         --set installCRDs=true
-  
+
   cert-manager-uninstall:
     desc: Uninstall Cert Manager.
     cmd: helm del -n cert-manager-system cert-manager
-  
+
   eso-install:
     desc: Install External Secret Operator.
     cmds:
       - helm repo add external-secrets https://charts.external-secrets.io
       - helm repo update external-secrets
-      - helm install external-secrets external-secrets/external-secrets 
+      - helm upgrade --install external-secrets external-secrets/external-secrets
         --create-namespace
         --namespace eso-system
         --set installCRDs=true
         -f ESO/helm.values.yml
-      - kubectl wait -n eso-system 
+      - kubectl wait -n eso-system
         --for=condition=ready pod
         --selector=app.kubernetes.io/instance=external-secrets
         --timeout=90s
-  
+
   eso-uninstall:
     desc: Uninstall External Secret Operator.
     cmd: helm del -n eso-system external-secrets
-  
+
   sealed-secrets-install:
     desc: Install Sealed Secret Operator.
     cmds:
@@ -43,7 +43,7 @@ tasks:
         --version 2.15.4
         --namespace kube-system
         -f sealed-secret/helm.values.yml
-  
+
   sealed-secrets-uninstall:
     desc: Uninstall Sealed Secret Operator.
     cmd: helm del -n kube-system sealed-secrets
@@ -58,15 +58,15 @@ tasks:
         --create-namespace
         --namespace neuvector-system
         -f neuvector/helm.values.yml
-      
+
       # Wait for NeuVector to be ready.
-      - kubectl wait -n neuvector-system 
+      - kubectl wait -n neuvector-system
         --for=condition=ready pod
         --selector=release=neuvector
         --timeout=90s
-      
+
       - echo "Credentials -> admin/admin"
-  
+
   neuvector-uninstall:
     desc: Uninstall NeuVector Operator.
     cmd: helm del -n neuvector-system  neuvector
@@ -81,13 +81,13 @@ tasks:
         --create-namespace
         --namespace falco
         -f falco/helm.values.yml
-      
+
       # Wait for Falco to be ready.
-      - kubectl wait -n falco 
+      - kubectl wait -n falco
         --for=condition=ready pod
         --selector=app.kubernetes.io/instance=falco
         --timeout=180s
-  
+
   falco-uninstall:
     desc: Uninstall Falco Operator.
     cmd: helm del -n falco  falco
@@ -99,7 +99,31 @@ tasks:
       - |-
         cd falco-talon/deployment/helm/
         helm upgrade --install falco-talon . --namespace falco
-  
+
   falco-talon-uninstall:
     desc: Uninstall Falco Talon.
     cmd: helm del -n falco  falco-talon
+
+  vault-install:
+    desc: Install Vault
+    deps:
+      - eso-install
+    cmds:
+      - helm repo add hashicorp https://helm.releases.hashicorp.com
+      - helm repo update hashicorp
+      - helm upgrade --install vault hashicorp/vault
+        --version 0.28.1
+        --create-namespace
+        --namespace vault-system
+        -f vault/helm.values.yml
+      - |-
+        echo "export VAULT_ADDR=http://vault.127.0.0.1.nip.io" >> $HOME/.bashrc
+        echo "export VAULT_TOKEN=root" >> $HOME/.bashrc
+        source $HOME/.bashrc
+      - echo "Sign in to Vault ->  Token/root"
+
+  vault-uninstall:
+    desc: Uninstall Vault.
+    deps:
+      - eso-uninstall
+    cmd: helm del -n vault-system  vault

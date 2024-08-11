@@ -20,7 +20,8 @@
     "ghcr.io/devcontainers-contrib/features/pre-commit:2": {},
     "ghcr.io/gickis/devcontainer-features/kubeseal:1": {},
     "ghcr.io/devcontainers-contrib/features/argo-cd:1": {},
-    "ghcr.io/devcontainers-contrib/features/fzf:1": {}
+    "ghcr.io/devcontainers-contrib/features/fzf:1": {},
+    "ghcr.io/devcontainers-contrib/features/vault-asdf:2": {}
   },
   "customizations": {
     "vscode": {
