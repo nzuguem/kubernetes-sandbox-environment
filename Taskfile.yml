@@ -37,15 +37,8 @@ tasks:
   cluster-kind-deploy:
     desc: Create kubernetes cluster with Kind.
     cmds:
-      - |-
-        count=$(docker ps --filter "name=kubernetes-stack" -q | wc -l)
-        if [ "$count" -ne 3 ]; then
-          echo "🆕 Creation of the Kind cluster ..."
-          kind create cluster --config kind.yml
-        else
-          echo "💚 Re-using the Kind cluster. Containers start up..."
-          sleep 10s
-        fi
+      - kind delete cluster --name kubernetes-stack || true
+      - kind create cluster --config kind.yml
       - kubectl cluster-info --context kind-kubernetes-stack || exit 1
     preconditions:
       - sh: test -f kind.yml
@@ -66,3 +59,12 @@ tasks:
       - task: gateway:nginx-install
       - task: security:cert-manager-install
     cmd: kubectl apply -f security/cert-manager/self.clusterissuer.yml
+
+  devcontainer-prebuild:
+    desc: Pre-Build DevContainer
+    cmd: |
+      devcontainer build \
+        --workspace-folder ./ \
+        --push false \
+        --image-name ghcr.io/nzuguem/kubernetes-sandbox-environment:latest \
+        --cache-from ghcr.io/nzuguem/kubernetes-sandbox-environment:latest

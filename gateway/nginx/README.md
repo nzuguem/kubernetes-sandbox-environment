@@ -43,6 +43,73 @@ curl -H "Host: coffee.nzuguem.me" localhost:9080/tea
 
 > ℹ️ Using the `--connect-to` option with curl is closely related to the `--resolve` option. This command instructs `curl` to resolve the domain name in the URL by replacing it with the specified one. In the case of an HTTPS request, this option also sends the `SNI` (*the domain name specified in the URL*). The use of the `Host` header will also work, but only for unencrypted requests, as in the case of HTTPS requests, this header will not be considered as SNI (Cf. [Name resolve tricks][curl-name-resolve-tricks])
 
+### Advanced Routing
+
+```bash
+## Deploy All Resources
+kubectl apply -f gateway/nginx/advanced/routing
+
+## Curl to "coffee-v1-svc"
+curl --connect-to cafe.nzuguem.me:80:localhost:9080 http://cafe.nzuguem.me/coffee
+
+## Curl to "coffee-v2-svc"
+curl --connect-to cafe.nzuguem.me:80:localhost:9080 http://cafe.nzuguem.me/coffee -H "version:v2"
+curl --connect-to cafe.nzuguem.me:80:localhost:9080 http://cafe.nzuguem.me/coffee?TEST=v2
+
+## Curl to "tea-post-svc"
+curl --connect-to cafe.nzuguem.me:80:localhost:9080 http://cafe.nzuguem.me/tea -X POST
+
+## Curl to "tea-svc"
+curl --connect-to cafe.nzuguem.me:80:localhost:9080 http://cafe.nzuguem.me/tea
+```
+
+### GRPC
+
+```bash
+
+## Deploy Workload
+kubectl apply -f gateway/nginx/advanced/grpc/helloworld.yml
+```
+
+#### Exact method matching based routing
+
+```bash
+kubectl apply -f gateway/nginx/advanced/grpc/exact-method.yml
+
+grpcurl -plaintext -proto gateway/nginx/advanced/grpc/grpc.proto -d '{"name": "GRPC"}' localhost:9080 helloworld.Greeter/SayHello
+```
+
+#### Hostname based routing
+
+```bash
+kubectl delete -f gateway/nginx/advanced/grpc/exact-method.yml
+
+kubectl apply -f gateway/nginx/advanced/grpc/hostname.yml
+
+# Test bar hostname
+grpcurl -plaintext -proto gateway/nginx/advanced/grpc/grpc.proto -authority bar.nzuguem.me -d '{"name": "bar server"}' localhost:9080 helloworld.Greeter/SayHello
+
+# Test foo-bar hostname
+grpcurl -plaintext -proto gateway/nginx/advanced/grpc/grpc.proto -authority foo-bar.nzuguem.me -d '{"name": "foo-bar server"}' localhost:9080 helloworld.Greeter/SayHello
+```
+
+#### Headers based routing
+
+```bash
+kubectl delete -f gateway/nginx/advanced/grpc/hostname.yml
+
+kubectl apply -f gateway/nginx/advanced/grpc/headers.yml
+
+# Test Version One
+grpcurl -plaintext -proto gateway/nginx/advanced/grpc/grpc.proto -d '{"name": "version one"}' -H 'version: one' localhost:9080 helloworld.Greeter/SayHello
+
+# Test Version Two
+grpcurl -plaintext -proto gateway/nginx/advanced/grpc/grpc.proto -d '{"name": "version two"}' -H 'version: two' localhost:9080 helloworld.Greeter/SayHello
+
+# Test Version Two And Color Orange
+grpcurl -plaintext -proto gateway/nginx/advanced/grpc/grpc.proto -d '{"name": "version two color orange"}' -H 'version: two' -H 'color: orange' localhost:9080 helloworld.Greeter/SayHello
+```
+
 ## Uninstall
 
 ```bash

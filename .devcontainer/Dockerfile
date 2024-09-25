@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 FROM mcr.microsoft.com/devcontainers/base:ubuntu
 
-## Install Tools
+## Install Taskfile
 RUN <<EOF
 set -e
 
