@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: support-sidecar-cronjob
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          initContainers:
+          - name: sidecar
+            image: zwindler/slow-sidecar
+            # It is this declaration that makes this initContainer a sidecar
+            restartPolicy: Always
+            ports:
+            - containerPort: 8081
+            # In our case, the sidecar container is very slow (sleep 5),
+            # so the fact that the process is running is not an indication of the state of the sidecar.
+            # We need to add a startupProbe
+            startupProbe:
+              httpGet:
+                path: /
+                port: 8081
+              initialDelaySeconds: 5
+              periodSeconds: 1
+              failureThreshold: 5
+          containers:
+          - name: app
+            image: zwindler/sidecar-user
+

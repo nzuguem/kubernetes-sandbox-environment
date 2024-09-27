@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: classic-sidecar-cronjob
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: app
+            image: zwindler/sidecar-user
+          - name: sidecar
+            image: zwindler/slow-sidecar
+            ports:
+            - containerPort: 8081

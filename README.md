@@ -27,6 +27,8 @@ It contains configurations and examples for the following components:
   - [Crossplane](platform/crossplane)
 - Serverless
   - [Knative](serverless/knative)
+- Experimental
+  - [Sidecar Container Support v1.29 [beta]](experimental/sidecar-container-support-1.29-beta)
 
 ## Launch DevContainer
 
@@ -50,6 +52,8 @@ Make sure that the following ports are available :
 - `443`: Ingress Controller Nginx - HTTPS
 - `8080`: Kourier for Knative - HTTP
 - `8443`: Kourier for Knative - HTTPS
+- `9080`: Nginx Gateway Fabric - HTTP
+- `9443`: Nginx Gateway Fabric - HTTPSÒ
 
 Execute the command `lsof -i:<PORT>` to identify the PID occupying one of these ports. Then execute the command `kill -9 <PID>` to kill the process
 
@@ -64,9 +68,6 @@ Execute the command `lsof -i:<PORT>` to identify the PID occupying one of these 
 ```bash
 ## Deploy CLuster
 task cluster-kind-deploy
-
-## Assert 🎉🎉🎉
-kubectl cluster-info --context kind-kubernetes-stack
 ```
 
 - Delete cluster
