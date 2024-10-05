@@ -1,0 +1,26 @@
+services:
+  argocd:
+    name: ArgoCD 🐙
+    description: Start ArgoCD
+    triggeredBy:
+      - manual
+    commands:
+        start: task gitops:argocd-install
+        stop: task gitops:argocd-uninstall
+
+  otel:
+    name: OpenTelemetry 🔭
+    description: Start OpenTelemetry
+    triggeredBy:
+      - manual
+    commands:
+        start: task observability:opentelemetry-install
+        stop: task observability:opentelemetry-uninstall
+
+  initDevContainer:
+    name: Init 🌱
+    description: Init DevContainer
+    triggeredBy:
+      - postDevcontainerStart
+    commands:
+        start: bash .devcontainer/scripts/postStartCommand.sh
