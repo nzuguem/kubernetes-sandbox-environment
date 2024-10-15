@@ -48,6 +48,6 @@
     "9080:9080", // Nginx Gateway Fabric - HTTP
     "9443:9443" // Nginx Gateway Fabric - HTTPS
   ],
-  // "postStartCommand": "bash .devcontainer/scripts/postStartCommand.sh",
+  "postStartCommand": "bash .devcontainer/scripts/postStartCommand.sh",
   "onCreateCommand": "bash  .devcontainer/scripts/onCreateCommand.sh"
 }

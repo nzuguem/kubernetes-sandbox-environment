@@ -2,3 +2,4 @@
 *.pem
 **/*/sealed-secret-key.yaml
 **/*/falco-talon
+.env

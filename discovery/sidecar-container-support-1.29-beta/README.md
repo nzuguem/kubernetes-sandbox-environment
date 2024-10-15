@@ -27,7 +27,7 @@ Regarding the second issue, common examples include:
 ### Test
 
 ```bash
-kubectl apply -f experimental/sidecar-container-support-1.29-beta/sidecar-container-classic.cronjob.yml
+kubectl apply -f discovery/sidecar-container-support-1.29-beta/sidecar-container-classic.cronjob.yml
 
 ## List the containers of a Pod with their Status
 kubectl get po/<POD_NAME> -o jsonpath='{range .status.containerStatuses[*]}{.name}{"\t"}{.state}{"\n"}{end}'
@@ -53,7 +53,7 @@ Sidecar containers can interact directly with the main application containers, b
 ### Test
 
 ```bash
-kubectl apply -f experimental/sidecar-container-support-1.29-beta/sidecar-container-support.cronjob.yml
+kubectl apply -f discovery/sidecar-container-support-1.29-beta/sidecar-container-support.cronjob.yml
 
 ## List the containers of a Pod with their Status
 kubectl get pod/<POD_NAME> -o jsonpath='{range .status.initContainerStatuses[*]}{.name}{"\t"}{.state}{"\n"}{end}{range .status.containerStatuses[*]}{.name}{"\t"}{.state}{"\n"}{end}'

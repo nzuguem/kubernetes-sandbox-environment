@@ -27,8 +27,9 @@ It contains configurations and examples for the following components:
   - [Crossplane](platform/crossplane)
 - Serverless
   - [Knative](serverless/knative)
-- Experimental
-  - [Sidecar Container Support v1.29 [beta]](experimental/sidecar-container-support-1.29-beta)
+- Discovery
+  - [Sidecar Container Support v1.29 [beta]](discovery/sidecar-container-support-1.29-beta)
+  - [Ephemeral Container - v1.25 [stable]](discovery/ephemeral-container-1.25-stable)
 
 ## Launch DevContainer
 
@@ -53,7 +54,7 @@ Make sure that the following ports are available :
 - `8080`: Kourier for Knative - HTTP
 - `8443`: Kourier for Knative - HTTPS
 - `9080`: Nginx Gateway Fabric - HTTP
-- `9443`: Nginx Gateway Fabric - HTTPSÒ
+- `9443`: Nginx Gateway Fabric - HTTPS
 
 Execute the command `lsof -i:<PORT>` to identify the PID occupying one of these ports. Then execute the command `kill -9 <PID>` to kill the process
 
@@ -78,6 +79,11 @@ task cluster-kind-deploy
 task cluster-kind-undeploy
 ```
 
+## Try [Gitpod Flex][gitpod-flex-introduction]
+
+⏳⏳⏳
+
 <!-- Links -->
 [kind-doc]:https://kind.sigs.k8s.io/
 [vs-code-dev-container-doc]: https://code.visualstudio.com/docs/devcontainers/containers
+[gitpod-flex-introduction]: https://www.gitpod.io/docs/flex/introduction
