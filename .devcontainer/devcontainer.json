@@ -1,30 +1,6 @@
 {
   "name": "kubernetes-stack",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
-  // https://containers.dev/features
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers-contrib/features/kind:1": {},
-    "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
-      "minikube": "none"
-    },
-    "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/rio/features/k9s:1": {},
-    "ghcr.io/rio/features/kustomize:1": {},
-    "ghcr.io/rio/features/skaffold:2": {},
-    "ghcr.io/devcontainers/features/python:1": {},
-    "ghcr.io/devcontainers/features/aws-cli:1": {},
-    "ghcr.io/devcontainers-contrib/features/pre-commit:2": {},
-    "ghcr.io/gickis/devcontainer-features/kubeseal:1": {},
-    "ghcr.io/devcontainers-contrib/features/argo-cd:1": {},
-    "ghcr.io/devcontainers-contrib/features/fzf:1": {},
-    "ghcr.io/devcontainers-contrib/features/vault-asdf:2": {},
-    "ghcr.io/devcontainers/features/go:1": {},
-    "./features/grpcurl": {}
-  },
+  "image": "ghcr.io/nzuguem/kubernetes-sandbox-environment:latest",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -41,13 +17,22 @@
     }
   },
   "forwardPorts": [
-    "80:80", // Ingress Controller Nginx - HTTP
-    "443:443", // Ingress Controller Nginx - HTTPS
-    "8080:8080", // Kourier for Knative - HTTP
-    "8443:8443", // Kourier for Knative - HTTPS
-    "9080:9080", // Nginx Gateway Fabric - HTTP
-    "9443:9443" // Nginx Gateway Fabric - HTTPS
+    80,
+    443,
+    8080,
+    8443,
+    9080,
+    9443
   ],
+
+	"portsAttributes": {
+		"80": { "label": "nginx-ingress-http" },
+		"443": { "label": "nginx-ingress-https" },
+		"8080": { "label": "kourier-knative-http" },
+		"8443": { "label": "kourier-knative-https" },
+		"9080": { "label": "nginx-gateway-fabric-http" },
+		"9443": { "label": "nginx-gateway-fabric-https" }
+	},
   "postStartCommand": "bash .devcontainer/scripts/postStartCommand.sh",
   "onCreateCommand": "bash  .devcontainer/scripts/onCreateCommand.sh"
 }

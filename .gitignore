@@ -3,3 +3,4 @@
 **/*/sealed-secret-key.yaml
 **/*/falco-talon
 .env
+.DS_Store
