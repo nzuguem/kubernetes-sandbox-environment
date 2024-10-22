@@ -60,11 +60,11 @@ tasks:
       - task: security:cert-manager-install
     cmd: kubectl apply -f security/cert-manager/self.clusterissuer.yml
 
-  devcontainer-prebuild:
-    desc: Pre-Build DevContainer
-    cmd: |
-      devcontainer build \
-        --workspace-folder ./ \
-        --push false \
-        --image-name ghcr.io/nzuguem/kubernetes-sandbox-environment:latest \
-        --cache-from ghcr.io/nzuguem/kubernetes-sandbox-environment:latest
+  # Error: GET "https://ghcr.io/v2/nginxinc/charts/nginx-gateway-fabric/tags/list": unable to retrieve credentials
+  platform-install-gp-flex:
+    desc: Install all the components required for the kubernetes platform.
+    deps:
+      - task: ingress:nginx-install
+      # - task: gateway:nginx-install
+      - task: security:cert-manager-install
+    cmd: kubectl apply -f security/cert-manager/self.clusterissuer.yml

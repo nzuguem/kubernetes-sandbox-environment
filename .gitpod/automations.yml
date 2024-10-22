@@ -5,8 +5,8 @@ services:
     triggeredBy:
       - manual
     commands:
-        start: task gitops:argocd-install
-        stop: task gitops:argocd-uninstall
+      start: task gitops:argocd-install
+      stop: task gitops:argocd-uninstall
 
   otel:
     name: OpenTelemetry 🔭
@@ -14,8 +14,8 @@ services:
     triggeredBy:
       - manual
     commands:
-        start: task observability:opentelemetry-install
-        stop: task observability:opentelemetry-uninstall
+      start: task observability:opentelemetry-install
+      stop: task observability:opentelemetry-uninstall
 
   initDevContainer:
     name: Init 🌱
@@ -23,4 +23,9 @@ services:
     triggeredBy:
       - postDevcontainerStart
     commands:
-        start: bash .devcontainer/scripts/postStartCommand.sh
+      start: |
+        echo "source <(fzf --bash)" >> /home/vscode/.bashrc
+        echo "alias k=kubectl" >> /home/vscode/.bashrc
+        task cluster-kind-deploy
+        task platform-install-gp-flex
+        task pre-commit-install
