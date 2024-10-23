@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: asma-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: curl
+  template:
+    metadata:
+      labels:
+        app: curl
+    spec:
+      volumes:
+      - name: aws-asma-token
+        emptyDir: {}
+      - name: asma-config
+        configMap:
+          name: asma-config
+      initContainers:
+      - name: asma
+        image: alpine/asma
+        # It is this declaration that makes this initContainer a sidecar
+        restartPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          # https://github.com/aws/aws-secretsmanager-agent/blob/c604b4b4831f5051f5c65e17941e9a7cc623d853/aws_secretsmanager_agent/configuration/awssmaseedtoken#L12C9-L15C23
+          dd if=/dev/urandom bs=32 count=1 2>/dev/null | sha256sum -b | cut -f1 -d' ' > /var/run/awssmatoken
+          /usr/local/bin/aws_secretsmanager_agent --config /config/config.toml
+        env:
+        - name: AWS_TOKEN
+          value: file:///var/run/awssmatoken
+        - name: AWS_DEFAULT_REGION
+          value: eu-west-3
+        envFrom:
+        - secretRef:
+            name: aws-secrets
+        #startupProbe:
+        #  httpGet:
+        #    path: /ping
+        #    port: http
+        #  initialDelaySeconds: 2
+        #  periodSeconds: 2
+        #  successThreshold: 1
+        #  failureThreshold: 3
+        volumeMounts:
+        - name: aws-asma-token
+          mountPath: /var/run
+        - name: asma-config
+          mountPath: /config
+        ports:
+        - name: http
+          containerPort: 2773
+      containers:
+      - name: curl
+        image: curlimages/curl
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          export AWS_ASMA_TOKEN=$(cat /var/run/awssmatoken)
+          while true; do
+            curl -s -H "X-Aws-Parameters-Secrets-Token: $AWS_ASMA_TOKEN" 'http://localhost:2773/secretsmanager/get?secretId=asma-key'
+            echo
+            sleep 5
+          done
+        volumeMounts:
+        - name: aws-asma-token
+          mountPath: /var/run/awssmatoken
+          subPath: awssmatoken

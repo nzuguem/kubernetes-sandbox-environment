@@ -128,3 +128,21 @@ tasks:
     deps:
       - eso-uninstall
     cmd: helm del -n vault-system  vault
+
+  asma-create-secret:
+    desc: Create Secret for Demo.
+    requires:
+      vars:
+        - AWS_ACCESS_KEY_ID
+        - AWS_ACCESS_SECRET_KEY
+    env:
+      AWS_ACCESS_KEY_ID: "{{.AWS_ACCESS_KEY_ID}}"
+      AWS_SECRET_ACCESS_KEY: "{{.AWS_ACCESS_SECRET_KEY}}"
+      AWS_DEFAULT_REGION: eu-west-3
+    cmds:
+      - aws secretsmanager create-secret
+        --name asma-key
+        --secret-string "{\"key\":\"value\"}" || true
+      - kubectl create secret generic aws-secrets
+        --from-literal=AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+        --from-literal=AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
