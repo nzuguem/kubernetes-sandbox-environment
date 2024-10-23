@@ -33,15 +33,14 @@ It contains configurations and examples for the following components:
 
 ## Launch DevContainer
 
-> 📌 **The only prerequisite is to have Docker installed on your workstation**
+> 📌 **prerequisite :**
+>
+> - Docker
+> - VS Code
 
-To start the environment :
+### Open in Visual Studio Code ⤵️
 
-1. Clone this repo : `git clone https://github.com/nzuguem/kubernetes-sandbox-environment.git`
-2. Open it in VS Code
-3. `Shift`+ `Cmd` + `p`
-    - Type : *`open in container`*
-    - Choose ***`Dev Containers: Reopen in Container`***
+[![Open in Dev Containers](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/nzuguem/kubernetes-sandbox-environment)
 
 ### Troubleshooting
 
