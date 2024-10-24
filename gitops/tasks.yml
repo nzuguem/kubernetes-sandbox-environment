@@ -1,15 +1,8 @@
 version: 3 
 
-includes:
-  ingress:
-    taskfile: ../ingress/tasks.yml
-    dir: ../ingress
-
 tasks:
   argocd-install:
     desc: Install ArgoCD.
-    deps: 
-      - ingress:nginx-install
     cmds:
       - helm repo add argocd https://argoproj.github.io/argo-helm
       - helm repo update argocd

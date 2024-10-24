@@ -15,7 +15,7 @@ task security:cert-manager-install
 ## Deploy ClusterIssuer
 ```bash
 ## Deploy Self Signed Cluster Issuer
-kubectl apply -f security/cert-manager/self.clusterissuer.yml
+kubectl apply -f security/cert-manager/issuers/self.clusterissuer.yml
 ```
 
 ## Test

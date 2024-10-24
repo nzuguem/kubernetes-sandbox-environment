@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx-gateway
+  namespace: argocd-system
+spec:
+  project: platform
+  destination:
+    namespace: nginx-gateway-system
+    name: in-cluster
+  sources:
+  - path: config/crd/experimental
+    repoURL: https://github.com/kubernetes-sigs/gateway-api
+    targetRevision: main
+  - path: charts/nginx-gateway-fabric
+    repoURL: https://github.com/nginxinc/nginx-gateway-fabric
+    targetRevision: main
+    helm:
+      valueFiles:
+      - $values/gateway/nginx/helm.values.yml
+  - repoURL: https://github.com/nzuguem/kubernetes-sandbox-environment
+    targetRevision: main
+    ref: values
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

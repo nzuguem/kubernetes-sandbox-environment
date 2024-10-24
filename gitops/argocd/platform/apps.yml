@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-apps
+  namespace: argocd-system
+spec:
+  project: platform
+  destination:
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/nzuguem/kubernetes-sandbox-environment
+    targetRevision: main
+    path: gitops/argocd/platform/apps
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

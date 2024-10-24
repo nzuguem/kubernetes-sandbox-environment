@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd-system
+spec:
+  project: platform
+  destination:
+    namespace: cert-manager-system
+    name: in-cluster
+  sources:
+  - chart: cert-manager
+    repoURL: https://charts.jetstack.io
+    targetRevision: 1.15.3
+    helm:
+      valuesObject:
+        crds:
+          enabled: true
+  - repoURL: https://github.com/nzuguem/kubernetes-sandbox-environment
+    targetRevision: main
+    path: security/cert-manager/issuers
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

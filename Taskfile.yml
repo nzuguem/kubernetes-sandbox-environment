@@ -58,13 +58,12 @@ tasks:
       - task: ingress:nginx-install
       - task: gateway:nginx-install
       - task: security:cert-manager-install
-    cmd: kubectl apply -f security/cert-manager/self.clusterissuer.yml
+    cmd: kubectl apply -f security/cert-manager/issuers/self.clusterissuer.yml
 
-  # Error: GET "https://ghcr.io/v2/nginxinc/charts/nginx-gateway-fabric/tags/list": unable to retrieve credentials
-  platform-install-gp-flex:
-    desc: Install all the components required for the kubernetes platform.
+  platform-install-with-gitops-mode:
+    desc: Install all the components required for the kubernetes platform, with GitOps Mode.
     deps:
-      - task: ingress:nginx-install
-      # - task: gateway:nginx-install
-      - task: security:cert-manager-install
-    cmd: kubectl apply -f security/cert-manager/self.clusterissuer.yml
+      - task: gitops:argocd-install
+    cmds:
+      - kubectl apply -f gitops/argocd/platform/project.yml
+      - kubectl apply -f gitops/argocd/platform/apps.yml

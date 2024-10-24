@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: platform
+  namespace: argocd-system
+spec:
+  description: Platform Project
+  destinations:
+  - name: in-cluster
+    namespace: '*'
+    server: https://kubernetes.default.svc
+  sourceRepos:
+  - https://github.com/nzuguem/kubernetes-sandbox-environment
+  - https://github.com/kubernetes-sigs/gateway-api
+  - https://kubernetes.github.io/ingress-nginx
+  - https://charts.jetstack.io
+  - https://github.com/nginxinc/nginx-gateway-fabric
+  sourceNamespaces:
+  - ingress-nginx-system
+  - cert-manager-system
+  - nginx-gateway-system
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
