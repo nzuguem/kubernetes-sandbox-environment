@@ -28,6 +28,9 @@ includes:
   gateway:
     taskfile: ./gateway/tasks.yml
     dir: ./gateway
+  discovery:
+    taskfile: ./discovery/tasks.yml
+    dir: ./discovery
 
 tasks:
   default:

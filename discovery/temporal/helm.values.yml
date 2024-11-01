@@ -1,0 +1,30 @@
+server:
+  config:
+    namespaces:
+      create: true
+  frontend:
+    ingress:
+      enabled: true
+      className: nginx
+      # Grpc Reguired TLS connection on Ingress-nginx
+      # https://github.com/kubernetes/ingress-nginx/issues/3897
+      tls:
+      - secretName: temporal-gateway.127.0.0.1.nip.io-tls
+        hosts:
+        - temporal-gateway.127.0.0.1.nip.io
+      hosts:
+        - temporal-gateway.127.0.0.1.nip.io
+      annotations:
+        nginx.ingress.kubernetes.io/backend-protocol: GRPC # Enable support of HTTP/2, for GRPC Client
+        nginx.org/grpc-services: temporal-frontend
+        nginx.ingress.kubernetes.io/proxy-body-size: 50m
+        nginx.ingress.kubernetes.io/proxy-connect-timeout: "60"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+        cert-manager.io/cluster-issuer: selfsigned-cluster-issuer
+web:
+  ingress:
+    enabled: true
+    className: nginx
+    hosts:
+      - temporal-ui.127.0.0.1.nip.io

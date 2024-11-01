@@ -30,6 +30,7 @@ It contains configurations and examples for the following components:
 - Discovery
   - [Sidecar Container Support v1.29 [beta]](discovery/sidecar-container-support-1.29-beta)
   - [Ephemeral Container - v1.25 [stable]](discovery/ephemeral-container-1.25-stable)
+  - [Temporal IO](discovery/temporal)
 
 ## Launch DevContainer
 
