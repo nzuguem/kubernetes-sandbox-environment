@@ -8,13 +8,16 @@ spec:
   destination:
     namespace: ingress-nginx-system
     name: in-cluster
-  source:
-    chart: ingress-nginx
-    repoURL: https://kubernetes.github.io/ingress-nginx
-    targetRevision: 4.10.1
-    helm:
-      valueFiles:
-      - https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/hack/manifest-templates/provider/kind/values.yaml     
+  sources:
+    - repoURL: https://github.com/nzuguem/kubernetes-sandbox-environment
+      targetRevision: main
+      ref: values
+    - chart: ingress-nginx
+      repoURL: https://kubernetes.github.io/ingress-nginx
+      targetRevision: 4.10.1
+      helm:
+        valueFiles:
+        - $values/ingress/nginx/helm.values.yml
   syncPolicy:
     automated:
       prune: true
