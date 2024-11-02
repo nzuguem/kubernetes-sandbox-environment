@@ -17,14 +17,34 @@
       ]
     }
   },
-  "appPort": [
-    "80:80",
-    "443:443",
-    "8080:8080",
-    "8443:8443",
-    "9080:9080",
-    "9443:9443"
+  "forwardPorts": [
+    80,
+    443,
+    8080,
+    8443,
+    9080,
+    9443
   ],
+  "portsAttributes": {
+    "80": {
+      "label": "nginx-ingress-http"
+    },
+    "443": {
+      "label": "nginx-ingress-https"
+    },
+    "8080": {
+      "label": "kourier-knative-http"
+    },
+    "8443": {
+      "label": "kourier-knative-https"
+    },
+    "9080": {
+      "label": "nginx-gateway-fabric-http"
+    },
+    "9443": {
+      "label": "nginx-gateway-fabric-https"
+    }
+  },
   "postStartCommand": "bash .devcontainer/scripts/postStartCommand.sh",
   "onCreateCommand": "bash  .devcontainer/scripts/onCreateCommand.sh"
 }
