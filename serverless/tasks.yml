@@ -23,12 +23,12 @@ tasks:
         --namespace knative-serving
         --type merge
         --patch '{"data":{"ingress-class":"kourier.ingress.networking.knative.dev"}}'
-      
+
       # Configure DNS
       - kubectl patch configmap/config-domain
         --namespace knative-serving
         --patch '{"data":{"127.0.0.1.nip.io":""}}'
-  
+
   knative-serving-uninstall:
     desc: Uninstall Knative Serving Operator.
     cmds:
@@ -40,10 +40,9 @@ tasks:
   knative-eventing-install:
     desc: Install Knative Eventing Operator.
     deps:
-      - ingress:nginx-install
       - knative-serving-install
     cmds:
-      # Install the required custom resource definitions (CRDs) 
+      # Install the required custom resource definitions (CRDs)
       - kubectl apply -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/eventing-crds.yaml
       - kubectl wait --for=condition=Established --all crd
 
@@ -60,12 +59,14 @@ tasks:
       - kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n knative-eventing
 
       # Install Default Broker
-      - kubectl apply -f knative/eventing/default.broker.yml
-  
+      - kubectl apply -f knative/eventing/brokers-triggers/default.broker.yml
+
   knative-eventing-uninstall:
     desc: Uninstall Knative Eventing Operator.
     cmds:
-      - kubectl delete -f knative/eventing/default.broker.yml
+      - kubectl delete -f serverless/knative/eventing/source-to-service || true
+      - kubectl delete -f serverless/knative/eventing/channels-subscribers || true
+      - kubectl delete -f serverless/knative/eventing/sink-binding || true
       - kubectl delete -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/mt-channel-broker.yaml
       - kubectl delete -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/in-memory-channel.yaml
       - kubectl delete -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/eventing-core.yaml

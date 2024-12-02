@@ -16,7 +16,7 @@ task serverless:knative-eventing-install
 Only when an event occurs is the Service Knative scaled from Zero. So if there are no events, then Scale To Zero. You can use this command to observe scaling (Up/Down):
 
 ```bash
-## 
+##
 kubectl get po -l serving.knative.dev/configuration=eventing-hello -w
 ```
 
@@ -32,10 +32,10 @@ kubectl get po -l serving.knative.dev/configuration=eventing-hello -w
 
 ```bash
 ## Deploy Knative Service Consumer (Wait Service is Ready : kubectl get ksvc)
-kubectl apply -f serverless/knative/eventing/consumer.service.yml
+kubectl apply -f serverless/knative/eventing/source-to-service/consumer.service.yml
 
 ## Deploy Knative Eventing Source : Ping (Wait Source is Ready : kubectl get pingsources)
-kubectl apply -f serverless/knative/eventing/ping-ksvc.source.yml
+kubectl apply -f serverless/knative/eventing/source-to-service/ping-ksvc.source.yml
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
 kubectl logs po/<POD_NAME> -c user-container
@@ -62,16 +62,16 @@ With the Channel and Subscription, the Knative Eventing system defines a Channel
 
 ```bash
 ## Deploy Channel
-kubectl apply -f serverless/knative/eventing/hello.channel.yml
+kubectl apply -f serverless/knative/eventing/channels-subscribers/hello.channel.yml
 
 ## Deploy Knative Eventing Source : Ping (Wait Source is Ready : kubectl get pingsources)
-kubectl apply -f serverless/knative/eventing/ping-channel.source.yml
+kubectl apply -f serverless/knative/eventing/channels-subscribers/ping-channel.source.yml
 
 ## Deploy Knative Service Consumer (Wait Service is Ready : kubectl get ksvc)
-kubectl apply -f serverless/knative/eventing/consumer-subs.service.yml
+kubectl apply -f serverless/knative/eventing/channels-subscribers/consumer-subs.service.yml
 
 ## Deploy Subscription on Channel
-kubectl apply -f serverless/knative/eventing/hello.subscription.yml
+kubectl apply -f serverless/knative/eventing/channels-subscribers/hello.subscription.yml
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
 kubectl logs po/<POD_NAME> -c user-container
@@ -89,13 +89,13 @@ This scenario (*Channel and Subscribers*) supports ***Reply***. The Consumer (Se
 
 ```bash
 ## Deploy Channel (in which the "eventing-hello" subscription will push the Reply of its consumer)
-kubectl apply -f serverless/knative/eventing/hello-reply.channel.yml
+kubectl apply -f serverless/knative/eventing/channels-subscribers/hello-reply.channel.yml
 
 ## Deploy Knative Service Consumer (Wait Service is Ready : kubectl get ksvc)
-kubectl apply -f serverless/knative/eventing/consumer-subs-reply.service.yml
+kubectl apply -f serverless/knative/eventing/channels-subscribers/consumer-subs-reply.service.yml
 
 ## Deploy Subscription on Channel Reply
-kubectl apply -f serverless/knative/eventing/hello-reply.subscription.yml
+kubectl apply -f serverless/knative/eventing/channels-subscribers/hello-reply.subscription.yml
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
 ## Observe the CloudEvents headers, you will see values with the "reply"
@@ -124,13 +124,13 @@ This is an implementation of the **[EIP Content-Based Router pattern][eip-conten
 
 ```bash
 ## Deploy Knative Eventing Source : Ping (Wait Source is Ready : kubectl get pingsources)
-kubectl apply -f serverless/knative/eventing/ping-broker.source.yml
+kubectl apply -f serverless/knative/eventing/brokers-triggers/ping-broker.source.yml
 
 ## Deploy Knative Service Consumer (Wait Service is Ready : kubectl get ksvc)
-kubectl apply -f serverless/knative/eventing/consumer-trigger.service.yml
+kubectl apply -f serverless/knative/eventing/brokers-triggers/consumer-trigger.service.yml
 
 ## Deploy Trigger object
-kubectl apply -f serverless/knative/eventing/hello.trigger.yml
+kubectl apply -f serverless/knative/eventing/brokers-triggers/hello.trigger.yml
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
 kubectl logs po/<POD_NAME> -c user-container
@@ -149,10 +149,10 @@ The consumer replies in the broker in the form of CloudEvents. So we can have an
 
 ```bash
 ## Deploy Trigger object
-kubectl apply -f serverless/knative/eventing/hello-reply.trigger.yml
+kubectl apply -f serverless/knative/eventing/brokers-triggers/hello-reply.trigger.yml
 
 ## Deploy Knative Service Consumer (Wait Service is Ready : kubectl get ksvc)
-kubectl apply -f serverless/knative/eventing/consumer-trigger-reply.service.yml
+kubectl apply -f serverless/knative/eventing/brokers-triggers/consumer-trigger-reply.service.yml
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
 kubectl logs po/<POD_NAME> -c user-container
@@ -179,16 +179,16 @@ Sink binding injects environment variables (`K_SINK`) into the **PodTemplateSpec
 
 ```bash
 ## Deploy two Service (Consumer, Producer)
-kubectl apply -f serverless/knative/eventing/producer-sb.deploy.yml
-kubectl apply -f serverless/knative/eventing/consumer-sb.service.yml
+kubectl apply -f serverless/knative/eventing/sink-binding/producer-sb.deploy.yml
+kubectl apply -f serverless/knative/eventing/sink-binding/consumer-sb.service.yml
 
 ## Deploy SinkBinding, to link two Services
-kubectl apply -f serverless/knative/eventing/sinkbinding.yml
+kubectl apply -f serverless/knative/eventing/sink-binding/sinkbinding.yml
 
 ## Send the request to producer
 curl -v http://producer-sb.127.0.0.1.nip.io \
     -H "Content-Type: application/cloudevents+json" \
-    -d @serverless/knative/eventing/cloud-events-structured.example.json
+    -d @serverless/knative/eventing/sink-binding/cloud-events-structured.example.json
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
 ## Check the original message in the logs : "This is an example of structured Content Mode"
@@ -202,25 +202,6 @@ kubectl logs po/<POD_NAME> -c user-container
 ## Uninstall
 
 ```bash
-
-kubectl delete -f serverless/knative/eventing/ping-ksvc.source.yml
-kubectl delete -f serverless/knative/eventing/consumer.service.yml
-
-kubectl delete -f serverless/knative/eventing/hello.subscription.yml
-kubectl delete -f serverless/knative/eventing/consumer-subs.service.yml
-kubectl delete -f serverless/knative/eventing/ping-channel.source.yml
-kubectl delete -f serverless/knative/eventing/hello.channel.yml
-
-kubectl delete -f serverless/knative/eventing/consumer-trigger-reply.service.yml
-kubectl delete -f serverless/knative/eventing/hello-reply.trigger.yml
-kubectl delete -f serverless/knative/eventing/ping-broker.source.yml
-kubectl delete -f serverless/knative/eventing/consumer-trigger.service.yml
-kubectl delete -f serverless/knative/eventing/hello.trigger.yml
-
-kubectl delete -f serverless/knative/eventing/sinkbinding.yml
-kubectl delete -f serverless/knative/eventing/producer-sb.deploy.yml
-kubectl delete -f serverless/knative/eventing/consumer-sb.service.yml
-
 task serverless:knative-eventing-uninstall
 ```
 

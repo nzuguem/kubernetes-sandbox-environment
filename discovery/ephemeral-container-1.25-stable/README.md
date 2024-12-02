@@ -126,7 +126,7 @@ kubectl apply -f discovery/ephemeral-container-1.25-stable/spring-petclinic.depl
 ## Begin Debug : JFR Recording / Jcmd
 POD_NAME=$(kubectl get pods -l app=spring-petclinic -o jsonpath='{.items[0].metadata.name}')
 kubectl debug -it -c debugger --target=spring-petclinic --image=eclipse-temurin:17-jdk ${POD_NAME} -- bash
-/# pas auxf
+/# ps auxf
 # USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 # root         463  0.0  0.0   7452  3944 pts/0    Ss   05:47   0:00 bash
 # root         513  0.0  0.0  10588  4088 pts/0    R+   05:48   0:00  \_ ps auxf
