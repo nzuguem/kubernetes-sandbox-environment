@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-cd-image-updater
+  namespace: argocd-system
+spec:
+  project: platform
+  destination:
+    namespace: argocd-system
+    name: in-cluster
+  sources:
+  - repoURL: https://github.com/nzuguem/kubernetes-sandbox-environment
+    targetRevision: main
+    path: gitops/argocd/image-updater
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

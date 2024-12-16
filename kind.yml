@@ -4,10 +4,10 @@ name: kubernetes-stack
 featureGates:
   # Kubernetes 1.31 - Alpha
   # https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/
-  "ImageVolume": true
+  ImageVolume: true
 nodes:
 - role: control-plane
-  image: kindest/node:v1.31.0
+  image: kindest/node:v1.32.0
   # Need By Falco : https://gist.github.com/Issif/e17c9294b4e1a76a274db387fe58343c
   extraMounts:
     # Allow Falco to use devices provided by the kernel module
@@ -69,6 +69,6 @@ nodes:
     hostPort: 443
     protocol: TCP
 - role: worker
-  image: kindest/node:v1.31.0
+  image: kindest/node:v1.32.0
 - role: worker
-  image: kindest/node:v1.31.0
+  image: kindest/node:v1.32.0
