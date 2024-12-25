@@ -14,7 +14,7 @@ A few use cases :
 kubectl apply -f discovery/image-volume-with-pod-1.31-alpha/image-volumes.yml
 ```
 
-We got this error because `Kind` uses `containerd` as Container Runtime, and it does not yet support this feature (Read this [comment][issuecomment-gh-kind-image-volume]) :
+⚠️ We got this error because `Kind` uses `containerd` as Container Runtime, and it does not yet support this feature (Read this [comment][issuecomment-gh-kind-image-volume]) :
 
 ```log
   Warning  Failed     2m54s (x58 over 16m)  kubelet            (combined from similar events): Error: failed to generate container "b2af7fef90779276e347682badccc61c70fa8131a42b7b8a6a832c54a351a236" spec: failed to apply OCI options: failed to mkdir "": mkdir : no such file or directory

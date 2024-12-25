@@ -12,7 +12,7 @@ tasks:
         --create-namespace
         --namespace temporal-system
         -f temporal/helm.values.yml
-        --version 0.50.0
+        --version 0.52.0
       - |
         kubectl get secret temporal-gateway.127.0.0.1.nip.io-tls -n temporal-system -o jsonpath="{['data']['ca\.crt']}" | base64 --decode > /home/vscode/temporal-ing-ca.crt
         cat <<EOF >> /home/vscode/.bashrc

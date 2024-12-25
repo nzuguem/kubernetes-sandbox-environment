@@ -42,3 +42,24 @@ web:
     className: nginx
     hosts:
       - temporal-ui.127.0.0.1.nip.io
+  additionalEnv:
+  - name: TEMPORAL_OPENAPI_ENABLED
+    value: "true"
+  - name: TEMPORAL_SHOW_TEMPORAL_SYSTEM_NAMESPACE
+    value: "true"
+  - name: TEMPORAL_DISABLE_WRITE_ACTIONS
+    value: "false"
+  - name: TEMPORAL_WORKFLOW_TERMINATE_DISABLED
+    value: "true"
+  - name: TEMPORAL_WORKFLOW_CANCEL_DISABLED
+    value: "true"
+  - name: TEMPORAL_WORKFLOW_SIGNAL_DISABLED
+    value: "false"
+  - name: TEMPORAL_WORKFLOW_RESET_DISABLED
+    value: "false"
+  - name: TEMPORAL_BATCH_ACTIONS_DISABLED
+    value: "true"
+  - name: TEMPORAL_START_WORKFLOW_DISABLED
+    value: "true"
+  - name: TEMPORAL_AUTH_ENABLED
+    value: "false"
