@@ -13,13 +13,18 @@ tasks:
         --namespace temporal-system
         -f temporal/helm.values.yml
         --version 0.52.0
-      - |
-        kubectl get secret temporal-gateway.127.0.0.1.nip.io-tls -n temporal-system -o jsonpath="{['data']['ca\.crt']}" | base64 --decode > /home/vscode/temporal-ing-ca.crt
-        cat <<EOF >> /home/vscode/.bashrc
-        export TEMPORAL_TLS_CA=/home/vscode/temporal-ing-ca.crt
-        export TEMPORAL_ADDRESS=temporal-gateway.127.0.0.1.nip.io:443
-        EOF
-        source /home/vscode/.bashrc
+      - task: temporal-configure-cli
+
+  temporal-configure-cli:
+    desc: Configure Temporal CLI
+    cmd: |
+      kubectl get secret temporal-gateway.127.0.0.1.nip.io-tls -n temporal-system -o jsonpath="{['data']['ca\.crt']}" | base64 --decode > /home/vscode/temporal-ing-ca.crt
+      cat <<EOF >> /home/vscode/.bashrc
+      export TEMPORAL_TLS_CA=/home/vscode/temporal-ing-ca.crt
+      export TEMPORAL_ADDRESS=temporal-gateway.127.0.0.1.nip.io:443
+      EOF
+      source /home/vscode/.bashrc
+
 
   temporal-uninstall:
     desc: Uninstall Temporal IO.

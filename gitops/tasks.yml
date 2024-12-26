@@ -1,4 +1,4 @@
-version: 3 
+version: 3
 
 tasks:
   argocd-install:
@@ -7,23 +7,24 @@ tasks:
       - helm repo add argocd https://argoproj.github.io/argo-helm
       - helm repo update argocd
       - helm upgrade --install argocd argocd/argo-cd
+        --version 7.7.11
         --create-namespace
         --namespace argocd-system
         -f argocd/helm.values.yml
-      
+
       # Wait for ArgoCD to be ready.
-      - kubectl wait -n argocd-system 
+      - kubectl wait -n argocd-system
         --for=condition=ready pod
         --selector=app.kubernetes.io/name=argocd-repo-server
         --timeout=90s
 
       # Get Credentials of ArgoCD.
       - task: argocd-get-credentials
-  
+
   argocd-uninstall:
     desc: Uninstall ArgoCD.
     cmd:  helm del argocd -n argocd-system
-  
+
   argocd-get-credentials:
     desc: Get Credentials of ArgoCD.
     vars:
