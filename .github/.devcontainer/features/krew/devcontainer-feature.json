@@ -1,0 +1,16 @@
+{
+  "id": "krew",
+  "name": "krew",
+  "description": "Install krew - the plugin manager for kubectl command-line tool..",
+  "documentationURL": "https://krew.sigs.k8s.io/",
+  "options": {
+    "version": {
+      "type": "string",
+      "proposals": [
+        "latest"
+      ],
+      "default": "latest",
+      "description": "Select or enter a version."
+    }
+  }
+}

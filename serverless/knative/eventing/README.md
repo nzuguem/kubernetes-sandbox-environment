@@ -38,7 +38,7 @@ kubectl apply -f serverless/knative/eventing/source-to-service/consumer.service.
 kubectl apply -f serverless/knative/eventing/source-to-service/ping-ksvc.source.yml
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
-kubectl logs po/<POD_NAME> -c user-container
+stern eventing-hello -c user-container
 
 # 2024-05-11 08:34:13,656 INFO  [eventing-hello] (executor-thread-1) ce-id=ffd53eae-8ca9-4ae9-bb19-857aa889f66d
 # 2024-05-11 08:34:13,657 INFO  [eventing-hello] (executor-thread-1) ce-source=/apis/v1/namespaces/default/pingsources/# eventing-hello-ping-source
@@ -74,7 +74,7 @@ kubectl apply -f serverless/knative/eventing/channels-subscribers/consumer-subs.
 kubectl apply -f serverless/knative/eventing/channels-subscribers/hello.subscription.yml
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
-kubectl logs po/<POD_NAME> -c user-container
+stern eventing-hello-subs -c user-container
 
 # 2024-05-13 16:18:02,063 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) CloudEvents : Binary Content mode
 # 2024-05-13 16:18:02,064 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-id=b4736812-5976-492a-ad02-fbae65ac9ab7
@@ -99,7 +99,7 @@ kubectl apply -f serverless/knative/eventing/channels-subscribers/hello-reply.su
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
 ## Observe the CloudEvents headers, you will see values with the "reply"
-kubectl logs po/<POD_NAME> -c user-container
+stern eventing-hello-subs-reply -c user-container
 
 # 2024-05-13 16:18:02,238 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) CloudEvents : Binary Content mode
 # 2024-05-13 16:18:02,238 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) ce-id=4a25f802-2c92-437d-b439-9ed13ece12eb
@@ -109,9 +109,11 @@ kubectl logs po/<POD_NAME> -c user-container
 # 2024-05-13 16:18:02,239 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Content-Type=application/json
 # 2024-05-13 16:18:02,239 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Revcieve Event : CloudEvent{ ...
 ```
+
 ### 3. Broker and Trigger
 
 #### Késako ?
+
 The Broker and Trigger are similar to Channel and Subscription, except that they support filtering of events. Event filtering is a method that allows the subscribers to show an interest on certain set of messages that flows into the Broker. ***For each Broker, Knative Eventing will implicitly create a Knative Eventing Channel.***
 
 This is an implementation of the **[EIP Content-Based Router pattern][eip-content-based-router]**.
@@ -133,7 +135,7 @@ kubectl apply -f serverless/knative/eventing/brokers-triggers/consumer-trigger.s
 kubectl apply -f serverless/knative/eventing/brokers-triggers/hello.trigger.yml
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
-kubectl logs po/<POD_NAME> -c user-container
+stern eventing-hello-trigger-service -c user-container
 
 # 2024-05-16 11:14:00,500 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Revcieve Event ID : 35e7a8f5-af86-473b-bbac-2ff685fec638
 # 2024-05-16 11:14:00,503 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) CloudEvents : Binary Content mode
@@ -155,7 +157,7 @@ kubectl apply -f serverless/knative/eventing/brokers-triggers/hello-reply.trigge
 kubectl apply -f serverless/knative/eventing/brokers-triggers/consumer-trigger-reply.service.yml
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
-kubectl logs po/<POD_NAME> -c user-container
+stern eventing-hello-trigger-service-reply -c user-container
 
 # 2024-05-16 11:24:34,155 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-261) Revcieve Event ID : d075ed48-20e6-4806-828a-139195195aa4
 # 2024-05-16 11:24:34,157 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-261) CloudEvents : Binary Content mode
@@ -192,7 +194,7 @@ curl -v http://producer-sb.127.0.0.1.nip.io \
 
 ## Check the logs and see the message sent (spec. CloudEvents) by PingSource
 ## Check the original message in the logs : "This is an example of structured Content Mode"
-kubectl logs po/<POD_NAME> -c user-container
+stern eventing-hello-service-sb -c user-container
 
 # 2024-05-16 12:17:49,224 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) Revcieve Event ID : 1e997d37-6f62-47a2-93a1-3cfa8a6cb571
 # 2024-05-16 12:17:49,233 INFO  [me.nzu.clo.Handler] (quarkus-virtual-thread-0) CloudEvents : Structured Content mode

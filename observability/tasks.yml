@@ -6,7 +6,7 @@ tasks:
     cmds:
       - helm repo add otel https://open-telemetry.github.io/opentelemetry-helm-charts
       - helm repo update otel
-      - helm upgrade --install --version 0.60.0
+      - helm upgrade --install --version 0.75.1
         --create-namespace
         --namespace otel-system otel otel/opentelemetry-operator
         --set admissionWebhooks.certManager.enabled=false

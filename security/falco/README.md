@@ -62,12 +62,12 @@ kubectl run alpine --image alpine -- sh -c "sleep infinity"
 ## Shell into the running container and run the uptime command. This will trigger Falco to send an Alert.
 kubectl exec -it alpine -- sh -c "uptime"
 
-## Examine Falco's output 
-kubectl logs -l app.kubernetes.io/name=falco -n falco-system -c falco | grep Notice
+## Examine Falco's output
+stern -l app.kubernetes.io/name=falco -n falco-system -c falco | grep Notice
 # {"hostname":"kubernetes-stack-worker","output":"19:39:32.856027382: Notice A shell was spawned in a ... }
 ```
 
-> The output to FalcoSidekick is also configured, so visit https://falcosidekick-ui.127.0.0.1.nip.io
+> The output to FalcoSidekick is also configured, so visit <https://falcosidekick-ui.127.0.0.1.nip.io>
 
 Falco's output (*STDOUT and HTTP Falcosidekick*) is the result of rule [Terminal shell in container](https://github.com/falcosecurity/rules/blob/28b98b6f5f2fd1c1a82fc96c07bc844db33eb7cd/rules/falco_rules.yaml#L710)
 
@@ -85,9 +85,10 @@ It allows you to run series of actions following the name, the priority, the tag
 ### Hello World Falco Talon
 
 > ℹ️ Previous FalcoSidekick integration configured to push alerts into Falco Talon
+>
 > ```yaml
 > falcosidekick:
->  config: 
+>  config:
 >    webhook:
 >      address: http://falco-talon:2803
 >```
@@ -128,7 +129,6 @@ task security:falco-talon-uninstall
 [falco-docs]: https://falco.org/
 [falco-youtube]: https://youtu.be/Mx28fhyKX7Q?si=GIQsPn2UOCsBl1JO
 [falco-blog-by-quentin-joly]: https://une-tasse-de.cafe/blog/falco/
-[falco-default-macros]: https://falco.org/docs/reference/rules/default-macros/
 [falco-default-rules]: https://falco.org/docs/reference/rules/default-rules/
 [falcoctl-docs]: https://falco.org/blog/falcoctl-install-manage-rules-plugins/
 [falco-registed-plugins]: https://falco.org/docs/plugins/registered-plugins/

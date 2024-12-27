@@ -1,6 +1,7 @@
 # Observability - OpenTelemetry
 
 ## Install
+
 ```bash
 task observability:opentelemetry-install
 ```
@@ -8,6 +9,7 @@ task observability:opentelemetry-install
 ## Test
 
 ### Create OTel Collector
+
 ```bash
 kubectl apply -f observability/otel/otelcol.sidecar.yml
 
@@ -18,6 +20,7 @@ kubectl get otelcol,svc
 > ℹ️ The OpenTelemetry operator analyzes the recievers and their ports in the configuration and creates corresponding services (standard and headless).
 
 ### Injecting the sidecar on a kubernetes workload
+
 ```bash
 ## This workload uses the OpenTracing SDK to push traces to Jeager
 kubectl apply -f observability/otel/jaegertracing.deploy.yml
@@ -26,12 +29,13 @@ kubectl apply -f observability/otel/jaegertracing.deploy.yml
 kubectl get pods -l app=jaegertracing -o jsonpath={.items[*].spec.containers[*].name}
 
 ## Follow and Observe Logs of Injected OTel Collector
-kubectl logs deploy/jaegertracing -c otc-container -f
+stern jaegertracing -c otc-container
 ```
 
-Visit this URL to generate telemetry http://jaegertracing.127.0.0.1.nip.io
+Visit this URL to generate telemetry <http://jaegertracing.127.0.0.1.nip.io>
 
 ### Workload Auto-Instrumentation
+
 ```bash
 kubectl apply -f observability/otel/otel.inst.yml
 
@@ -45,11 +49,10 @@ kubectl apply -f observability/otel/otelcol.deployment.yml
 kubectl apply -f observability/otel/hello.deploy.yml
 
 ## Follow and Observe Logs of Injected OTel Collector
-kubectl logs deploy/collector-deployment-collector -f
+stern collector-deployment
 ```
 
-Visit this URL to generate Traces http://hello.127.0.0.1.nip.io/hello/Kevin
-
+Visit this URL to generate Traces <http://hello.127.0.0.1.nip.io/hello/Kevin>
 
 ### Deploy OTel Collector as DaemonSet
 
@@ -58,10 +61,10 @@ Visit this URL to generate Traces http://hello.127.0.0.1.nip.io/hello/Kevin
 kubectl apply -f observability/otel/otelcol.daemonset.yml
 
 ## Get logs
-kubectl logs -l app.kubernetes.io/instance=default.collector-daemonset -f
+stern collector-daemonset
 ```
 
-Visit this URL to generate Logs http://jaegertracing.127.0.0.1.nip.io
+Visit this URL to generate Logs <http://jaegertracing.127.0.0.1.nip.io>
 
 ### Focus on the [Target Allocator][otel-target-allocator-gh] component
 
@@ -84,7 +87,7 @@ The TA serves two functions:
 kubectl apply -f observability/otel/otelcol-ta.statefulset.yml
 
 ## Check that the collector is working
-kubectl logs po/collector-statefulset-collector-0 -f
+stern collector-statefulset
 
 # 2024-05-19T09:17:12.183Z        info    MetricsExporter {"kind": "exporter", "data_type": "metrics", "name": "debug", "resource metrics": 1, "metrics": 15, "data points": 15}
 # 2024-05-19T09:17:22.181Z        info    MetricsExporter {"kind": "exporter", "data_type": "metrics", "name": "debug", "resource metrics": 1, "metrics": 15, "data points": 15}
@@ -107,7 +110,7 @@ kubectl describe cm/collector-statefulset-collector
 # ...
 
 ## Verify TA configuration
-kubectl describe cm/collector-statefulset-targetallocator 
+kubectl describe cm/collector-statefulset-targetallocator
 
 # ...
 # config:
@@ -122,7 +125,7 @@ kubectl describe cm/collector-statefulset-targetallocator
 
 > ℹ️ The TA component exposes a [Rest API][otel-target-allocator-endpoints] for consulting its configurations and actions.
 >
-> **The base URL in this workshop is : http://otel-ta.127.0.0.1.nip.io**
+> **The base URL in this workshop is : <http://otel-ta.127.0.0.1.nip.io>**
 
 Let's try scaling OTel Collector and observe the power of the TA component:
 
@@ -137,6 +140,7 @@ for i in {1..3}; do curl http://otel-ta.127.0.0.1.nip.io/jobs/otel-collector/tar
 You'll see that the TA has assigned the Job to a single OTel Collector. Depending on your workload, you can choose a particular [allocation strategy][otel-target-allocator-strategy] by the TA.
 
 ## Uninstall
+
 ```bash
 kubectl delete -f observability/otel/otelcol.sidecar.yml
 kubectl delete -f observability/otel/jaegertracing.deploy.yml
@@ -151,6 +155,7 @@ task observability:opentelemetry-uninstall
 ```
 
 ## Resources
+
 - [OpenTelemetry Operator][otel-operator-gh]
 
 <!-- Links -->

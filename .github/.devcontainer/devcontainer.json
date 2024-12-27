@@ -24,7 +24,9 @@
     "ghcr.io/devcontainers-contrib/features/vault-asdf:2": {},
     "ghcr.io/devcontainers/features/go:1": {},
     "./features/grpcurl": {},
+    "./features/krew": {},
     "ghcr.io/devcontainers-contrib/features/temporal-cli:1": {},
-    "ghcr.io/guiyomh/features/vim": {}
+    "ghcr.io/guiyomh/features/vim": {},
+    "ghcr.io/dhoeric/features/stern:1": {}
   }
 }

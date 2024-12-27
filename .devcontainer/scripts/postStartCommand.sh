@@ -3,9 +3,12 @@
 set -e
 
 # Configure Bash
-echo "source <(fzf --bash)" >> /home/vscode/.bashrc
-echo "alias k=kubectl" >> /home/vscode/.bashrc
-echo 'complete -o default -F __start_kubectl k' >> /home/vscode/.bashrc
+cat <<EOF >> /home/vscode/.bashrc
+source <(fzf --bash)
+alias k=kubectl
+complete -o default -F __start_kubectl k
+export PATH="${KREW_ROOT:-/home/vscode/.krew}/bin:$PATH"
+EOF
 sudo sh -c 'task --completion bash > /etc/bash_completion.d/task'
 
 # Deploy and configure cluster

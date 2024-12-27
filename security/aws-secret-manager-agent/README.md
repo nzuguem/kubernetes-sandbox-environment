@@ -28,7 +28,7 @@ kubectl apply -f security/aws-secret-manager-agent/asma.cm.yml
 kubectl apply -f security/aws-secret-manager-agent/asma.deploy.yml
 
 ## Logs Workload Activities (Retrieve secrets every 5 seconds)
-kubectl logs deploy/asma-deployment -c curl -f
+stern asma-deployment -c curl
 
 # {"ARN":"arn:aws:secretsmanager:eu-west-3:005072761142:secret:asma-key-Msj1ze","Name":"asma-key","VersionId":"28245f30-e421-4dd1-b421-f5ad049f1267","SecretString":"{\"key\":\"value\"}","VersionStages":["AWSCURRENT"],"CreatedDate":"1729509676.851"}
 # {"ARN":"arn:aws:secretsmanager:eu-west-3:005072761142:secret:asma-key-Msj1ze","Name":"asma-key","VersionId":"28245f30-e421-4dd1-b421-f5ad049f1267","SecretString":"{\"key\":\"value\"}","VersionStages":["AWSCURRENT"],"CreatedDate":"1729509676.851"}

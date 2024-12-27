@@ -11,8 +11,8 @@ spec:
     hostPath:
       path: /var/log/pods
   - name: varlibdockercontainers
-  hostPath:
-    path: /var/lib/docker/containers
+    hostPath:
+      path: /var/lib/docker/containers
   volumeMounts:
   - name: varlogpods
     mountPath: /var/log/pods
@@ -32,7 +32,9 @@ spec:
       otlp:
         protocols:
           grpc:
+            endpoint: 0.0.0.0:4317
           http:
+            endpoint: 0.0.0.0:4318
     processors:
       memory_limiter:
         check_interval: 1s

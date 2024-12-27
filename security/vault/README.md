@@ -86,7 +86,7 @@ kubectl apply -f security/vault/busybox.deploy.yml -n default
 kubectl get po -n default
 
 ## 3. Display the secret written to the spring-native container
-kubectl logs deploy/busybox -c busybox | grep "AWS_"
+stern deploy/busybox -c busybox | grep "AWS_"
 ```
 
 ### Using [External Secret Operator](../ESO/README.md)
