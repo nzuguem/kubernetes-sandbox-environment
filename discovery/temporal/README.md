@@ -45,6 +45,14 @@ temporal operator namespace create --retention 5d --namespace team-cadence
 # Namespace team-cadence successfully registered.
 ```
 
+#### Temporal accessible via the K8S Gateway API
+
+```bash
+temporal operator namespace create --retention 5d --namespace t
+eam-gateway-api --address temporal-gateway-new.127.0.0.1.nip.io:9080
+# Namespace team-cadence successfully registered.
+```
+
 ### Via Temporal SDK Java
 
 ```java
@@ -70,7 +78,20 @@ WorkflowServiceStubs service = WorkflowServiceStubs.newServiceStubs(
 
 > ℹ️ You can see that I'm using an `InsecureTrustManagerFactory`. The simple reason that the ingress certificate is self-signed, and to avoid getting the [*Empty issuer DN not allowed in X509Certificates* error][cert-manager-certificate-validity], I decide to bypass the SSL verification.
 >
-> ⚠️ **However, this configuration is exclusively reserved for Tests. For production use, you should consider using [mTLS][temporal-mtls-cloud]**
+> ⚠️ **However, this configuration is exclusively reserved for Tests. For production use, you should consider using [Security Features][temporal-self-hosted-security]**
+
+#### Temporal accessible via the K8S Gateway API
+
+```java
+import io.temporal.serviceclient.WorkflowServiceStubs;
+import io.temporal.serviceclient.WorkflowServiceStubsOptions;
+
+WorkflowServiceStubs service = WorkflowServiceStubs.newServiceStubs(
+        WorkflowServiceStubsOptions.newBuilder()
+                .setTarget("temporal-gateway-new.127.0.0.1.nip.io:9080")
+                .build()
+        );
+```
 
 ## Uninstall
 
@@ -86,4 +107,4 @@ task discovery:temporal-uninstall
 [temporal.io]: https://temporal.io/
 [temporal-helm-chart-gh]: https://github.com/temporalio/helm-charts
 [cert-manager-certificate-validity]: https://cert-manager.io/docs/configuration/selfsigned/#certificate-validity
-[temporal-mtls-cloud]: https://learn.temporal.io/getting_started/java/run_workers_with_cloud_java/
+[temporal-self-hosted-security]: https://docs.temporal.io/self-hosted-guide/security
