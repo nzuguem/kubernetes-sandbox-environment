@@ -1,0 +1,33 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GRPCRoute
+metadata:
+  name: temporal-io-frontend-grpc-route
+spec:
+  hostnames:
+  - temporal-gateway-new.127.0.0.1.nip.io
+  parentRefs:
+  - name: kubernetes-sandbox-gateway
+    namespace: nginx-gateway-system
+    sectionName: http
+  rules:
+  - backendRefs:
+    - name: temporal-frontend
+      port: 7233
+
+---
+
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: temporal-io-ui-route
+spec:
+  hostnames:
+  - temporal-ui-new.127.0.0.1.nip.io
+  parentRefs:
+  - name: kubernetes-sandbox-gateway
+    namespace: nginx-gateway-system
+    sectionName: http
+  rules:
+  - backendRefs:
+    - name: temporal-web
+      port: 8080

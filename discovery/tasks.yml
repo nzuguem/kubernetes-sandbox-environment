@@ -12,7 +12,9 @@ tasks:
         --create-namespace
         --namespace temporal-system
         -f temporal/helm.values.yml
-        --version 0.52.0
+        --version 0.54.0
+      - sleep 3
+      - kubectl apply -f temporal/temporal.routes.yml -n temporal-system
       - task: temporal-configure-cli
 
   temporal-configure-cli:

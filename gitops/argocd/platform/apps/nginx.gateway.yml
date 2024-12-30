@@ -21,6 +21,9 @@ spec:
   - repoURL: https://github.com/nzuguem/kubernetes-sandbox-environment
     targetRevision: main
     ref: values
+  - repoURL: https://github.com/nzuguem/kubernetes-sandbox-environment
+    targetRevision: main
+    path: gateway/nginx/gateways
   syncPolicy:
     automated:
       prune: true
