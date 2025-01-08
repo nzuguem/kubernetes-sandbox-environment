@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pastry-api
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app: pastry-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pastry-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pastry-api
+  template:
+    metadata:
+      labels:
+        app: pastry-api
+    spec:
+      containers:
+        - name: pastry-api
+          image: quay.io/microcks/quarkus-api-pastry
+          ports:
+            - name: http
+              containerPort: 8282
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pastry-api
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: pastry-api.127.0.0.1.nip.io
+      http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: pastry-api
+                  port:
+                    number: 80

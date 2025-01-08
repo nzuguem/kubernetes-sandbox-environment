@@ -31,3 +31,26 @@ tasks:
   temporal-uninstall:
     desc: Uninstall Temporal IO.
     cmd: helm del -n temporal-system temporal
+
+  microcks-install:
+    desc: Install Microcks.
+    cmds:
+      - helm repo add microcks https://microcks.io/helm
+      - helm repo update microcks
+      - helm upgrade --install
+        microcks microcks/microcks
+        --create-namespace
+        --namespace microcks
+        -f microcks/helm.values.yml
+        --version 1.10.1
+
+  microcks-keycloak-get-credentials:
+    desc: Get Credentials of Microcks Keycloak.
+    vars:
+      MICROCKS_KEYCLOAK_PASSWORD:
+        sh: kubectl -n microcks get secret microcks-keycloak-admin -o jsonpath="{.data.password}" | base64 -d
+    cmd: 'echo "admin/{{.MICROCKS_KEYCLOAK_PASSWORD}}"'
+
+  microcks-uninstall:
+    desc: Uninstall Microcks.
+    cmd: helm del -n microcks microcks
