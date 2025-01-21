@@ -1,0 +1,20 @@
+apiVersion: autoscaling.x-k8s.io/v1alpha1
+kind: StartupCPUBoost
+metadata:
+  name: boost-001
+selector:
+  matchExpressions:
+  - key: app.kubernetes.io/name
+    operator: In
+    values: ["spring-demo-app"]
+spec:
+  resourcePolicy:
+    containerPolicies:
+    - containerName: spring-demo-app
+      fixedResources:
+        requests: "1"
+        limits: "2"
+  durationPolicy:
+    fixedDuration:
+      unit: Seconds
+      value: 120

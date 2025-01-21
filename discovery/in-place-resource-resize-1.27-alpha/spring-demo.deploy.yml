@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-demo-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: spring-demo-app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: spring-demo-app
+    spec:
+      containers:
+      - name: spring-demo-app
+        image: ghcr.io/google/spring-demo-app:latest
+        args:
+        - --spring.config.location=file:/config/application.yaml
+        env:
+        - name: JAVA_OPTS
+          value: -XX:MaxRAMPercentage=75
+        volumeMounts:
+        - name: spring-demo-app-config
+          mountPath: /config
+        ports:
+        - name: http
+          containerPort: 8080
+        startupProbe:
+          periodSeconds: 2
+          failureThreshold: 60
+          httpGet:
+            path: /actuator/health
+            port: http
+            scheme: HTTP
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: http
+            scheme: HTTP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+      volumes:
+      - name: spring-demo-app-config
+        configMap:
+          name: spring-demo-app-config
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spring-demo-app-config
+data:
+  application.yaml: |
+      spring:
+        datasource:
+          url: jdbc:h2:mem:mydb
+          username: sa
+          password: password
+          driverClassName: org.h2.Driver
+        jpa:
+          hibernate:
+            ddl-auto: create
+          database-platform: org.hibernate.dialect.H2Dialect
+          defer-datasource-initialization: true
+      management:
+        endpoints:
+          web:
+            exposure:
+              include:
+                - health
+                - prometheus

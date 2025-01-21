@@ -5,6 +5,9 @@ featureGates:
   # Kubernetes 1.31 - Alpha
   # https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/
   ImageVolume: true
+  # Kubernetes 1.27 - Alpha
+  # https://kubernetes.io/blog/2023/05/12/in-place-pod-resize-alpha/
+  InPlacePodVerticalScaling: true
 nodes:
 - role: control-plane
   image: kindest/node:v1.32.0

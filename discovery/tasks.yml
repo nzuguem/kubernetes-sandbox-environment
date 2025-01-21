@@ -17,6 +17,13 @@ tasks:
       - kubectl apply -f temporal/temporal.routes.yml -n temporal-system
       - task: temporal-configure-cli
 
+  temporal-grafana-get-credentials:
+    desc: Get Temporal Grafana credentials.
+    vars:
+      TEMPORAL_GRAFANA_PASSWORD:
+        sh: kubectl -n temporal-system get secret temporal-grafana -o jsonpath="{.data.admin-password}" | base64 -d
+    cmd: 'echo "admin/{{.TEMPORAL_GRAFANA_PASSWORD}}"'
+
   temporal-configure-cli:
     desc: Configure Temporal CLI
     cmd: |
@@ -54,3 +61,11 @@ tasks:
   microcks-uninstall:
     desc: Uninstall Microcks.
     cmd: helm del -n microcks microcks
+
+  kube-startup-cpu-boost-install:
+    desc: Install Startup CPU Boost.
+    cmd: kubectl apply -f https://github.com/google/kube-startup-cpu-boost/releases/download/v0.11.3/manifests.yaml
+
+  kube-startup-cpu-boost-uninstall:
+    desc: Uninstall Startup CPU Boost.
+    cmd: kubectl delete -f https://github.com/google/kube-startup-cpu-boost/releases/download/v0.11.3/manifests.yaml

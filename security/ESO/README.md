@@ -23,7 +23,7 @@ task security:eso-install
 ## Create Secret Store
 kubectl apply -f security/ESO/secretmanager.store.yml
 
-## Storing a secret in AWS Secret Manager 
+## Storing a secret in AWS Secret Manager
 aws secretsmanager create-secret \
     --name my-eso-secret \
     --description "My ESO Secret." \
@@ -59,7 +59,6 @@ task security:eso-uninstall
 - [GESTION DES SECRETS SUR KUBERNETES][k8s-secret-management-blog]
 - [Secrets store CSI driver vs external secrets in a nutshel][eso-vs-csi-secrets-store]
 - [Clarity: secrets store CSI driver vs external secrets... what to use? #478][eso-vs-csi-secrets-store-clarity]
-
 
 <!-- Links -->
 [eso-doc]:https://external-secrets.io/latest/

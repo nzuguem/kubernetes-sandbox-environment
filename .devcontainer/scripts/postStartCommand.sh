@@ -5,6 +5,7 @@ set -e
 # Configure Bash
 cat <<EOF >> /home/vscode/.bashrc
 source <(fzf --bash)
+alias kubectl=kubecolor
 alias k=kubectl
 complete -o default -F __start_kubectl k
 export PATH="${KREW_ROOT:-/home/vscode/.krew}/bin:$PATH"

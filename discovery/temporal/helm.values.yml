@@ -6,10 +6,15 @@ elasticsearch:
   replicas: 1
 
 prometheus:
-  enabled: false
+  enabled: true
 
 grafana:
-  enabled: false
+  enabled: true
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana-temporal.127.0.0.1.nip.io
 
 server:
   replicaCount: 1
@@ -63,3 +68,5 @@ web:
     value: "true"
   - name: TEMPORAL_AUTH_ENABLED
     value: "false"
+  - name: TEMPORAL_CSRF_COOKIE_INSECURE
+    value: "true"
