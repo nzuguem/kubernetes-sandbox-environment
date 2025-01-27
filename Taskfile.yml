@@ -31,6 +31,12 @@ includes:
   discovery:
     taskfile: ./discovery/tasks.yml
     dir: ./discovery
+  workflows:
+    taskfile: ./workflows/tasks.yml
+    dir: ./workflows
+  apim:
+    taskfile: ./apim/tasks.yml
+    dir: ./apim
 
 tasks:
   default:

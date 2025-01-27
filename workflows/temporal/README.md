@@ -9,7 +9,7 @@ Temporal is a distributed, scalable, durable, and highly available orchestration
 ## Install
 
 ```bash
-task discovery:temporal-install
+task workflows:temporal-install
 ```
 
 > ⚠️ Installation can take several minutes

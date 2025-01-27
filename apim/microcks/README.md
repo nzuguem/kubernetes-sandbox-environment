@@ -9,7 +9,7 @@ The open source, cloud native tool for API Mocking and Testing.
 ## Install
 
 ```bash
-task discovery:microcks-install
+task apim:microcks-install
 ```
 
 > ⚠️ Start opening <https://keycloak.127.0.0.1.nip.io> in your browser to validate the self-signed certificate. Once done, you can visit <https://microcks.127.0.0.1.nip.io> in your browser, validate the self-signed certificate and start playing around with Microcks!
@@ -39,7 +39,7 @@ Please follow the instructions below to use Microcks :
 ## Uninstall
 
 ```bash
-task discovery:microcks-uninstall
+task apim:microcks-uninstall
 ```
 
 ## Resources
