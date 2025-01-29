@@ -16,7 +16,9 @@ The Vault access endpoint is <http://vault.127.0.0.1.nip.io>
 
 ## Test
 
-### Set a secret in Vault
+### Configure Secret Engine & Kubernetes authentication on Vault
+
+#### Secret Engine
 
 ```bash
 ## 1. Enable kv-v2 secrets at the path of team "nzuguem".
@@ -29,13 +31,7 @@ vault kv put nzuguem/cloud/config/aws access_key_id="foo" access_secret_key="bar
 vault kv get nzuguem/cloud/config/aws
 ```
 
-### Using [Vault Agent][vault-agent-doc]
-
-Vault Agent aims to remove the initial hurdle to adopt Vault by providing a more scalable and simpler way for applications to integrate with Vault, by providing the ability to render templates containing the secrets required by your application, without requiring changes to your application.
-
-![Vault Agent](../images/vault-agent.png)
-
-#### Configure Kubernetes authentication
+#### Kubernetes authentication
 
 Vault provides a Kubernetes authentication method that enables clients to authenticate with a Kubernetes Service Account Token. This token is provided to each pod when it is created.
 
@@ -74,7 +70,11 @@ kubectl create sa aws-config-reader
 kubectl get sa -n default
 ```
 
-#### Inject secrets into the pod
+### Inject secrets: Using [Vault Agent][vault-agent-doc]
+
+Vault Agent aims to remove the initial hurdle to adopt Vault by providing a more scalable and simpler way for applications to integrate with Vault, by providing the ability to render templates containing the secrets required by your application, without requiring changes to your application.
+
+![Vault Agent](../images/vault-agent.png)
 
 Injection uses the [annotation][vault-agent-annotations-list] mechanism
 
@@ -89,7 +89,7 @@ kubectl get po -n default
 stern deploy/busybox -c busybox | grep "AWS_"
 ```
 
-### Using [External Secret Operator](../ESO/README.md)
+### Inject secrets: Using [External Secret Operator](../ESO/README.md)
 
 ```bash
 ## 1. Create ClusterSecretStore
