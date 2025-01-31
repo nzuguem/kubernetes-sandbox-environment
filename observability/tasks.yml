@@ -6,7 +6,7 @@ tasks:
     cmds:
       - helm repo add otel https://open-telemetry.github.io/opentelemetry-helm-charts
       - helm repo update otel
-      - helm upgrade --install --version 0.75.1
+      - helm upgrade --install --version 0.79.0
         --create-namespace
         --namespace otel-system otel otel/opentelemetry-operator
         --set admissionWebhooks.certManager.enabled=false
@@ -15,6 +15,15 @@ tasks:
   opentelemetry-uninstall:
     desc: Uninstall OTel Operator.
     cmd: helm del -n otel-system otel
+
+  opentelemetry-k8s-discovery-try:
+    desc: Try OTel Collector with K8s Discovery.
+    cmds:
+      - kubectl apply -f otel/otelcol.sa.yml
+      - kubectl apply -f otel/otelcol.deployment.yml
+      - kubectl apply -f otel/otelcol.daemonset.yml
+      - kubectl apply -f otel/lgtm.yml
+      - kubectl apply -f otel/cloud-events.otelcol-k8s-discovery.deploy.yml
 
   coroot-install:
     desc: Install Coroot Observability.

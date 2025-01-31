@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-events-handler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloud-events-handler
+  template:
+    metadata:
+      name: cloud-events-handler
+      labels:
+        app: cloud-events-handler
+      annotations:
+        io.opentelemetry.discovery.logs/enabled: "true"
+        io.opentelemetry.discovery.logs/config: |
+          include_file_name: true
+        io.opentelemetry.discovery.metrics.8080/enabled: "true"
+        io.opentelemetry.discovery.metrics.8080/scraper: prometheus_simple
+        io.opentelemetry.discovery.metrics.8080/config: |
+          metrics_path: /q/metrics
+    spec:
+      containers:
+      - name: cloud-events-handler
+        image: ghcr.io/nzuguem/cloudevents-handler
+        ports:
+        - containerPort: 8080
+          name: http
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-events-handler
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app: cloud-events-handler
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cloud-events-handler
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: cloud-events-handler.127.0.0.1.nip.io
+      http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: cloud-events-handler
+                  port:
+                    number: 80

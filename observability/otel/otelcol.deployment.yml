@@ -3,8 +3,10 @@ kind: OpenTelemetryCollector
 metadata:
   name: collector-deployment
 spec:
+
   # Automatic resource update in the event of an operator update
   upgradeStrategy: automatic
+  serviceAccount: otelcontribcol
   mode: deployment
   config:
     receivers:
@@ -14,6 +16,10 @@ spec:
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
+      receiver_creator:
+        watch_observers: [k8s_observer]
+        discovery:
+          enabled: true
     processors:
       memory_limiter:
         check_interval: 1s
@@ -23,13 +29,35 @@ spec:
         send_batch_size: 10000
         timeout: 10s
 
+    extensions:
+      k8s_observer:
+        auth_type: serviceAccount
+        observe_pods: true
+        observe_nodes: true
+        observe_services: true
+        observe_ingresses: true
+
     exporters:
       debug:
         verbosity: detailed
+      otlp:
+        endpoint: lgtm.default.svc.cluster.local:4317
+        tls:
+          insecure: true
+
 
     service:
+      extensions: [k8s_observer]
       pipelines:
         traces:
-          receivers: [otlp]
+          receivers: [otlp, receiver_creator]
           processors: [batch]
-          exporters: [debug]
+          exporters: [debug, otlp]
+        logs:
+          receivers: [otlp, receiver_creator]
+          processors: [batch]
+          exporters: [debug, otlp]
+        metrics:
+          receivers: [otlp, receiver_creator]
+          processors: [batch]
+          exporters: [debug, otlp]

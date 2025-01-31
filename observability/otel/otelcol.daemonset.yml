@@ -5,6 +5,7 @@ metadata:
 spec:
   # Automatic resource update in the event of an operator update
   upgradeStrategy: automatic
+  serviceAccount: otelcontribcol
   mode: daemonset
   volumes:
   - name: varlogpods
@@ -22,6 +23,10 @@ spec:
     readOnly: true
   config:
     receivers:
+      receiver_creator:
+        watch_observers: [k8s_observer]
+        discovery:
+          enabled: true
       filelog:
         include_file_path: true
         include:
@@ -29,12 +34,22 @@ spec:
         exclude:
           # Exclude logs from all containers named otel-collector
           - /var/log/pods/*/otel-collector/*.log
+          - /var/log/pods/*/otc-container/*.log
       otlp:
         protocols:
           grpc:
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
+
+    extensions:
+      k8s_observer:
+        auth_type: serviceAccount
+        observe_pods: true
+        observe_nodes: true
+        observe_services: true
+        observe_ingresses: true
+
     processors:
       memory_limiter:
         check_interval: 1s
@@ -47,10 +62,15 @@ spec:
     exporters:
       debug:
         verbosity: detailed
+      otlp:
+        endpoint: lgtm.default.svc.cluster.local:4317
+        tls:
+          insecure: true
 
     service:
+      extensions: [k8s_observer]
       pipelines:
         logs:
-          receivers: [filelog]
+          receivers: [filelog, receiver_creator]
           processors: []
-          exporters: [debug]
+          exporters: [debug, otlp]

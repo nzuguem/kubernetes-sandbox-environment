@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lgtm
+  labels:
+    app: lgtm
+spec:
+  selector:
+    matchLabels:
+      app: lgtm
+  template:
+    metadata:
+      labels:
+        app: lgtm
+    spec:
+      containers:
+      - name: lgtm
+        image: grafana/otel-lgtm:0.8.3
+        ports:
+        - containerPort: 3000
+          name: grafana
+        - containerPort: 4317
+          name: otlp-grpc
+        - containerPort: 4318
+          name: otlp-http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lgtm
+  labels:
+    app: lgtm
+spec:
+  selector:
+    app: lgtm
+  ports:
+  - name: grafana
+    port: 3000
+    targetPort: grafana
+  - name: otlp-grpc
+    port: 4317
+    targetPort: otlp-grpc
+  - name: otlp-http
+    port: 4318
+    targetPort: otlp-http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lgtm
+spec:
+  rules:
+  - host: grafana-lgtm.127.0.0.1.nip.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: lgtm
+            port:
+              number: 3000
