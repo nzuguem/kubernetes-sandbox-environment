@@ -49,6 +49,8 @@ tasks:
       - kind delete cluster --name kubernetes-stack || true
       - kind create cluster --config kind.yml
       - kubectl cluster-info --context kind-kubernetes-stack || exit 1
+      - cp $HOME/.kube/config $HOME/.kube/config-argocd
+      - kubectl config set-context --current --namespace=argocd-system --kubeconfig $HOME/.kube/config-argocd
     preconditions:
       - sh: test -f kind.yml
         msg: Kind's manisfest not provided

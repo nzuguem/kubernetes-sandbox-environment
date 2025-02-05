@@ -5,6 +5,9 @@ set -e
 # Configure Bash
 cat <<EOF >> /home/vscode/.bashrc
 source <(fzf --bash)
+source <(argocd completion bash)
+## Using ArgoCD CLI on Core Mode (https://docs.openshift.com/gitops/1.12/gitops_cli_argocd/argocd-gitops-cli-reference.html#core-mode)
+alias argocd="KUBECONFIG=$HOME/.kube/config-argocd argocd --core"
 alias kubectl=kubecolor
 alias k=kubectl
 complete -o default -F __start_kubectl k
