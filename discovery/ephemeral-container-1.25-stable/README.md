@@ -117,7 +117,7 @@ kubectl get po
 # http-server-7d4dd5b544-czjm7   1/1     Running             0             15m
 ```
 
-### Debug App Java ☕ - 🚧
+### Debug App Java ☕
 
 ```bash
 ## Deploy Spring Petclinic Application
@@ -125,7 +125,10 @@ kubectl apply -f discovery/ephemeral-container-1.25-stable/spring-petclinic.depl
 
 ## Begin Debug : JFR Recording / Jcmd
 POD_NAME=$(kubectl get pods -l app=spring-petclinic -o jsonpath='{.items[0].metadata.name}')
-kubectl debug -it -c debugger --target=spring-petclinic --image=eclipse-temurin:17-jdk ${POD_NAME} -- bash
+
+## "general" Profile -> https://github.com/kubernetes/enhancements/tree/master/keps/sig-cli/1441-kubectl-debug#profile-general
+kubectl debug -it -c debugger --target=spring-petclinic --image=eclipse-temurin:17-jdk ${POD_NAME} --profile=general -- bash
+
 /# ps auxf
 # USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 # root         463  0.0  0.0   7452  3944 pts/0    Ss   05:47   0:00 bash
@@ -133,24 +136,34 @@ kubectl debug -it -c debugger --target=spring-petclinic --image=eclipse-temurin:
 # 999            1  3.0  4.4 9240128 590848 ?      Ssl  05:20   0:50 /media/rosetta/rosetta /opt/java/openjdk/bin/java java -jar /usr/local/jetty/start.jar
 
 /# jcmd
+# 1 /usr/local/jetty/start.jar
 # 514 jdk.jcmd/sun.tools.jcmd.JCmd
 
 /# jps
+# 1 start.jar
 # 534 Jps
 
+/# jcmd 1 JFR.start duration=15s filename=/tmp/record.jfr
+
+/# ls /proc/1/root/tmp
+
+# Upload JFR Record
+/# curl --upload-file /proc/1/root/tmp/record.jfr  https://transfer.whalebone.io/record.jfr
+# https://transfer.whalebone.io/<UNIQUE-ID>/record.jfr
+
+# Download JFR Record
+/# curl https://transfer.whalebone.io/<UNIQUE-ID>/record.jfr -o record.jfr
+# The JFR Record can be operated using the JMC (JDK Mission Control) tool.
 ```
-
-We can see that the `jcmd` / `jps` commands do not see the Java process in the main container.After investigating ([Oracle - The Jcmd Command][oracle-jcmd-command-doc]), I discovered the following (That explains our situation) :
-
-> "*The jcmd utility is used to send diagnostic command requests to the JVM. It must be used on the same machine on which the JVM is running, and have the same effective user and group identifiers that were used to launch the JVM.  ...*"
 
 ## Resources
 
 - [Kubernetes Ephemeral Containers and kubectl debug Command][kubernetes-ephemeral-containers-blog-iximiuz]
 - [Kubernetes : déboguer avec les conteneurs éphémères][k8s-debug-ephemeral-containers-blog-adaltas]
+- [Programmer’s Guide to the JDK Flight Recorder][jfr-jfokus-2023-pdf]
 
 <!-- Links -->
 [ephemeral-container-doc]: https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/
 [kubernetes-ephemeral-containers-blog-iximiuz]: https://iximiuz.com/en/posts/kubernetes-ephemeral-containers/
 [k8s-debug-ephemeral-containers-blog-adaltas]: https://www.adaltas.com/fr/2023/02/07/k8s-debug-ephemeral-containers/
-[oracle-jcmd-command-doc]: https://docs.oracle.com/en/java/javase/17/docs/specs/man/jcmd.html
+[jfr-jfokus-2023-pdf]: https://www.jfokus.se/jfokus23-preso/Programmers-Guide-to-JDK-Flight-Recorder.pdf

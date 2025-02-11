@@ -18,6 +18,9 @@ spec:
       containers:
       - name: spring-petclinic
         image: springcommunity/spring-framework-petclinic:6.1.2
+        env:
+        - name: JAVA_OPTIONS
+          value: "-XX:StartFlightRecording:dumponexit=true,filename=/tmp/record_%p_%t.jfr"
         ports:
         - containerPort: 8080
           name: http

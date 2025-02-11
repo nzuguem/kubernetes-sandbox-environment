@@ -6,28 +6,24 @@ tasks:
     cmds:
       - helm repo add argocd https://argoproj.github.io/argo-helm
       - helm repo update argocd
-      - helm upgrade --install argocd argocd/argo-cd
-        --version 7.7.11
-        --create-namespace
-        --namespace argocd-system
-        -f argocd/helm.values.yml
+      - helm upgrade --install argocd argocd/argo-cd --version 7.7.11
+        --create-namespace --namespace argocd-system -f argocd/helm.values.yml
 
       # Wait for ArgoCD to be ready.
-      - kubectl wait -n argocd-system
-        --for=condition=ready pod
-        --selector=app.kubernetes.io/name=argocd-repo-server
-        --timeout=90s
+      - kubectl wait -n argocd-system --for=condition=ready pod
+        --selector=app.kubernetes.io/name=argocd-repo-server --timeout=90s
 
       # Get Credentials of ArgoCD.
       - task: argocd-get-credentials
 
   argocd-uninstall:
     desc: Uninstall ArgoCD.
-    cmd:  helm del argocd -n argocd-system
+    cmd: helm del argocd -n argocd-system
 
   argocd-get-credentials:
     desc: Get Credentials of ArgoCD.
     vars:
       ARGOCD_PASSWORD:
-        sh: kubectl -n argocd-system get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-    cmd: 'echo "admin/{{.ARGOCD_PASSWORD}}"'
+        sh: kubectl -n argocd-system get secret argocd-initial-admin-secret -o
+          jsonpath="{.data.password}" | base64 -d
+    cmd: echo "admin/{{.ARGOCD_PASSWORD}}"
