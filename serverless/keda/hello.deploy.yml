@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-keda-http
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-keda-http
+  template:
+    metadata:
+      name: hello-keda-http
+      labels:
+        app: hello-keda-http
+    spec:
+      containers:
+      - name: hello-keda-http
+        image: nzuguem/hello
+        ports:
+        - containerPort: 8080
+          name: http
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-keda-http
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  selector:
+    app: hello-keda-http
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: keda-interceptor-proxy
+spec:
+  type: ExternalName
+  externalName: keda-add-ons-http-interceptor-proxy.keda-system.svc.cluster.local
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hello-keda-http
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: hello-keda-http.127.0.0.1.nip.io
+      http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: keda-interceptor-proxy
+                  port:
+                    number: 8080

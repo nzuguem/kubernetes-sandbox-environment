@@ -1,0 +1,17 @@
+kind: HTTPScaledObject
+apiVersion: http.keda.sh/v1alpha1
+metadata:
+  name: hello-keda-http
+spec:
+  hosts:
+  - hello-keda-http.127.0.0.1.nip.io
+  targetPendingRequests: 10
+  scaleTargetRef:
+    name: hello-keda-http
+    kind: Deployment
+    apiVersion: apps/v1
+    service: hello-keda-http
+    port: 80
+  replicas:
+    min: 0
+    max: 10

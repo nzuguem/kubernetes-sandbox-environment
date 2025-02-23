@@ -71,3 +71,37 @@ tasks:
       - kubectl delete -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/in-memory-channel.yaml
       - kubectl delete -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/eventing-core.yaml
       - kubectl delete -f https://github.com/knative/eventing/releases/download/knative-v1.14.1/eventing-crds.yaml
+
+  keda-install:
+    desc: Install KEDA
+    deps:
+      - rabbitmq-install
+    cmds:
+    - helm repo add kedacore https://kedacore.github.io/charts
+    - helm repo update kedacore
+    - helm upgrade --install keda kedacore/keda
+        --version 2.16.1
+        --namespace keda-system
+        --create-namespace
+    - helm upgrade --install http-add-on kedacore/keda-add-ons-http
+        --namespace keda-system
+        --version 0.10.0
+
+
+  rabbitmq-install:
+    internal: true
+    desc: Install RabbitMQ
+    cmds:
+    - helm repo add bitnami https://charts.bitnami.com/bitnami
+    - helm repo update bitnami
+    - helm upgrade --install rabbitmq bitnami/rabbitmq
+        --version 15.3.2
+        --set auth.username=rmquser --set auth.password=rmqpassword
+
+  keda-uninstall:
+    desc: Uninstall KEDA
+    cmds:
+    - kubectl delete so --all
+    - helm del keda -n keda-system
+    - helm del http-add-on -n keda-system
+    - helm del rabbitmq -n keda-system

@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: rabbitmq-receiver
+  name: rabbitmq-receiver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq-receiver
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: rabbitmq-receiver
+    spec:
+      containers:
+      - image: nzuguem/rabbitmq-receiver
+        name: rabbitmq-receiver
+        env:
+        - name: RMQ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-creds
+              key: user
+        - name: RMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-creds
+              key: password
+        - name: RMQ_QUEUE
+          value: hello
+
+---
+
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: rabbitmq-trigger
+spec:
+  secretTargetRef:
+    - parameter: host
+      name: rabbitmq-creds
+      key: amqp-url
+
+---
+
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: rabbitmq-receiver
+spec:
+  scaleTargetRef:
+    name: rabbitmq-receiver
+  triggers:
+    - type: rabbitmq
+      metadata:
+        queueName: hello
+        queueLength: "5"
+      authenticationRef:
+        name: rabbitmq-trigger

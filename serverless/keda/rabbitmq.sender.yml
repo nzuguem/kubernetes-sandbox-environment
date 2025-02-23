@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rabbitmq-sender
+spec:
+  template:
+    spec:
+      containers:
+      - image: nzuguem/rabbitmq-sender
+        name: rabbitmq-sender
+        env:
+        - name: RMQ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-creds
+              key: user
+        - name: RMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-creds
+              key: password
+        - name: RMQ_QUEUE
+          value: hello
+        resources: {}
+      restartPolicy: Never
