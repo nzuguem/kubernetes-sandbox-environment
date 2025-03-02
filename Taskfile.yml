@@ -78,3 +78,10 @@ tasks:
     cmds:
       - kubectl apply -f gitops/argocd/platform/project.yml
       - kubectl apply -f gitops/argocd/platform/apps.yml
+
+  # https://pluto.docs.fairwinds.com/
+  platform-check-k8s-breakings-changes/*:
+    desc: Check Kubernetes breaking changes.
+    vars:
+      K8S_VERSION: '{{index .MATCH 0}}'
+    cmd: pluto detect-all-in-cluster -t k8s={{.K8S_VERSION}}
