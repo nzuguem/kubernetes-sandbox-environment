@@ -1,0 +1,22 @@
+version: 3
+
+tasks:
+  gitlab-runner-register/*:
+    desc: Install GitLab Runner.
+    vars:
+      AUTH_TOKEN: '{{index .MATCH 0}}'
+    requires:
+      vars:
+        - AUTH_TOKEN
+    cmds:
+      - helm repo add gitlab https://charts.gitlab.io
+      - helm repo update
+      - helm upgrade --install gitlab-runner gitlab/gitlab-runner
+        --version 0.74.0
+        --create-namespace --namespace gitlab-runner-system
+        --set runnerToken={{.AUTH_TOKEN}}
+        -f gitlab-runner/helm.values.yml
+
+  gitlab-runner-uninstall:
+    desc: Uninstall GitLab Runner.
+    cmd: helm del gitlab-runner --namespace gitlab-runner-system

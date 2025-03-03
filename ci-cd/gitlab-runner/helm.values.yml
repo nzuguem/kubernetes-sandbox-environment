@@ -1,0 +1,15 @@
+gitlabUrl: https://gitlab.com/
+rbac:
+  create: true
+runners:
+  name: kubernetes-stack
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        namespace = "{{.Release.Namespace}}"
+        image = "alpine"
+        # https://docs.gitlab.com/runner/configuration/advanced-configuration/#helper-image
+        helper_image_autoset_arch_and_os = true
+
+serviceAccount:
+  create: true

@@ -8,7 +8,7 @@ cat <<EOF >> /home/vscode/.bashrc
 ## Completion
 source <(fzf --bash)
 source <(argocd completion bash)
-source <(pluto completion bash)
+source <(pluto completion bash --no-footer)
 
 ## Aliases
 ### Using ArgoCD CLI on Core Mode (https://docs.openshift.com/gitops/1.12/gitops_cli_argocd/argocd-gitops-cli-reference.html#core-mode)

@@ -37,7 +37,9 @@ includes:
   apim:
     taskfile: ./apim/tasks.yml
     dir: ./apim
-
+  ci-cd:
+    taskfile: ./ci-cd
+    dir: ./ci-cd
 tasks:
   default:
     desc: List Tasks.
