@@ -6,7 +6,12 @@ Ephemeral Container is a special type of container that runs temporarily in an e
 
 Ephemeral containers provide a solution for interactive troubleshooting when `kubectl exec` is inadequate, such as when a container has crashed or lacks debugging utilities. This is especially useful for distroless images, which are minimalistic and designed to reduce the attack surface, bugs, and vulnerabilities by excluding a shell or debugging tools. Due to these limitations, traditional troubleshooting methods like `kubectl exec` are insufficient, making ephemeral containers crucial for diagnosing issues in distroless environments.
 
-Ephemeral containers are created using a special `ephemeralcontainers` handler in the API rather than by adding them directly to `pod.spec`, so it's not possible to add an ephemeral container using kubectl edit. It is added using the `kubectl debug` command
+Ephemeral containers are created using a special `ephemeralcontainers` handler in the API rather than by adding them directly to `pod.spec`, so it's not possible to add an ephemeral container using kubectl edit. It is added using the `kubectl debug` command.
+
+> ⚠️ Some debug profiles will manipulate the ephemeral container's securityContext, and this can make debugging impossible if the [Pod Security Admission][k8s-psa-doc] are configured with the **enforce** mode set to **baseline** or **restricted**.
+>
+>
+> However, there is a way around this problem by configuring [exemptions on the responsible admission controller][configure-the-admission-controller].
 
 ## Test
 
@@ -156,6 +161,20 @@ kubectl debug -it -c debugger --target=spring-petclinic --image=eclipse-temurin:
 # The JFR Record can be operated using the JMC (JDK Mission Control) tool.
 ```
 
+To see the **Pod Security Admission** in action :
+
+```bash
+## Configure PSA (enforce=baseline) on default NS
+kubectl label ns default pod-security.kubernetes.io/enforce=baseline
+
+## Try to run kubectl debug
+kubectl debug -it -c debugger-psa --target=spring-petclinic --image=eclipse-temurin:17-jdk ${POD_NAME} --profile=general -- bash
+
+# Error from server (Forbidden): pods "spring-petclinic-xxx-xxx" is forbidden: violates PodSecurity "baseline:latest": # # # non-default capabilities (container "debugger-psa" must not include "SYS_PTRACE" in securityContext.capabilities.add)
+```
+
+You can see that the `kubectl debug` is not possible, because the `general` profile is trying to add a capabilty (`SYS_PTRACE`) that is not authorised by the PSA [baseline level][psa-baseline-level], and the mode is set to **enforce**.
+
 ## Resources
 
 - [Kubernetes Ephemeral Containers and kubectl debug Command][kubernetes-ephemeral-containers-blog-iximiuz]
@@ -167,3 +186,6 @@ kubectl debug -it -c debugger --target=spring-petclinic --image=eclipse-temurin:
 [kubernetes-ephemeral-containers-blog-iximiuz]: https://iximiuz.com/en/posts/kubernetes-ephemeral-containers/
 [k8s-debug-ephemeral-containers-blog-adaltas]: https://www.adaltas.com/fr/2023/02/07/k8s-debug-ephemeral-containers/
 [jfr-jfokus-2023-pdf]: https://www.jfokus.se/jfokus23-preso/Programmers-Guide-to-JDK-Flight-Recorder.pdf
+[psa-baseline-level]: https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+[k8s-psa-doc]: https://kubernetes.io/docs/concepts/security/pod-security-admission/
+[configure-the-admission-controller]: https://kubernetes.io/docs/tasks/configure-pod-container/enforce-standards-admission-controller/#configure-the-admission-controller
