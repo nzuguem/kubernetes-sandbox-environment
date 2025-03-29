@@ -22,6 +22,9 @@ EOF
 
 sudo sh -c 'task --completion bash > /etc/bash_completion.d/task'
 
+# Install Helm Plugins
+helm plugin install https://github.com/databus23/helm-diff
+
 # Deploy and configure cluster
 task cluster-kind-deploy
 task platform-install-with-gitops-mode

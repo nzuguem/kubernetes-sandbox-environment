@@ -1,0 +1,15 @@
+ingress-nginx:
+  installed: true
+  chart_version: 4.12.1
+
+metrics-server:
+  installed: true
+  chart_version: 3.12.2
+
+cert-manager:
+  installed: true
+  chart_version: 1.16.2
+
+argocd:
+  installed: true
+  chart_version: 7.7.11

@@ -1,0 +1,9 @@
+---
+bases:
+- bases/helmDefaults.yaml
+- bases/environments.yaml
+
+helmfiles:
+- releases/ingress-nginx/helmfile.yaml
+
+missingFileHandler: Error
