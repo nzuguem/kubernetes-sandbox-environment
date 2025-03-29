@@ -37,4 +37,5 @@ jobs:
         platform: linux/amd64,linux/arm64
         imageName: ghcr.io/${{ github.repository }}
         cacheFrom: ghcr.io/${{ github.repository }}
+        cacheTo: ghcr.io/${{ github.repository }}
         push: always
