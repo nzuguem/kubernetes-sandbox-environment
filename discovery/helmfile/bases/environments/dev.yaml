@@ -1,15 +1,9 @@
-ingress-nginx:
+ingress_nginx:
   installed: true
   chart_version: 4.12.1
-
-metrics-server:
-  installed: true
-  chart_version: 3.12.2
-
-cert-manager:
-  installed: true
-  chart_version: 1.16.2
-
-argocd:
-  installed: true
-  chart_version: 7.7.11
+  secrets:
+    aws:
+      # accessKeyId: ref+vault://nzuguem/dev/helm/ingress-nginx/cloud/config/aws#access_key_id
+      # secretAccessKey: ref+vault://nzuguem/dev/helm/ingress-nginx/cloud/config/aws#access_secret_key
+      accessKeyId: foo
+      secretAccessKey: bar

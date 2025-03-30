@@ -1,8 +1,7 @@
----
 {{- $envValuesDir := print (regexReplaceAll "/releases/[^/]+$" (env "PWD") "") "/bases/environments" }}
 
 environments:
   dev:
     kubeContext: kind-kubernetes-stack
     values:
-      - {{ $envValuesDir }}/dev.yaml
+    - {{ $envValuesDir }}/dev.yaml

@@ -1,4 +1,3 @@
----
 # Kind - https://kind.sigs.k8s.io/docs/user/ingress/
 controller:
   config:
@@ -42,3 +41,7 @@ defaultBackend:
     value: 'true'
   - name: SEND_SAME_HTTP_CODE
     value: 'true'
+
+secrets:
+  accessKeyId: {{ .Values.ingress_nginx.secrets.aws.accessKeyId | fetchSecretValue }}
+  secretAccessKey: {{ .Values | get "ingress_nginx.secrets.aws.secretAccessKey" | fetchSecretValue }}

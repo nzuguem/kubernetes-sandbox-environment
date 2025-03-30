@@ -120,7 +120,6 @@ tasks:
       - |-
         echo "export VAULT_ADDR=http://vault.127.0.0.1.nip.io" >> $HOME/.bashrc
         echo "export VAULT_TOKEN=root" >> $HOME/.bashrc
-        source $HOME/.bashrc
       - echo "Sign in to Vault ->  Token/root"
 
   vault-uninstall:
