@@ -1,5 +1,7 @@
 # [In-Place Resource Resize - v1.27 [alpha]][in-place-resource-resize-blog]
 
+🏷️ **v1.33 [Beta]**
+
 ## Késako ?
 
 In-place resize allows operators to **dynamically modify** the CPU and memory resources of a **running pod** **without causing scheduling interruptions or downtime during the resizing process**. **This therefore allows a `kubectl patch ...` to be made on the `resources` of a deployment**

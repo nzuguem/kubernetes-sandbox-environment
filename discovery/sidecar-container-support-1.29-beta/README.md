@@ -1,5 +1,7 @@
 # [Sidecar Container Support - v1.29 [beta]][sidecar-container-support-doc]
 
+🏷️ **v1.33 [GA]**
+
 ## Késako ?
 
 Sidecar containers are the secondary containers that run along with the main application container within the same Pod. These containers are used to enhance or to extend the functionality of the primary app container by providing additional services, or functionality such as logging, monitoring, security, or data synchronization, without directly altering the primary application code.

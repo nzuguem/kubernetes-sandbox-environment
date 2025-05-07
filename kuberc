@@ -1,0 +1,5 @@
+apiVersion: kubectl.config.k8s.io/v1alpha1
+kind: Preference
+aliases:
+- name: crns
+  command: create namespace

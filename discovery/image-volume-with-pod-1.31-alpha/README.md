@@ -1,4 +1,6 @@
-# [Use an Image Volume With a Pod][image-volume-pod-doc]
+# [Use an Image Volume With a Pod - v1.31 [alpha]][image-volume-pod-doc]
+
+🏷️ **v1.33 [Beta]**
 
 ## Késako ?
 
