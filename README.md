@@ -27,6 +27,7 @@ It contains configurations and examples for the following components:
   - [Crossplane](platform/crossplane)
 - Serverless
   - [Knative](serverless/knative)
+  - [KEDA](serverless/keda)
 - Discovery
   - [Sidecar Container Support v1.29 [beta]](discovery/sidecar-container-support-1.29-beta)
   - [Ephemeral Container - v1.25 [stable]](discovery/ephemeral-container-1.25-stable)
@@ -84,11 +85,6 @@ task cluster-kind-deploy
 task cluster-kind-undeploy
 ```
 
-## Try [Gitpod Flex][gitpod-flex-introduction]
-
-⏳⏳⏳
-
 <!-- Links -->
 [kind-doc]:https://kind.sigs.k8s.io/
 [vs-code-dev-container-doc]: https://code.visualstudio.com/docs/devcontainers/containers
-[gitpod-flex-introduction]: https://www.gitpod.io/docs/flex/introduction

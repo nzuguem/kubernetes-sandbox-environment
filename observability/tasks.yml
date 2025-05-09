@@ -43,7 +43,7 @@ tasks:
       - helm repo update prometheus-community
       - helm upgrade --install prometheus-operator
         prometheus-community/kube-prometheus-stack
-        --version 61.8.0
+        --version 72.1.0
         --namespace monitoring
         --create-namespace
         -f prometheus/helm.values.yml

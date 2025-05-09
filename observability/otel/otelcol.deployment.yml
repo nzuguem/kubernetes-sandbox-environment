@@ -8,6 +8,9 @@ spec:
   upgradeStrategy: automatic
   serviceAccount: otelcontribcol
   mode: deployment
+  ports:
+  - name: zpages
+    port: 55679
   config:
     receivers:
       otlp:
@@ -30,6 +33,8 @@ spec:
         timeout: 10s
 
     extensions:
+      zpages:
+        endpoint: :55679
       k8s_observer:
         auth_type: serviceAccount
         observe_pods: true
@@ -45,9 +50,8 @@ spec:
         tls:
           insecure: true
 
-
     service:
-      extensions: [k8s_observer]
+      extensions: [k8s_observer, zpages]
       pipelines:
         traces:
           receivers: [otlp, receiver_creator]

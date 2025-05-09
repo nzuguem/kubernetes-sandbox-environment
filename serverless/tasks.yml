@@ -4,6 +4,9 @@ includes:
   ingress:
     taskfile: ../ingress/tasks.yml
     dir: ../ingress
+  workflows:
+    taskfile: ../workflows/tasks.yml
+    dir: ../workflows
 
 tasks:
   knative-serving-install:
@@ -76,11 +79,12 @@ tasks:
     desc: Install KEDA
     deps:
       - rabbitmq-install
+      - workflows:temporal-install
     cmds:
     - helm repo add kedacore https://kedacore.github.io/charts
     - helm repo update kedacore
     - helm upgrade --install keda kedacore/keda
-        --version 2.16.1
+        --version 2.17.0
         --namespace keda-system
         --create-namespace
     - helm upgrade --install http-add-on kedacore/keda-add-ons-http

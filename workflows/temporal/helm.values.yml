@@ -65,7 +65,7 @@ web:
   - name: TEMPORAL_BATCH_ACTIONS_DISABLED
     value: "true"
   - name: TEMPORAL_START_WORKFLOW_DISABLED
-    value: "true"
+    value: "false"
   - name: TEMPORAL_AUTH_ENABLED
     value: "false"
   - name: TEMPORAL_CSRF_COOKIE_INSECURE

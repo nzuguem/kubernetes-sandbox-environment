@@ -17,24 +17,23 @@ tasks:
       - kubectl apply -f temporal/temporal.routes.yml -n temporal-system
       - task: temporal-configure-cli
 
-    temporal-grafana-get-credentials:
-      desc: Get Temporal Grafana credentials.
-      vars:
-        TEMPORAL_GRAFANA_PASSWORD:
-          sh: kubectl -n temporal-system get secret temporal-grafana -o jsonpath="{.data.admin-password}" | base64 -d
-      cmd: 'echo "admin/{{.TEMPORAL_GRAFANA_PASSWORD}}"'
+  temporal-grafana-get-credentials:
+    desc: Get Temporal Grafana credentials.
+    vars:
+      TEMPORAL_GRAFANA_PASSWORD:
+        sh: kubectl -n temporal-system get secret temporal-grafana -o jsonpath="{.data.admin-password}" | base64 -d
+    cmd: 'echo "admin/{{.TEMPORAL_GRAFANA_PASSWORD}}"'
 
-    temporal-configure-cli:
-      desc: Configure Temporal CLI
-      cmd: |
-        kubectl get secret temporal-gateway.127.0.0.1.nip.io-tls -n temporal-system -o jsonpath="{['data']['ca\.crt']}" | base64 --decode > /home/vscode/temporal-ing-ca.crt
-        cat <<EOF >> /home/vscode/.bashrc
-        export TEMPORAL_TLS_CA=/home/vscode/temporal-ing-ca.crt
-        export TEMPORAL_ADDRESS=temporal-gateway.127.0.0.1.nip.io:443
-        EOF
-        source /home/vscode/.bashrc
+  temporal-configure-cli:
+    desc: Configure Temporal CLI
+    cmd: |
+      kubectl get secret temporal-gateway.127.0.0.1.nip.io-tls -n temporal-system -o jsonpath="{['data']['ca\.crt']}" | base64 --decode > /home/vscode/temporal-ing-ca.crt
+      cat <<EOF >> /home/vscode/.bashrc
+      export TEMPORAL_TLS_CA=/home/vscode/temporal-ing-ca.crt
+      export TEMPORAL_ADDRESS=temporal-gateway.127.0.0.1.nip.io:443
+      EOF
+      source /home/vscode/.bashrc
 
-
-    temporal-uninstall:
-      desc: Uninstall Temporal IO.
-      cmd: helm del -n temporal-system temporal
+  temporal-uninstall:
+    desc: Uninstall Temporal IO.
+    cmd: helm del -n temporal-system temporal
