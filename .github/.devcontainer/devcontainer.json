@@ -28,6 +28,7 @@
     "ghcr.io/devcontainers-contrib/features/temporal-cli:1": {},
     "ghcr.io/guiyomh/features/vim": {},
     "ghcr.io/dhoeric/features/stern:1": {},
-    "ghcr.io/devcontainers-extra/features/helmfile:1": {}
+    "ghcr.io/devcontainers-extra/features/helmfile:1": {},
+    "ghcr.io/dhoeric/features/oras:1": {}
   }
 }
