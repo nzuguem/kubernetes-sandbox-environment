@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpu-stressor-deployment-guaranteed
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cpu-stressor
+  template:
+    metadata:
+      labels:
+        app: cpu-stressor
+    spec:
+      nodeName: kubernetes-stack-worker
+      containers:
+      - name: cpu-stressor
+        image: narmidm/k8s-pod-cpu-stressor:latest
+        args:
+          - "-cpu=1"
+          - "-duration=10s"
+          - "-forever"
+        resources:
+          limits:
+            cpu: "0.1"

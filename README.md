@@ -37,6 +37,7 @@ It contains configurations and examples for the following components:
   - [Temporal IO](workflows/temporal)
 - API Management (apim)
   - [Microcks](apim/microcks)
+- [Trash](trash/)
 
 ## Launch DevContainer
 

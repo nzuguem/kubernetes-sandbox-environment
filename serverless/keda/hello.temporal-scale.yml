@@ -1,0 +1,15 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: hello-worker-scaler
+spec:
+  scaleTargetRef:
+    name: hello-keda-http
+  triggers:
+  - type: temporal
+    metadata:
+      namespace: temporal-system
+      taskQueue: "hello-workflow-task-queue"
+      targetQueueSize: "2"
+      endpoint: temporal-frontend.temporal-system.svc.cluster.local:7233
+      queueTypes: workflow
