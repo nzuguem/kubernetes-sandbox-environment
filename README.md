@@ -35,6 +35,7 @@ It contains configurations and examples for the following components:
   - [In-Place Resource Resize - v1.27 [alpha]](discovery/in-place-resource-resize-1.27-alpha)
 - Workflows
   - [Temporal IO](workflows/temporal)
+  - [Kestra](workflows/kestra)
 - API Management (apim)
   - [Microcks](apim/microcks)
 - [Trash](trash/)

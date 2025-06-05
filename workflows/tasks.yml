@@ -37,3 +37,20 @@ tasks:
   temporal-uninstall:
     desc: Uninstall Temporal IO.
     cmd: helm del -n temporal-system temporal
+
+  kestra-install:
+    desc: Install Kestra.
+    cmds:
+      - helm repo add kestra https://helm.kestra.io/
+      - helm repo update kestra
+      - helm upgrade --install
+        kestra kestra/kestra
+        --timeout 15m
+        --create-namespace
+        --namespace kestra-system
+        -f kestra/helm.values.yml
+        --version 0.22.10
+
+  kestra-uninstall:
+    desc: Uninstall Kestra.
+    cmd: helm del -n kestra-system kestra

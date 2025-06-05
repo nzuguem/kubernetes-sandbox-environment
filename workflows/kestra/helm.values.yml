@@ -1,0 +1,22 @@
+deployments:
+  webserver:
+    enabled: false
+  executor:
+    enabled: false
+  indexer:
+    enabled: false
+  scheduler:
+    enabled: false
+  worker:
+    enabled: false
+  standalone:
+    enabled: true
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+  - host: kestra.127.0.0.1.nip.io
+    paths:
+    - path: /
+      pathType: Prefix
