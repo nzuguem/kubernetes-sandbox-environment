@@ -53,6 +53,11 @@ tasks:
       - kubectl cluster-info --context kind-kubernetes-stack || exit 1
       - cp $HOME/.kube/config $HOME/.kube/config-argocd
       - kubectl config set-context --current --namespace=argocd-system --kubeconfig $HOME/.kube/config-argocd
+      # Allowing load balancers access to control plane nodes
+      # https://github.com/kubernetes-sigs/cloud-provider-kind#allowing-load-balancers-access-to-control-plane-nodes
+      # - kubectl label node/kubernetes-stack-control-plane  node.kubernetes.io/exclude-from-external-load-balancers-
+      # Running LoadBalancer for KIND
+      - docker run --rm -d --network kind -v /var/run/docker.sock:/var/run/docker.sock registry.k8s.io/cloud-provider-kind/cloud-controller-manager:v0.4.0
     preconditions:
       - sh: test -f kind.yml
         msg: Kind's manisfest not provided
