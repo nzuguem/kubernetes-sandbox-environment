@@ -105,4 +105,4 @@ tasks:
         - CONTAINER_PORT
         - HOST_PORT
     cmd: >-
-      docker run --rm -it -p {{.HOST_PORT}}:{{.CONTAINER_PORT}} --link {{.CONTAINER_NAME}}:target alpine/socat tcp-listen:{{.CONTAINER_PORT}},fork,reuseaddr tcp-connect:target:{{.CONTAINER_PORT}}
+      docker run --rm --net kind -it -p {{.HOST_PORT}}:{{.CONTAINER_PORT}} --link {{.CONTAINER_NAME}}:target alpine/socat tcp-listen:{{.CONTAINER_PORT}},fork,reuseaddr tcp-connect:target:{{.CONTAINER_PORT}}
