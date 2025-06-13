@@ -92,3 +92,17 @@ tasks:
     vars:
       K8S_VERSION: '{{index .MATCH 0}}'
     cmd: pluto detect-all-in-cluster -t k8s={{.K8S_VERSION}}
+
+  socat-expose-container/*/*/*:
+    desc: Expose container port on Host via Socat.
+    vars:
+      CONTAINER_NAME: '{{index .MATCH 0}}'
+      CONTAINER_PORT: '{{index .MATCH 1}}'
+      HOST_PORT: '{{index .MATCH 2}}'
+    requires:
+      vars:
+        - CONTAINER_NAME
+        - CONTAINER_PORT
+        - HOST_PORT
+    cmd: >-
+      docker run --rm -it -p {{.HOST_PORT}}:{{.CONTAINER_PORT}} --link {{.CONTAINER_NAME}}:target alpine/socat tcp-listen:{{.CONTAINER_PORT}},fork,reuseaddr tcp-connect:target:{{.CONTAINER_PORT}}

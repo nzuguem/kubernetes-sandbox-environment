@@ -4,6 +4,10 @@
 
 Fully isolated Kubernetes environment (*container level via **[VS Code DevContainer][vs-code-dev-container-doc]***), for try and test components of the Kubernetes ecosystem.
 
+![](images/k8s-env-arch.svg)
+
+## Content
+
 It contains configurations and examples for the following components:
 
 - Ingress
@@ -11,6 +15,7 @@ It contains configurations and examples for the following components:
   - [Ngrok](ingress/ngrok)
 - Gateway
   - [Nginx](gateway/nginx)
+  - [Kgateway](gateway/kgateway)
 - GitOps
   - [ArgoCD](gitops/argocd)
 - Observability

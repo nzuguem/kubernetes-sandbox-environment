@@ -7,7 +7,7 @@ tasks:
       The experimental release channel includes everything in the standard release channel plus some experimental resources and fields.
       This includes TCPRoute, TLSRoute, UDPRoute and GRPCRoute.
     summary: Install Experimental Channel.
-    cmd: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/experimental-install.yaml
+    cmd: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/experimental-install.yaml
 
   nginx-install:
     desc: Install Nginx Gateway Farbic, the implementation of Kubernetes Gateway API Specification.
@@ -24,3 +24,24 @@ tasks:
     cmds:
       - helm del nginx-gateway -n nginx-gateway-system
       - kubectl delete -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.1.0/experimental-install.yaml
+
+  kgateway-install:
+    desc: Install KGateway, the implementation of Kubernetes Gateway API Specification.
+    deps:
+      - gateway-api-crd-experimental-channel-install
+      - gateway-api-inference-extension-crd-install
+    cmds:
+    - helm upgrade -i --create-namespace --namespace kgateway-system --version v2.0.2 kgateway-crds oci://cr.kgateway.dev/kgateway-dev/charts/kgateway-crds
+    - helm upgrade -i --namespace kgateway-system --version v2.0.2 kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway -f kgateway/helm.values.yml
+
+  kgateway-uninstall:
+    desc: Uninstall KGateway.
+    cmds:
+      - helm del kgateway -n kgateway-system
+      - helm del kgateway-crds -n kgateway-system
+
+  gateway-api-inference-extension-crd-install:
+    desc: Install Gateway API Inference Extension CRDs.
+    internal: true
+    cmd: >-
+      kubectl apply -f https://github.com/kubernetes-sigs/gateway-api-inference-extension/releases/download/v0.3.0/manifests.yaml
