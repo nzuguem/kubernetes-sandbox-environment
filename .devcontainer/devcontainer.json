@@ -1,6 +1,6 @@
 {
   "name": "kubernetes-stack",
-  "image": "ghcr.io/nzuguem/kubernetes-sandbox-environment:latest",
+  "image": "nzuguem/kubernetes-sandbox-environment:latest",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -23,7 +23,8 @@
     8080,
     8443,
     9080,
-    9443
+    9443,
+    8088
   ],
   "postStartCommand": "bash .devcontainer/scripts/postStartCommand.sh",
   "onCreateCommand": "bash  .devcontainer/scripts/onCreateCommand.sh"

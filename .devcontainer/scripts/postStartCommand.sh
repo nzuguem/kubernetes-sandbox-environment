@@ -3,7 +3,7 @@
 set -e
 
 # Configure Bash
-cat <<EOF >> /home/vscode/.bashrc
+cat <<EOF >>/home/vscode/.bashrc
 
 ## Completion
 source <(fzf --bash)
@@ -41,3 +41,6 @@ task platform-install-with-gitops-mode
 
 # Install pre-commit
 task pre-commit-install
+
+# Start Code Server
+task install-code-server

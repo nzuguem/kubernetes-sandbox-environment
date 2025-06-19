@@ -22,13 +22,13 @@ Please follow the instructions below to use Microcks :
 
 - [Getting started / Using Microcks][microcks-getting-started]
 - [Getting started with Tests][microcks-getting-started-tests]
-  - Deploying **Pastry Api** : `docker run -i --rm -p 8282:8282 quay.io/microcks/quarkus-api-pastry:latest`
-  - Use this URL as a Test Endpoint : <http://host.docker.internal:8282>
+  - Deploying **Pastry Api** : `kubectl apply -f apim/microcks/pastry-api.deploy.yml`
+  - Use this URL as a Test Endpoint : <http://pastry-api.default.svc.cluster.local>
   - We can also use the Microcks CLI to run Contract Tests
 
     ```bash
     docker run --net host -it quay.io/microcks/microcks-cli:latest microcks-cli test \
-      'API Pastry - 2.0:2.0.0' http://host.docker.internal:8282 OPEN_API_SCHEMA \
+      'API Pastry - 2.0:2.0.0' http://pastry-api.default.svc.cluster.local OPEN_API_SCHEMA \
       --microcksURL=https://microcks.127.0.0.1.nip.io/api/ \
       --keycloakClientId=microcks-serviceaccount \
       --keycloakClientSecret=ab54d329-e435-41ae-a900-ec6b3fe15c54 \

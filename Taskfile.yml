@@ -90,15 +90,15 @@ tasks:
   platform-check-k8s-breakings-changes/*:
     desc: Check Kubernetes breaking changes.
     vars:
-      K8S_VERSION: '{{index .MATCH 0}}'
+      K8S_VERSION: "{{index .MATCH 0}}"
     cmd: pluto detect-all-in-cluster -t k8s={{.K8S_VERSION}}
 
   socat-expose-container/*/*/*:
     desc: Expose container port on Host via Socat.
     vars:
-      CONTAINER_NAME: '{{index .MATCH 0}}'
-      CONTAINER_PORT: '{{index .MATCH 1}}'
-      HOST_PORT: '{{index .MATCH 2}}'
+      CONTAINER_NAME: "{{index .MATCH 0}}"
+      CONTAINER_PORT: "{{index .MATCH 1}}"
+      HOST_PORT: "{{index .MATCH 2}}"
     requires:
       vars:
         - CONTAINER_NAME
@@ -106,3 +106,19 @@ tasks:
         - HOST_PORT
     cmd: >-
       docker run --rm --net kind -it -p {{.HOST_PORT}}:{{.CONTAINER_PORT}} --link {{.CONTAINER_NAME}}:target alpine/socat tcp-listen:{{.CONTAINER_PORT}},fork,reuseaddr tcp-connect:target:{{.CONTAINER_PORT}}
+
+  install-code-server:
+    desc: Install and Start Code Server
+    cmds:
+      - |
+        VERSION=4.100.3
+        ARCH=$(uname -m)
+        ARCH="${ARCH/x86_64/amd64}"
+        ARCH="${ARCH/aarch64/arm64}"
+        mkdir -p $HOME/.local/lib $HOME/.local/bin $HOME/.config/code-server
+        curl -fL https://github.com/coder/code-server/releases/download/v$VERSION/code-server-$VERSION-linux-$ARCH.tar.gz | tar -C $HOME/.local/lib -xz
+        mv  $HOME/.local/lib/code-server-$VERSION-linux-$ARCH  $HOME/.local/lib/code-server-$VERSION
+        ln -s  $HOME/.local/lib/code-server-$VERSION/bin/code-server  $HOME/.local/bin/code-server
+        PATH="$HOME/.local/bin:$PATH"
+        cp code-server/config.yaml $HOME/.config/code-server/config.yaml
+        nohup bash -c 'code-server /workspaces/kubernetes-stack > /tmp/code-server.log 2>&1 &'

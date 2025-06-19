@@ -50,11 +50,24 @@ It contains configurations and examples for the following components:
 > 📌 **prerequisite :**
 >
 > - Docker
-> - VS Code
+> - VS Code *(1)*
+> - DevContainer CLI *(1)*
+>
+> *(1) One of these two*
 
 ### Open in Visual Studio Code ⤵️
 
 [![Open in Dev Containers](https://img.shields.io/static/v1?label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/nzuguem/kubernetes-sandbox-environment)
+
+### Start DevContainer without VS Code
+
+```bash
+git clone https://github.com/nzuguem/kubernetes-sandbox-environment
+
+devcontainer up --workspace-folder kubernetes-sandbox-environment
+```
+
+You can VS Code on your Browser : http://localhost:8088
 
 ### Troubleshooting
 

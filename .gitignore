@@ -4,3 +4,4 @@
 **/*/falco-talon
 .env
 .DS_Store
+nohup.out

@@ -6,7 +6,7 @@
   // https://containers.dev/features
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers-contrib/features/kind:1": {},
+    "ghcr.io/devcontainers-extra/features/kind:1": {},
     "ghcr.io/devcontainers/features/git:1": {},
     "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
       "minikube": "none"
@@ -17,15 +17,15 @@
     "ghcr.io/rio/features/skaffold:2": {},
     "ghcr.io/devcontainers/features/python:1": {},
     "ghcr.io/devcontainers/features/aws-cli:1": {},
-    "ghcr.io/devcontainers-contrib/features/pre-commit:2": {},
+    "ghcr.io/devcontainers-extra/features/pre-commit:2": {},
     "ghcr.io/gickis/devcontainer-features/kubeseal:1": {},
-    "ghcr.io/devcontainers-contrib/features/argo-cd:1": {},
-    "ghcr.io/devcontainers-contrib/features/fzf:1": {},
-    "ghcr.io/devcontainers-contrib/features/vault-asdf:2": {},
+    "ghcr.io/devcontainers-extra/features/argo-cd:1": {},
+    "ghcr.io/devcontainers-extra/features/fzf:1": {},
+    "ghcr.io/devcontainers-extra/features/vault-asdf:2": {},
     "ghcr.io/devcontainers/features/go:1": {},
     "./features/grpcurl": {},
     "./features/krew": {},
-    "ghcr.io/devcontainers-contrib/features/temporal-cli:1": {},
+    "ghcr.io/devcontainers-extra/features/temporal-cli:1": {},
     "ghcr.io/guiyomh/features/vim": {},
     "ghcr.io/dhoeric/features/stern:1": {},
     "ghcr.io/devcontainers-extra/features/helmfile:1": {},
