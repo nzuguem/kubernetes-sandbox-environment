@@ -6,7 +6,7 @@ tasks:
     cmds:
       - helm repo add argocd https://argoproj.github.io/argo-helm
       - helm repo update argocd
-      - helm upgrade --install argocd argocd/argo-cd --version 7.7.11
+      - helm upgrade --install argocd argocd/argo-cd --version 8.2.4
         --create-namespace --namespace argocd-system -f argocd/helm.values.yml
 
       # Wait for ArgoCD to be ready.
