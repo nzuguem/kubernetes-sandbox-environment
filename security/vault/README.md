@@ -104,6 +104,10 @@ kubectl get secret/aws-config-secret -o jsonpath="{.data.AWS_ACCESS_KEY_ID}" | b
 kubectl get secret/aws-config-secret -o jsonpath="{.data.AWS_ACCESS_SECRET_KEY}" | base64 -d
 ```
 
+## Alternatives
+
+- [OpenBAO](https://openbao.org/) : An open source, community-driven fork of Vault managed by the Linux Foundation.
+
 ## Uninstall
 
 ```bash

@@ -28,6 +28,8 @@ It contains configurations and examples for the following components:
   - [Falco](security/falco)
   - [Neuvector](security/neuvector)
   - [Sealed Secret](security/sealed-secret)
+  - [AWS Secrets Manager Agent](security/aws-secret-manager-agent)
+  - [Vault](security/vault)
 - Control Plane
   - [Crossplane](platform/crossplane)
 - Serverless
