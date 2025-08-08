@@ -2,14 +2,16 @@ apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: hello-worker-scaler
+  namespace: temporal-system
 spec:
+  minReplicaCount: 1
   scaleTargetRef:
-    name: hello-keda-http
+    name: benchmark-workers-workers
   triggers:
   - type: temporal
     metadata:
       namespace: temporal-system
-      taskQueue: "hello-workflow-task-queue"
-      targetQueueSize: "2"
+      taskQueue: "benchmark"
+      targetQueueSize: "1"
       endpoint: temporal-frontend.temporal-system.svc.cluster.local:7233
       queueTypes: workflow

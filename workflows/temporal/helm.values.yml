@@ -21,6 +21,8 @@ server:
   config:
     namespaces:
       create: true
+  internalFrontend:
+    enabled: true
   frontend:
     ingress:
       enabled: true

@@ -84,7 +84,7 @@ tasks:
     - helm repo add kedacore https://kedacore.github.io/charts
     - helm repo update kedacore
     - helm upgrade --install keda kedacore/keda
-        --version 2.17.0
+        --version 2.17.2
         --namespace keda-system
         --create-namespace
     - helm upgrade --install http-add-on kedacore/keda-add-ons-http

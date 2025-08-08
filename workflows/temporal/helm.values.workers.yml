@@ -1,0 +1,17 @@
+temporal:
+  grpcEndpoint: "temporal-frontend.temporal-system:7233"
+  namespace: "default"
+  taskQueue: "benchmark"
+  workflowTaskPollers: "16"
+  activityTaskPollers: "8"
+
+soakTest:
+  enabled: true
+  replicaCount: 1
+  concurrentWorkflows: "10"
+  workflowType: "ExecuteActivity"
+  workflowArgs: '{ "Count": 3, "Activity": "Echo", "Input": { "Message": "test" } }'
+
+metrics:
+  serviceMonitor:
+    enabled: false

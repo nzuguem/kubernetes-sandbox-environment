@@ -12,7 +12,7 @@ tasks:
         --create-namespace
         --namespace temporal-system
         -f temporal/helm.values.yml
-        --version 0.54.0
+        --version 0.65.0
       - sleep 3
       - kubectl apply -f temporal/temporal.routes.yml -n temporal-system
       - task: temporal-configure-cli
@@ -33,6 +33,15 @@ tasks:
       export TEMPORAL_ADDRESS=temporal-gateway.127.0.0.1.nip.io:443
       EOF
       source /home/vscode/.bashrc
+  
+  temporal-install-benchmark-workers:
+    desc: Temporal benchmark workers for load testing and performance evaluation of a Temporal cluster.
+    cmds:
+    - helm upgrade --install 
+      benchmark-workers oci://ghcr.io/temporalio/charts/benchmark-workers
+      --timeout 15m
+      --namespace temporal-system
+      -f temporal/helm.values.workers.yml
 
   temporal-uninstall:
     desc: Uninstall Temporal IO.
