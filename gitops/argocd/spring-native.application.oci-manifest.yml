@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: spring-native-application
+  name: spring-native-application-oci-manisfest
   namespace: argocd-system
 spec:
   destination:
@@ -9,9 +9,12 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: 03-springboot/k8s
-    repoURL: https://github.com/nzuguem/java-native-compilation-workshop
-    targetRevision: main
+    path: .
+    repoURL: oci://registry-1.docker.io/nzuguem/oci-k8s-manifest-spring-native 
+    targetRevision: latest
   syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
     syncOptions:
       - CreateNamespace=true

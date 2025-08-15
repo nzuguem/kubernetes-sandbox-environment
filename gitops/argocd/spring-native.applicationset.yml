@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: spring-native-applicationset
-  namespace: argocd
+  namespace: argocd-system
 spec:
   generators:
   - list:
