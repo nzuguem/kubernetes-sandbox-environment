@@ -1,0 +1,3 @@
+[submodule "discovery/kubernetes-goat"]
+	path = discovery/kubernetes-goat
+	url = https://github.com/madhuakula/kubernetes-goat.git

@@ -8,3 +8,20 @@ tasks:
   kube-startup-cpu-boost-uninstall:
     desc: Uninstall Startup CPU Boost.
     cmd: kubectl delete -f https://github.com/google/kube-startup-cpu-boost/releases/download/v0.11.3/manifests.yaml
+  
+  update-kubernetes-goat-submodule-🐐:
+    desc: Update kubernetes Goat submodule
+    cmd: git submodule update --init
+  
+  setup-kubernetes-goat-🐐:
+    desc: Setup kubernetes goat
+    cmd: |
+      cd kubernetes-goat
+      bash setup-kubernetes-goat.sh
+      bash access-kubernetes-goat.sh
+  
+  teardown-kubernetes-goat-🐐:
+    desc: Teardown kubernetes goat
+    cmd: |
+      cd kubernetes-goat
+      bash teardown-kubernetes-goat.sh
