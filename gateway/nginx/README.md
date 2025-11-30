@@ -39,6 +39,8 @@ curl -H "Host: coffee.nzuguem.me" localhost:9080/coffee
 curl --connect-to coffee.nzuguem.me:80:localhost:9080 http://coffee.nzuguem.me/tea
 ## or
 curl -H "Host: coffee.nzuguem.me" localhost:9080/tea
+## or HTTPS
+curl --connect-to coffee.nzuguem.me:443:localhost:9443 https://coffee.nzuguem.me/tea -k
 ```
 
 > ℹ️ Using the `--connect-to` option with curl is closely related to the `--resolve` option. This command instructs `curl` to resolve the domain name in the URL by replacing it with the specified one. In the case of an HTTPS request, this option also sends the `SNI` (*the domain name specified in the URL*). The use of the `Host` header will also work, but only for unencrypted requests, as in the case of HTTPS requests, this header will not be considered as SNI (Cf. [Name resolve tricks][curl-name-resolve-tricks])

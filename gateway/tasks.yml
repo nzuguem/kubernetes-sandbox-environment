@@ -7,7 +7,9 @@ tasks:
       The experimental release channel includes everything in the standard release channel plus some experimental resources and fields.
       This includes TCPRoute, TLSRoute, UDPRoute and GRPCRoute.
     summary: Install Experimental Channel.
-    cmd: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/experimental-install.yaml
+    cmds:
+    - kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/experimental-install.yaml
+    - kubectl apply -f security/cert-manager/nginx.certificate.yml # Just so that the TLS secret is generated
 
   nginx-install:
     desc: Install Nginx Gateway Farbic, the implementation of Kubernetes Gateway API Specification.

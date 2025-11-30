@@ -1,6 +1,6 @@
 # [Use an Image Volume With a Pod - v1.31 [alpha]][image-volume-pod-doc]
 
-🏷️ **v1.33 [Beta]**
+🏷️ **v1.33 [Beta](disabled by default)**
 
 ## Késako ?
 
