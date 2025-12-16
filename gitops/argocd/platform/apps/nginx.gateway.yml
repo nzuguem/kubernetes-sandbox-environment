@@ -9,12 +9,12 @@ spec:
     namespace: nginx-gateway-system
     name: in-cluster
   sources:
-  - path: config/crd/experimental
-    repoURL: https://github.com/kubernetes-sigs/gateway-api
-    targetRevision: main
-  - path: charts/nginx-gateway-fabric
-    repoURL: https://github.com/nginxinc/nginx-gateway-fabric
-    targetRevision: main
+  - repoURL: https://github.com/nginx/nginx-gateway-fabric
+    targetRevision: v2.2.2
+    path: config/crd/gateway-api/experimental
+  - path: .
+    repoURL: oci://ghcr.io/nginx/charts/nginx-gateway-fabric
+    targetRevision: 2.2.2
     helm:
       valueFiles:
       - $values/gateway/nginx/helm.values.yml
@@ -30,3 +30,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true  # https://www.arthurkoziel.com/fixing-argocd-crd-too-long-error/
