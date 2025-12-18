@@ -1,6 +1,6 @@
 # [In-Place Resource Resize - v1.27 [alpha]][in-place-resource-resize-blog]
 
-🏷️ **v1.33 [Beta]**
+🏷️ **v1.35 [GA]**
 
 ## Késako ?
 
