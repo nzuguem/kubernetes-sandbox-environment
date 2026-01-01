@@ -1,0 +1,15 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: backstage
+spec:
+  hostnames:
+  - backstage.127.0.0.1.nip.io
+  parentRefs:
+  - name: kubernetes-sandbox-gateway
+    namespace: nginx-gateway-system
+    sectionName: http
+  rules:
+  - backendRefs:
+    - name: backstage
+      port: 7007

@@ -40,6 +40,9 @@ includes:
   ci-cd:
     taskfile: ./ci-cd
     dir: ./ci-cd
+  idp:
+    dir: ./idp
+    taskfile: ./idp
 tasks:
   default:
     desc: List Tasks.

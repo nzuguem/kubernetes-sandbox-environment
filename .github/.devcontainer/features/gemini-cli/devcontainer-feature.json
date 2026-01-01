@@ -1,0 +1,17 @@
+{
+  "id": "gemini-cli",
+  "name": "gemini-cli",
+  "description": "Install gemini-cli - An open-source AI agent that brings the power of Gemini directly into your terminal.",
+  "documentationURL": "https://geminicli.com/",
+  "options": {
+    "version": {
+      "type": "string",
+      "proposals": [
+        "latest"
+      ],
+      "default": "latest",
+      "description": "Select or enter a version."
+    }
+  },
+  "installsAfter": []
+}

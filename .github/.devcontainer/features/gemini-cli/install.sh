@@ -11,18 +11,11 @@ source ./library_scripts.sh
 # of the script
 ensure_nanolayer nanolayer_location "v0.5.6"
 
-OS="$(uname | tr '[:upper:]' '[:lower:]')"
-ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')"
-KREW_INSTALLER="krew-${OS}_${ARCH}"
-
 # Example nanolayer installation via devcontainer-feature
 $nanolayer_location \
     install \
     devcontainer-feature \
-    "ghcr.io/devcontainers-extra/features/gh-release:1" \
-    --option repo='kubernetes-sigs/krew' --option binaryNames="$KREW_INSTALLER" --option version="$VERSION" \
-    --option assetRegex='.*(\.tar\.gz)$'
-
-export KREW_ROOT="/usr/local/krew" && "$KREW_INSTALLER" install krew
+    "ghcr.io/devcontainers-extra/features/npm-package:1.0.4" \
+    --option package='@google/gemini-cli' --option version="$VERSION"
 
 echo 'Done!'

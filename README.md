@@ -31,7 +31,7 @@ It contains configurations and examples for the following components:
   - [AWS Secrets Manager Agent](security/aws-secret-manager-agent)
   - [Vault](security/vault)
 - Control Plane
-  - [Crossplane](platform/crossplane)
+  - [Crossplane](control-plane/crossplane)
 - Serverless
   - [Knative](serverless/knative)
   - [KEDA](serverless/keda)
@@ -45,6 +45,8 @@ It contains configurations and examples for the following components:
   - [Kestra](workflows/kestra)
 - API Management (apim)
   - [Microcks](apim/microcks)
+- Internal Developer Platform
+  - [Backtage](idp/backstage)
 - [Trash](trash/)
 
 ## Launch DevContainer

@@ -13,7 +13,7 @@ External Secrets Operator is a Kubernetes operator that integrates external secr
 task security:eso-install
 ```
 
-> ℹ️ Our tests will use the AWS Secret Manager, and to simulate it, we'll use LocalStack. See this [guide to installing LocalStack in a Kubernetes cluster](../../platform/aws/INSTALL.md)
+> ℹ️ Our tests will use the AWS Secret Manager, and to simulate it, we'll use LocalStack. See this [guide to installing LocalStack in a Kubernetes cluster](../../control-plane/aws/INSTALL.md)
 >
 > **Endpoint LocalStack (for [AWS Secret Manager][eso-aws-custom-endpoints]) is added during ESO installation**
 

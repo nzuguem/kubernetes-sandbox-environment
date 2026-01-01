@@ -1,0 +1,19 @@
+version: 3
+
+tasks:
+  backstage:install:
+    desc: Install backstage
+    cmds:
+      - helm repo add backstage https://backstage.github.io/charts
+      - helm repo update backstage
+      - helm upgrade --install backstage --version 2.6.3
+        --namespace backstage-system
+        -f backstage/helm.values.yml
+        --create-namespace backstage/backstage
+      - task: backstage:install:route
+
+  backstage:install:route:
+    internal: true
+    desc: Install Gateway API HTTPRoute
+    cmd: kubectl apply -f backstage/routes.yml -n backstage-system
+

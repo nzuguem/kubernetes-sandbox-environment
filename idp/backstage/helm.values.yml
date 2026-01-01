@@ -1,0 +1,7 @@
+postgresql:
+  enabled: true
+
+ingress:
+  enabled: true
+  className: nginx
+  host: backstage.127.0.0.1.nip.io

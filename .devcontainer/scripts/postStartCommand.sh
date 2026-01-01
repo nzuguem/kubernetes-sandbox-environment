@@ -18,7 +18,7 @@ alias kubectl=kubecolor
 alias k=kubectl
 complete -o default -F __start_kubectl k
 
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+export PATH="/usr/local/krew/bin:$PATH"
 
 ### Enable KUBERC (v1.33 [Alpha])
 export KUBECTL_KUBERC=true
@@ -28,7 +28,7 @@ EOF
 sudo sh -c 'task --completion bash > /etc/bash_completion.d/task'
 
 # Install Helm Plugins
-helm plugin install https://github.com/databus23/helm-diff
+helm plugin install --verify=false https://github.com/databus23/helm-diff
 
 # Deploy and configure cluster
 task cluster-kind-deploy

@@ -1,0 +1,17 @@
+{
+  "id": "pluto",
+  "name": "pluto",
+  "description": "Install pluto - A cli tool to help discover deprecated apiVersions in Kubernetes.",
+  "documentationURL": "https://github.com/FairwindsOps/pluto",
+  "options": {
+    "version": {
+      "type": "string",
+      "proposals": [
+        "latest"
+      ],
+      "default": "latest",
+      "description": "Select or enter a version."
+    }
+  },
+  "installsAfter": []
+}

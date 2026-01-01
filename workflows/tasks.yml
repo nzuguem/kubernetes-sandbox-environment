@@ -12,9 +12,9 @@ tasks:
         --create-namespace
         --namespace temporal-system
         -f temporal/helm.values.yml
-        --version 0.65.0
+        --version 0.73.1
       - sleep 3
-      - kubectl apply -f temporal/temporal.routes.yml -n temporal-system
+      - kubectl apply -f temporal/routes.yml -n temporal-system
       - task: temporal-configure-cli
 
   temporal-grafana-get-credentials:

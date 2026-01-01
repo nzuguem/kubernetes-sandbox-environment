@@ -1,0 +1,17 @@
+{
+  "id": "kubecolor",
+  "name": "kubecolor",
+  "description": "Install kubecolor -  Colorize your kubectl output.",
+  "documentationURL": "https://kubecolor.github.io/",
+  "options": {
+    "version": {
+      "type": "string",
+      "proposals": [
+        "latest"
+      ],
+      "default": "latest",
+      "description": "Select or enter a version."
+    }
+  },
+  "installsAfter": []
+}
