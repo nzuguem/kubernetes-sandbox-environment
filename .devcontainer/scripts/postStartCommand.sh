@@ -43,4 +43,4 @@ task platform-install-with-gitops-mode
 task pre-commit-install
 
 # Start Code Server
-task install-code-server
+task start-code-server

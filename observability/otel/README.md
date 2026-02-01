@@ -1,6 +1,36 @@
-# Observability - OpenTelemetry
+# Observability - [OpenTelemetry](https://opentelemetry.io/)
 
-## Install
+## Késako ?
+
+OpenTelemetry is an open source observability framework for cloud native software. It provides a single set of APIs, libraries, agents, and collector services to capture distributed traces and metrics from your application.
+
+![OpenTelemetry](../images/otel.svg)
+
+### Quick start guide
+
+Rapid deployment of an Opentelemetry collector + various telemetry backends (Prometheus, Loki, Tempo) + Grafana
+
+```bash
+## Install LGTM
+k apply -f observability/otel/lgtm.yml
+```
+
+Visit Grafana : http://grafana-lgtm.127.0.0.1.nip.io
+
+Generation of some telemetry data via the [telemetrygen](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/cmd/telemetrygen/README.md) tool
+
+```bash
+## Generate traces
+telemetrygen traces --otlp-endpoint=otel-http-lgtm.127.0.0.1.nip.io --otlp-http --otlp-insecure --duration=30s --rate=5 --service="test-service"
+
+## Generate metrics
+telemetrygen metrics --otlp-endpoint=otel-http-lgtm.127.0.0.1.nip.io --otlp-http --otlp-insecure --duration=30s --rate=5 --service="test-service"
+
+## Generate logs
+telemetrygen logs --otlp-endpoint=otel-http-lgtm.127.0.0.1.nip.io --otlp-http --otlp-insecure --duration=30s --rate=5 --service="test-service"
+```
+
+## Install OpenTelemetry Collector via Kubernetes OpenTelemetry Controller
 
 ```bash
 task observability:opentelemetry-install

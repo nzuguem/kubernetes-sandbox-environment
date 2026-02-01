@@ -1,0 +1,19 @@
+{
+  "id": "telemetrygen",
+  "name": "Telemetrygen",
+  "description": "Install telemetrygen -  Generate OpenTelemetry data (Traces, Metrics, Logs)",
+  "documentationURL": "https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/cmd/telemetrygen",
+  "options": {
+    "version": {
+      "type": "string",
+      "proposals": [
+        "latest"
+      ],
+      "default": "latest",
+      "description": "Select or enter a version."
+    }
+  },
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/go:1"
+  ]
+}

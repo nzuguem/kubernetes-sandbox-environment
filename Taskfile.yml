@@ -43,6 +43,9 @@ includes:
   idp:
     dir: ./idp
     taskfile: ./idp
+  k8s-ui:
+    dir: ./k8s-ui
+    taskfile: ./k8s-ui
 tasks:
   default:
     desc: List Tasks.
@@ -110,18 +113,17 @@ tasks:
     cmd: >-
       docker run --rm --net kind -it -p {{.HOST_PORT}}:{{.CONTAINER_PORT}} --link {{.CONTAINER_NAME}}:target alpine/socat tcp-listen:{{.CONTAINER_PORT}},fork,reuseaddr tcp-connect:target:{{.CONTAINER_PORT}}
 
-  install-code-server:
-    desc: Install and Start Code Server
+  start-code-server:
+    desc: Start and Start Code Server
+    cmd: >-
+      nohup bash -c 'code-server /workspaces/kubernetes-sandbox-environment --host 0.0.0.0 --port 8088 --accept-server-license-terms --telemetry-level=off --without-connection-token > /tmp/code-server.log 2>&1 &'
+      
+  build-push-devcontainer-image:
+    desc: Build base devcontainer Image.
     cmds:
-      - |
-        VERSION=4.100.3
-        ARCH=$(uname -m)
-        ARCH="${ARCH/x86_64/amd64}"
-        ARCH="${ARCH/aarch64/arm64}"
-        mkdir -p $HOME/.local/lib $HOME/.local/bin $HOME/.config/code-server
-        curl -fL https://github.com/coder/code-server/releases/download/v$VERSION/code-server-$VERSION-linux-$ARCH.tar.gz | tar -C $HOME/.local/lib -xz
-        mv  $HOME/.local/lib/code-server-$VERSION-linux-$ARCH  $HOME/.local/lib/code-server-$VERSION
-        ln -s  $HOME/.local/lib/code-server-$VERSION/bin/code-server  $HOME/.local/bin/code-server
-        PATH="$HOME/.local/bin:$PATH"
-        cp code-server/config.yaml $HOME/.config/code-server/config.yaml
-        nohup bash -c 'code-server /workspaces/kubernetes-stack > /tmp/code-server.log 2>&1 &'
+      - docker buildx create --name container-builder --driver docker-container --bootstrap --use || true
+      - devcontainer build --workspace-folder .github/ --image-name nzuguem/kubernetes-sandbox-environment:latest --platform linux/amd64,linux/arm64 --push
+
+  run-devcontainer:
+    desc: Run devcontainer
+    cmd: devcontainer up --workspace-folder ./

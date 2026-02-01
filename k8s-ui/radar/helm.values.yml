@@ -1,0 +1,14 @@
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: radar.127.0.0.1.nip.io
+      paths:
+        - path: /
+          pathType: Prefix
+
+rbac:
+  secrets: true      # Keep disabled unless needed
+  podExec: true       # Enable terminal feature
+  podLogs: true       # Enable log viewer (default)
+  portForward: true   # Enable port forwarding

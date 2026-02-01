@@ -1,0 +1,11 @@
+version: 3
+
+tasks:
+  radar-install:
+    desc: Install Radar.
+    cmds:
+      - helm repo add skyhook https://skyhook-io.github.io/helm-charts
+      - helm upgrade --install --version 0.7.6
+        --create-namespace
+        --namespace radar-system radar skyhook/radar
+        -f radar/helm.values.yml
