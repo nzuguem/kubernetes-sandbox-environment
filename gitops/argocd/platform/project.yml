@@ -17,13 +17,11 @@ spec:
   - https://github.com/nginx/nginx-gateway-fabric
   - https://kubernetes-sigs.github.io/metrics-server/
   - oci://ghcr.io/nginx/charts/nginx-gateway-fabric
-  - https://skyhook-io.github.io/helm-charts
   sourceNamespaces:
   - ingress-nginx-system
   - cert-manager-system
   - nginx-gateway-system
   - kube-system
-  - radar-system
   clusterResourceWhitelist:
   - group: '*'
     kind: '*'

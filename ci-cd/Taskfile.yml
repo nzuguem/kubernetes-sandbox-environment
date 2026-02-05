@@ -12,7 +12,7 @@ tasks:
       - helm repo add gitlab https://charts.gitlab.io
       - helm repo update
       - helm upgrade --install gitlab-runner gitlab/gitlab-runner
-        --version 0.74.0
+        --version 0.85.0
         --create-namespace --namespace gitlab-runner-system
         --set runnerToken={{.AUTH_TOKEN}}
         -f gitlab-runner/helm.values.yml
@@ -20,3 +20,26 @@ tasks:
   gitlab-runner-uninstall:
     desc: Uninstall GitLab Runner.
     cmd: helm del gitlab-runner --namespace gitlab-runner-system
+
+  install:gitlab-runner-operator:
+    desc: Install GitLab Runner Operator.
+    cmd: >-
+      kubectl apply -f gitlab-runner/operator.v1.45.0.yml
+
+  register:gitlab-runner-operator:*:
+    desc: Register GitLab Runner via Operator.
+    vars:
+      AUTH_TOKEN: '{{index .MATCH 0}}'
+    requires:
+      vars:
+        - AUTH_TOKEN
+    cmds:
+      - kubectl create secret generic gitlab-runner-operator-secret
+        --namespace gitlab-runner-system
+        --from-literal=runner-registration-token="{{.AUTH_TOKEN}}" || true
+      - kubectl apply -f gitlab-runner/runner.operator.yml
+
+  uninstall:gitlab-runner-operator:
+    desc: Install GitLab Runner Operator.
+    cmd: >-
+      kubectl delete -f gitlab-runner/operator.v1.45.0.yml

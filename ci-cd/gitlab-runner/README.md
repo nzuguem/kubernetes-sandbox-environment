@@ -20,6 +20,7 @@ task ci-cd:gitlab-runner-register/<AUTH_TOKEN>
 ```
 
 ## Resources
+- [How to Configure GitLab CI Runners on Kubernetes](https://oneuptime.com/blog/post/2026-01-27-gitlab-ci-runners-kubernetes)
 
 <!-- Links -->
 [gitlab-runner-k8s-executor]: https://docs.gitlab.com/runner/executors/kubernetes

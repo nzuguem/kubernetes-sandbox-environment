@@ -1,10 +1,31 @@
 gitlabUrl: https://gitlab.com/
 rbac:
   create: true
+  rules:
+    - resources: ["events"]
+      verbs: ["list", "watch"]
+    - resources: ["pods"]
+      verbs: ["create","delete","get", "list", "watch"]
+    - apiGroups: [""]
+      resources: ["pods/attach","pods/exec"]
+      verbs: ["get","create","patch","delete"]
+    - apiGroups: [""]
+      resources: ["pods/log"]
+      verbs: ["get","list"]
+    - resources: ["secrets"]
+      verbs: ["get", "create", "delete", "update"]
+    - resources: ["serviceaccounts"]
+      verbs: ["get"]
+
 runners:
   name: kubernetes-stack
   config: |
     [[runners]]
+      [runners.feature_flags]
+        FF_PRINT_POD_EVENTS = true
+        FF_KUBERNETES_HONOR_ENTRYPOINT = true
+        FF_USE_LEGACY_KUBERNETES_EXECUTION_STRATEGY = false
+        FF_USE_ADAPTIVE_REQUEST_CONCURRENCY = true
       [runners.kubernetes]
         namespace = "{{.Release.Namespace}}"
         image = "alpine"

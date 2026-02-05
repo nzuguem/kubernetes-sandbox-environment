@@ -59,6 +59,8 @@ tasks:
       - kubectl cluster-info --context kind-kubernetes-stack || exit 1
       - cp $HOME/.kube/config $HOME/.kube/config-argocd
       - kubectl config set-context --current --namespace=argocd-system --kubeconfig $HOME/.kube/config-argocd
+      - helm plugin install --verify=false https://github.com/databus23/helm-diff
+      - cp $PWD/kuberc $HOME/.kube/
       # Allowing load balancers access to control plane nodes
       # https://github.com/kubernetes-sigs/cloud-provider-kind#allowing-load-balancers-access-to-control-plane-nodes
       # - kubectl label node/kubernetes-stack-control-plane  node.kubernetes.io/exclude-from-external-load-balancers-
@@ -75,14 +77,6 @@ tasks:
   pre-commit-install:
     desc: Install pre-commit
     cmd: pre-commit install
-
-  platform-install:
-    desc: Install all the components required for the kubernetes platform.
-    deps:
-      - task: ingress:nginx-install
-      - task: gateway:nginx-install
-      - task: security:cert-manager-install
-    cmd: kubectl apply -f security/cert-manager/issuers/self.clusterissuer.yml
 
   platform-install-with-gitops-mode:
     desc: Install all the components required for the kubernetes platform, with GitOps Mode.
@@ -117,7 +111,7 @@ tasks:
     desc: Start and Start Code Server
     cmd: >-
       nohup bash -c 'code-server /workspaces/kubernetes-sandbox-environment --host 0.0.0.0 --port 8088 --accept-server-license-terms --telemetry-level=off --without-connection-token > /tmp/code-server.log 2>&1 &'
-      
+
   build-push-devcontainer-image:
     desc: Build base devcontainer Image.
     cmds:
@@ -126,4 +120,22 @@ tasks:
 
   run-devcontainer:
     desc: Run devcontainer
-    cmd: devcontainer up --workspace-folder ./
+    cmds:
+      - devcontainer up --remove-existing-container=true --workspace-folder ./
+      - |
+        CONTAINER_ID=$(docker ps -f "ancestor=nzuguem/kubernetes-sandbox-environment:latest" -q)
+        docker exec -it -u vscode $CONTAINER_ID bash
+
+  env:configure:shell:
+    desc: Configure SHELL
+    cmds:
+      - echo 'source <(fzf --bash)' >> /home/vscode/.bashrc
+      - echo 'source <(argocd completion bash)' >> /home/vscode/.bashrc
+      - echo 'source <(pluto completion bash)' >> /home/vscode/.bashrc
+      - echo 'alias kubectl=kubecolor' >> /home/vscode/.bashrc
+      - echo 'alias k=kubectl' >> /home/vscode/.bashrc
+      - echo 'alias argocd="KUBECONFIG=$HOME/.kube/config-argocd argocd --core"' >> /home/vscode/.bashrc
+      - echo 'complete -o default -F __start_kubectl k' >> /home/vscode/.bashrc
+      - echo 'export PATH="/usr/local/krew/bin:$PATH"' >> /home/vscode/.bashrc
+      - echo 'export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"' >> /home/vscode/.bashrc
+      - sudo sh -c 'task --completion bash > /etc/bash_completion.d/task'

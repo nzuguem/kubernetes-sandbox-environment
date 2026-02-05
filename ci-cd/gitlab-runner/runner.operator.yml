@@ -1,0 +1,23 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: gitlab-runner-operator-config
+  namespace: gitlab-runner-system
+data:
+  config.toml: |-
+    [[runners]]
+      [runners.kubernetes]
+        namespace = "gitlab-runner-system"
+        image = "alpine:latest"
+
+---
+apiVersion: apps.gitlab.com/v1beta2
+kind: Runner
+metadata:
+  name: gitlab-runner-operator
+  namespace: gitlab-runner-system
+spec:
+  gitlabUrl: https://gitlab.com
+  token: gitlab-runner-operator-secret
+  config: gitlab-runner-operator-config
+
