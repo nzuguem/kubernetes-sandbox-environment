@@ -1,7 +1,7 @@
 version: 3
 
 tasks:
-  nginx-install:
+  ingress-nginx:install:
     desc: Install Ingress Nginx.
     cmds:
       - helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
@@ -14,9 +14,24 @@ tasks:
       ## Wait for Nginx controller deployment to be Ready
       - kubectl rollout status -n ingress-nginx-system deploy/ingress-nginx-controller --timeout 90s
 
-  nginx-uninstall:
+  ingress-nginx:uninstall:
     desc: Unistall Ingress Nginx
     cmd: helm del -n ingress-nginx-system ingress-nginx
+
+  nginx-ingress:install:
+    desc: Install Nginx Ingress.
+    cmds:
+      - helm repo add nginx-ingress https://helm.nginx.com/stable
+      - helm repo update nginx-ingress
+      - helm upgrade --install nginx-ingress nginx-ingress/nginx-ingress
+        --version 2.4.4
+        --namespace nginx-ingress-system
+        --create-namespace
+        --values nginx/helm.nginx-ingress.values.yml
+
+  nginx-ingress:uninstall:
+    desc: Unistall Ingress Nginx
+    cmd: helm del -n nginx-ingress-system nginx-ingress
   
   ngrok-install:
     desc: Install Ngrok Ingress Controller.

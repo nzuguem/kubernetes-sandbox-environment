@@ -1,0 +1,19 @@
+controller:
+  hostPort:
+    enable: true
+    http: 8180
+    https: 8143
+  service:
+    type: NodePort
+  ingressClass:
+    name: nginx-ingress
+
+  nodeSelector:
+    ingress-ready: "true"
+  tolerations:
+    - key: "node-role.kubernetes.io/master"
+      operator: "Equal"
+      effect: "NoSchedule"
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Equal"
+      effect: "NoSchedule"

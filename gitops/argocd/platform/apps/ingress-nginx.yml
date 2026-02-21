@@ -17,7 +17,7 @@ spec:
       targetRevision: 4.11.3
       helm:
         valueFiles:
-        - $values/ingress/nginx/helm.values.yml
+        - $values/ingress/nginx/helm.ingress-nginx.values.yml
   syncPolicy:
     automated:
       prune: true

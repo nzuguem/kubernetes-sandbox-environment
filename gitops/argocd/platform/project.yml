@@ -13,6 +13,7 @@ spec:
   - https://github.com/nzuguem/kubernetes-sandbox-environment
   - https://github.com/kubernetes-sigs/gateway-api
   - https://kubernetes.github.io/ingress-nginx
+  - https://helm.nginx.com/stable
   - https://charts.jetstack.io
   - https://github.com/nginx/nginx-gateway-fabric
   - https://kubernetes-sigs.github.io/metrics-server/

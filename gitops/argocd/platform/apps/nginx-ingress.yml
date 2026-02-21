@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx-ingress
+  namespace: argocd-system
+spec:
+  project: platform
+  destination:
+    namespace: nginx-ingress-system
+    name: in-cluster
+  sources:
+    - repoURL: https://github.com/nzuguem/kubernetes-sandbox-environment
+      targetRevision: main
+      ref: values
+    - chart: nginx-ingress
+      repoURL: https://helm.nginx.com/stable
+      targetRevision: 2.4.4
+      helm:
+        valueFiles:
+        - $values/ingress/nginx/helm.nginx-ingress.values.yml
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

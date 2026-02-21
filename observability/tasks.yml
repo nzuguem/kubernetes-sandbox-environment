@@ -11,6 +11,16 @@ tasks:
         --namespace otel-system otel otel/opentelemetry-operator
         --set admissionWebhooks.certManager.enabled=false
         --set manager.collectorImage.repository=otel/opentelemetry-collector-contrib
+  
+  opentelemetry:demo:install:
+    desc: Install OpenTelemetry Demo Application.
+    cmds:
+      - helm repo add otel https://open-telemetry.github.io/opentelemetry-helm-charts
+      - helm repo update otel
+      - helm upgrade --install --version 0.40.3
+        --create-namespace
+        --namespace otel-demo otel otel/opentelemetry-demo
+        -f otel/helm.demo-application.values.yml
 
   opentelemetry-uninstall:
     desc: Uninstall OTel Operator.

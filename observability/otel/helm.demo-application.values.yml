@@ -1,0 +1,10 @@
+components:
+  frontend-proxy:
+    ingress:
+      enabled: true
+      hosts:
+        - host: otel-demo.127.0.0.1.nip.io
+          paths:
+            - path: /
+              pathType: Prefix
+              port: 8080
