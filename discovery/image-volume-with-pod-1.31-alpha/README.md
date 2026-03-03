@@ -15,11 +15,15 @@ A few use cases :
 ```bash
 kubectl apply -f discovery/image-volume-with-pod-1.31-alpha/image-volumes.yml
 
-## Ckeck
+## Check
 kubectl exec po/image-volume -- ls /volume
 ```
 
 We can see that the FileSystem of the `nzuguem/java-runtime:21.0.5_11-jre` image is mounted in the `/volume` directory of the Pod container.
+
+> ⚠️ Image Volumes require proper OCI images with filesystem layers, not ORAS artifacts.
+
+> [ORAS artifacts](https://oras.land/docs/concepts/artifact/) store files as opaque blob layers designed for generic artifact distribution (Helm charts, SBOMs, etc.), but they don’t have the filesystem layer structure that container runtimes can mount. Image Volumes specifically need OCI images built with tools like Docker, Podman, or Buildah that create proper tar.gz filesystem layers with the required **rootfs** metadata.
 
 ## Resources
 

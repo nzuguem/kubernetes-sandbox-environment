@@ -1,6 +1,11 @@
 configs:
+  cm:
+    url: http://argocd.127.0.0.1.nip.io
+    dex.config: "" # Disable built-in Dex since we are using OAuth2 Proxy
+    users.anonymous.enabled: "false" # Users info header from OAuth2 Proxy
   params:
     server.insecure: true # To expose the ArgoCD service in an Ingress/HTTPRoute, you will certainly need to disable TLS
+    server.rootpath: ""  # Trust proxy headers
 
 global:
   domain: argocd.127.0.0.1.nip.io
@@ -11,3 +16,8 @@ server:
     ingressClassName: "nginx"
     pathType: Prefix
     path: /
+    annotations:
+      nginx.ingress.kubernetes.io/auth-url: "http://argocd.127.0.0.1.nip.io/oauth2/auth"
+      nginx.ingress.kubernetes.io/auth-signin: "http://argocd.127.0.0.1.nip.io/oauth2/start?rd=$escaped_request_uri"
+      nginx.ingress.kubernetes.io/auth-response-headers: "X-Auth-Request-User,X-Auth-Request-Email,X-Auth-Request-Groups"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"

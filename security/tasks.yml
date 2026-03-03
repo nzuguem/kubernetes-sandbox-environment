@@ -145,3 +145,45 @@ tasks:
       - kubectl create secret generic aws-secrets
         --from-literal=AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
         --from-literal=AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+
+  oauth2-proxy:install:
+    desc: Install OAuth2 Proxy.
+    requires:
+      vars:
+        - GITHUB_CLIENT_ID
+        - GITHUB_CLIENT_SECRET
+    deps:
+      - task: oauth2-proxy:create-secret
+        vars:
+          GITHUB_CLIENT_ID: "{{.GITHUB_CLIENT_ID}}"
+          GITHUB_CLIENT_SECRET: "{{.GITHUB_CLIENT_SECRET}}"
+    cmds:
+      - helm repo add oauth2-proxy https://oauth2-proxy.github.io/manifests
+      - helm repo update oauth2-proxy
+      - helm upgrade --install oauth2-proxy oauth2-proxy/oauth2-proxy
+        --version 10.1.4
+        --create-namespace
+        --namespace oauth2-proxy-system
+        -f oauth2-proxy/helm.values.yml
+
+  oauth2-proxy:uninstall:
+    desc: Uninstall OAuth2 Proxy.
+    cmds:
+      - kubectl delete secret oauth2-proxy-secret -n oauth2-proxy-system || true
+      - helm del -n oauth2-proxy-system  oauth2-proxy
+
+  oauth2-proxy:create-secret:
+    desc: Create Secret for GitHub Provider.
+    requires:
+      vars:
+        - GITHUB_CLIENT_ID
+        - GITHUB_CLIENT_SECRET
+    vars:
+      COOKIE_SECRET:
+        sh: openssl rand -base64 32 | head -c 32 | base64
+    cmds:
+      - kubectl create secret generic oauth2-proxy-secret
+        --namespace oauth2-proxy-system
+        --from-literal=client-id={{.GITHUB_CLIENT_ID}}
+        --from-literal=client-secret={{.GITHUB_CLIENT_SECRET}}
+        --from-literal=cookie-secret={{.COOKIE_SECRET}} || true

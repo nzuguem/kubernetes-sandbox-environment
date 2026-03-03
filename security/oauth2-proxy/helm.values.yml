@@ -1,0 +1,20 @@
+config:
+  existingSecret: oauth2-proxy-secret
+  configFile: |-
+    provider = "github"
+    scope = "user:email read:org"
+    # github_org = "example-org"  # Replace with your GitHub org name, or github_team=team_name to limit access to a specific team
+    # github_team = team_name
+    github_users = "nzuguem"
+    email_domains = [ "*" ]  # Replace with [ "example.com" ] to limit access to users with specific email domain
+    cookie_secure = false
+    cookie_domains = [ ".nip.io" ]  # Replace with domain names that the proxy is allowed to redirect to after auth, prepend . for wildcards, i.e. ".example.com"
+    whitelist_domains = [ ".nip.io" ]  # Same as above
+
+ingress:
+  enabled: true
+  className: nginx
+  path: /oauth2
+  pathType: Prefix
+  hosts:
+  - argocd.127.0.0.1.nip.io
