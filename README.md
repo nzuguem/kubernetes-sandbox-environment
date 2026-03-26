@@ -32,6 +32,7 @@ It contains configurations and examples for the following components:
   - [Vault](security/vault)
 - Control Plane
   - [Crossplane](control-plane/crossplane)
+  - [AWS](control-plane/aws)
 - Serverless
   - [Knative](serverless/knative)
   - [KEDA](serverless/keda)

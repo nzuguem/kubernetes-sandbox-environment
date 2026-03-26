@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "floci.fullname" . }}
+  labels:
+    {{- include "floci.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "floci.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "floci.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "floci.fullname" . }}
+      containers:
+      - name: floci
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+          runAsUser: 0
+        ports:
+        - name: http
+          containerPort: 4566
+          protocol: TCP
+        env:
+        - name: AWS_DEFAULT_REGION
+          value: "eu-west-3"
+        - name: FLOCI_SERVICES_LAMBDA_DOCKER_HOST_OVERRIDE
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        volumeMounts:
+        {{- if .Values.dind.enabled }}
+        - name: docker-socket
+          mountPath: /var/run/
+        {{- end }}
+        - name: data
+          mountPath: /app/data
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      {{- if .Values.dind.enabled }}
+      initContainers:
+      - name: dind
+        image: "{{ .Values.dind.image.repository }}:{{ .Values.dind.image.tag }}"
+        imagePullPolicy: {{ .Values.dind.image.pullPolicy }}
+        restartPolicy: Always
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: docker-socket
+          mountPath: /var/run
+        resources:
+          {{- toYaml .Values.dind.resources | nindent 10 }}
+      {{- end }}
+        startupProbe:
+          exec:
+            command:
+              - sh
+              - -c
+              - test -S /var/run/docker.sock
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 12
+      volumes:
+      {{- if .Values.dind.enabled }}
+      - name: docker-socket
+        emptyDir: {}
+      {{- end }}
+      - name: data
+        emptyDir: {}

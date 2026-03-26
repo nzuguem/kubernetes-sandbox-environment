@@ -15,8 +15,23 @@ tasks:
     desc: UnInstall Crossplane Operator.
     cmd: helm del -n crossplane-system crossplane
 
+  floci-install:
+    desc: Install Floci AWS emulator (replaces LocalStack).
+    cmds:
+      - helm upgrade --install floci
+        --namespace default
+        aws/floci/chart
+        -f aws/floci/helm.values.yml
+      - mkdir -p $HOME/.aws && cp aws/config/* $HOME/.aws
+
+  floci-uninstall:
+    desc: Uninstall Floci AWS emulator.
+    cmds:
+      - helm del floci
+      - rm -Rf $HOME/.aws
+
   localstack-install:
-    desc: Install Localstack Operator.
+    desc: Install Localstack Operator (deprecated - use floci-install instead).
     cmds:
       - helm repo add localstack-charts https://localstack.github.io/helm-charts
       - helm repo update localstack-charts

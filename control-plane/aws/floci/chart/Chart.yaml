@@ -1,0 +1,12 @@
+apiVersion: v2
+name: floci
+description: A Kubernetes chart for Floci AWS emulator
+type: application
+version: 1.0.0
+appVersion: latest
+keywords:
+  - floci
+  - aws
+  - emulator
+maintainers:
+  - name: Kubernetes Sandbox

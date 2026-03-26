@@ -1,0 +1,42 @@
+replicaCount: 1
+
+image:
+  repository: hectorvent/floci
+  pullPolicy: IfNotPresent
+  tag: latest
+
+# Docker-in-Docker sidecar for Lambda, ElastiCache, RDS support
+dind:
+  enabled: true
+  image:
+    repository: docker
+    pullPolicy: IfNotPresent
+    tag: dind
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 128Mi
+
+service:
+  type: ClusterIP
+  port: 4566
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hosts:
+    - host: floci.127.0.0.1.nip.io
+      paths:
+        - path: /
+          pathType: Prefix
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 64Mi

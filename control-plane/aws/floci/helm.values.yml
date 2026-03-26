@@ -1,0 +1,18 @@
+# Custom Helm values for Floci deployment
+# These override the defaults in chart/values.yaml
+
+# Enable Docker-in-Docker sidecar for AWS Lambda, ElastiCache, RDS support
+dind:
+  enabled: true
+  image:
+    repository: docker
+    tag: dind
+
+# Increase Floci resources to accommodate Lambda execution
+resources:
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 128Mi
