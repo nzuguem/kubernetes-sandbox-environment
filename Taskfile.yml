@@ -58,7 +58,7 @@ tasks:
     desc: Create kubernetes cluster with Kind.
     cmds:
       - kind delete cluster --name kubernetes-stack || true
-      - kind create cluster --config kind.yml
+      - ./.devcontainer/scripts/kind-with-registry.sh
       - kubectl cluster-info --context kind-kubernetes-stack || exit 1
       - cp $HOME/.kube/config $HOME/.kube/config-argocd
       - kubectl config set-context --current --namespace=argocd-system --kubeconfig $HOME/.kube/config-argocd
@@ -118,7 +118,7 @@ tasks:
   build-push-devcontainer-image:
     desc: Build base devcontainer Image.
     cmds:
-      - docker buildx create --name container-builder --driver docker-container --bootstrap --use || true
+      - docker buildx create --name container-builder --driver docker-container --bootstrap --use || docker buildx use container-builder
       - devcontainer build --workspace-folder .github/ --image-name nzuguem/kubernetes-sandbox-environment:latest --platform linux/amd64,linux/arm64 --push
 
   run-devcontainer:
@@ -128,6 +128,16 @@ tasks:
       - |
         CONTAINER_ID=$(docker ps -f "ancestor=nzuguem/kubernetes-sandbox-environment:latest" -q)
         docker exec -it -u vscode $CONTAINER_ID bash
+
+  lazyvim:install:
+    desc: Install LazyVim
+    cmds:
+      - mv ~/.config/nvim{,.bak} || true
+      - mv ~/.local/share/nvim{,.bak} || true
+      - mv ~/.local/state/nvim{,.bak} || true
+      - mv ~/.cache/nvim{,.bak} || true
+      - git clone https://github.com/LazyVim/starter ~/.config/nvim
+      - rm -rf ~/.config/nvim/.git
 
   env:configure:shell:
     desc: Configure SHELL
@@ -141,4 +151,5 @@ tasks:
       - echo 'complete -o default -F __start_kubectl k' >> /home/vscode/.bashrc
       - echo 'export PATH="/usr/local/krew/bin:$PATH"' >> /home/vscode/.bashrc
       - echo 'export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"' >> /home/vscode/.bashrc
+      - echo 'eval "$(mise activate bash)"' >> ~/.bashrc
       - sudo sh -c 'task --completion bash > /etc/bash_completion.d/task'

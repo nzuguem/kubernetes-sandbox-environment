@@ -1,0 +1,14 @@
+version: 3
+
+tasks:
+  postgres:install:
+    desc: Install PostgreSQL.
+    cmds:
+      - kubectl create namespace postgresql-system || true
+      - kubectl apply -f postgresql/manifest.yml -n postgresql-system
+
+  elasticsearch:install:
+    desc: Install Elasticsearch.
+    cmds:
+      - kubectl create namespace elasticsearch-system || true
+      - kubectl apply -f elasticsearch/manifest.yml -n elasticsearch-system
