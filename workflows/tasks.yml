@@ -1,8 +1,15 @@
 version: 3
 
+includes:
+  datastores:
+    dir: ../datastores
+    taskfile: ../datastores
+
 tasks:
   temporal-install:
     desc: Install Temporal IO.
+    deps:
+      - task: datastores:postgres:install
     cmds:
       - helm repo add temporal https://go.temporal.io/helm-charts
       - helm repo update temporal
@@ -12,7 +19,7 @@ tasks:
         --create-namespace
         --namespace temporal-system
         -f temporal/helm.values.yml
-        --version 0.73.1
+        --version 1.2.0
       - sleep 3
       - kubectl apply -f temporal/routes.yml -n temporal-system
       - task: temporal-configure-cli
@@ -33,11 +40,11 @@ tasks:
       export TEMPORAL_ADDRESS=temporal-gateway.127.0.0.1.nip.io:443
       EOF
       source /home/vscode/.bashrc
-  
+
   temporal-install-benchmark-workers:
     desc: Temporal benchmark workers for load testing and performance evaluation of a Temporal cluster.
     cmds:
-    - helm upgrade --install 
+    - helm upgrade --install
       benchmark-workers oci://ghcr.io/temporalio/charts/benchmark-workers
       --timeout 15m
       --namespace temporal-system

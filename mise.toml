@@ -1,3 +1,11 @@
 [tools]
 devcontainer-cli = "0.81.1"
 task = "3.45.4"
+
+[tasks."sandbox:run:devcontainer"]
+description = "Run sandbox in devcontainer"
+run = '''
+devcontainer up --remove-existing-container=true --workspace-folder ./
+CONTAINER_ID=$(docker ps -f "ancestor=nzuguem/kubernetes-sandbox-environment:latest" -q)
+docker exec -it -u vscode $CONTAINER_ID bash
+'''

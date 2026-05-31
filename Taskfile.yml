@@ -46,6 +46,9 @@ includes:
   k8s-ui:
     dir: ./k8s-ui
     taskfile: ./k8s-ui
+  datastores:
+    dir: ./datastores
+    taskfile: ./datastores
 tasks:
   default:
     desc: List Tasks.
