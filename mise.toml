@@ -9,3 +9,10 @@ devcontainer up --remove-existing-container=true --workspace-folder ./
 CONTAINER_ID=$(docker ps -f "ancestor=nzuguem/kubernetes-sandbox-environment:latest" -q)
 docker exec -it -u vscode $CONTAINER_ID bash
 '''
+
+[tasks."sandbox:build-push:devcontainer"]
+description = "Build base devcontainer Image."
+run = '''
+docker buildx create --name container-builder --driver docker-container --bootstrap --use || docker buildx use container-builder
+devcontainer build --workspace-folder .github/ --image-name nzuguem/kubernetes-sandbox-environment:latest --platform linux/amd64,linux/arm64 --push
+'''

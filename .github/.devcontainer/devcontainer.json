@@ -7,9 +7,8 @@
     "ghcr.io/devcontainers/features/docker-in-docker:3": {},
     "ghcr.io/devcontainers-extra/features/kind:1": {},
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
-      "minikube": "none"
-    },
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
+    "ghcr.io/devcontainers-extra/features/kubectx-kubens:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/rio/features/k9s:1": {},
     "ghcr.io/rio/features/kustomize:1": {},
@@ -29,6 +28,7 @@
     "ghcr.io/dhoeric/features/oras:1": {},
     "ghcr.io/rio/features/vcluster:1": {},
     "ghcr.io/devcontainers-extra/features/claude-code:1": {},
+    "ghcr.io/devcontainers/features/copilot-cli:1": {},
     "ghcr.io/devcontainers-extra/features/go-task:1": {},
     "ghcr.io/devcontainers-extra/features/devcontainers-cli:1": {},
     "ghcr.io/devcontainers-extra/features/vscode-server:1": {},

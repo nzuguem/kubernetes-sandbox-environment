@@ -63,7 +63,7 @@ tasks:
       - cp $HOME/.kube/config $HOME/.kube/config-argocd
       - kubectl config set-context --current --namespace=argocd-system --kubeconfig $HOME/.kube/config-argocd
       - helm plugin install --verify=false https://github.com/databus23/helm-diff
-      - cp $PWD/kuberc $HOME/.kube/
+      - cp ./.devcontainer/config/kuberc $HOME/.kube/
       # Allowing load balancers access to control plane nodes
       # https://github.com/kubernetes-sigs/cloud-provider-kind#allowing-load-balancers-access-to-control-plane-nodes
       # - kubectl label node/kubernetes-stack-control-plane  node.kubernetes.io/exclude-from-external-load-balancers-
@@ -113,7 +113,7 @@ tasks:
   start-code-server:
     desc: Start and Start Code Server
     cmd: >-
-      nohup bash -c 'code-server /workspaces/kubernetes-sandbox-environment --host 0.0.0.0 --port 8088 --accept-server-license-terms --telemetry-level=off --without-connection-token > /tmp/code-server.log 2>&1 &'
+      nohup bash -c 'code-server /workspaces/kubernetes-sandbox-environment --bind-addr 0.0.0.0 --port 8088 --accept-server-license-terms --telemetry-level=off --without-connection-token > /tmp/code-server.log 2>&1 &'
 
   build-push-devcontainer-image:
     desc: Build base devcontainer Image.
@@ -138,6 +138,12 @@ tasks:
       - mv ~/.cache/nvim{,.bak} || true
       - git clone https://github.com/LazyVim/starter ~/.config/nvim
       - rm -rf ~/.config/nvim/.git
+
+  mise:global:install:
+    desc: Install mise tools
+    cmds:
+      - mise plugin install krew https://github.com/soupglasses/mise-krew
+      - mise use -g krew:explore@latest
 
   env:configure:shell:
     desc: Configure SHELL
