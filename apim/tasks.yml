@@ -1,17 +1,25 @@
 version: 3
 
+includes:
+  datastores:
+    dir: ../datastores
+    taskfile: ../datastores
+
 tasks:
   microcks-install:
     desc: Install Microcks.
     cmds:
+      - kubectl create ns microcks || true
+      - kubectl create -f 'https://strimzi.io/install/latest?namespace=microcks' -n microcks || true
+      - kubectl apply -f https://strimzi.io/examples/latest/kafka/kafka-ephemeral.yaml -n microcks
+      - kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n microcks
       - helm repo add microcks https://microcks.io/helm
       - helm repo update microcks
       - helm upgrade --install
         microcks microcks/microcks
-        --create-namespace
         --namespace microcks
         -f microcks/helm.values.yml
-        --version 1.10.1
+        --version 1.14.0
 
   microcks-keycloak-get-credentials:
     desc: Get Credentials of Microcks Keycloak.

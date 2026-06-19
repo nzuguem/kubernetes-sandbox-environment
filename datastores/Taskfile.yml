@@ -12,3 +12,14 @@ tasks:
     cmds:
       - kubectl create namespace elasticsearch-system || true
       - kubectl apply -f elasticsearch/manifest.yml -n elasticsearch-system
+  
+  strimzi:install:
+    desc: Install Strimzi Operator.
+    cmds:
+      - helm repo add strimzi https://strimzi.io/charts/
+      - helm repo update strimzi
+      - helm upgrade --install
+        strimzi strimzi/strimzi-kafka-operator
+        --create-namespace
+        --namespace strimzi
+        --version 0.51.0 # For support of v1alpha1, v1beta1, and v1beta2

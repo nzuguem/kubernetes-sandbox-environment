@@ -4,3 +4,10 @@ microcks:
 keycloak:
   url: keycloak.127.0.0.1.nip.io
   privateUrl: http://microcks-keycloak.microcks.svc.cluster.local:8080
+
+features:
+  async:
+    enabled: true
+    kafka:
+      install: false
+      url: my-cluster-kafka-bootstrap:9092 # Install via Strimzi Operator
