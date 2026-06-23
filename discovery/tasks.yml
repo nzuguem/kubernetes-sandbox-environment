@@ -3,11 +3,11 @@ version: 3
 tasks:
   kube-startup-cpu-boost-install:
     desc: Install Startup CPU Boost.
-    cmd: kubectl apply -f https://github.com/google/kube-startup-cpu-boost/releases/download/v0.11.3/manifests.yaml
+    cmd: kubectl apply -f https://github.com/google/kube-startup-cpu-boost/releases/download/v0.17.1/manifests.yaml
 
   kube-startup-cpu-boost-uninstall:
     desc: Uninstall Startup CPU Boost.
-    cmd: kubectl delete -f https://github.com/google/kube-startup-cpu-boost/releases/download/v0.11.3/manifests.yaml
+    cmd: kubectl delete -f https://github.com/google/kube-startup-cpu-boost/releases/download/v0.17.1/manifests.yaml
   
   update-kubernetes-goat-submodule-🐐:
     desc: Update kubernetes Goat submodule
