@@ -1,8 +1,8 @@
 replicaCount: 1
 
 image:
-  repository: hectorvent/floci
-  pullPolicy: IfNotPresent
+  repository: floci/floci
+  pullPolicy: Always
   tag: latest
 
 # Docker-in-Docker sidecar for Lambda, ElastiCache, RDS support
@@ -28,6 +28,10 @@ ingress:
   enabled: true
   ingressClassName: nginx
   hosts:
+    - host: localhost.floci.io
+      paths:
+        - path: /
+          pathType: Prefix
     - host: floci.127.0.0.1.nip.io
       paths:
         - path: /

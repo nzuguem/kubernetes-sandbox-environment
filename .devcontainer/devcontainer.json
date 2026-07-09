@@ -28,7 +28,8 @@
     9443,
     8088,
     9280,
-    5001
+    5001,
+    3001
   ],
   "postStartCommand": "bash .devcontainer/scripts/postStartCommand.sh",
   "onCreateCommand": "bash  .devcontainer/scripts/onCreateCommand.sh"

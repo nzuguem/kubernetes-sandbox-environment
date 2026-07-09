@@ -1,0 +1,22 @@
+# https://www.solo.io/blog/istio-ambient-argo-cd-kind-15-minutes
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-cni
+  namespace: argocd-system
+spec:
+  project: platform
+  destination:
+    namespace: kube-system
+    name: in-cluster
+  sources:
+  - chart: cni
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    targetRevision: 1.30.2
+    helm:
+      values: |
+        profile: ambient
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

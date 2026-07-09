@@ -19,6 +19,9 @@ spec:
   - https://kubernetes-sigs.github.io/metrics-server/
   - oci://ghcr.io/nginx/charts/nginx-gateway-fabric
   - https://oauth2-proxy.github.io/manifests
+  - https://istio-release.storage.googleapis.com/charts
+  - https://kiali.org/helm-charts
+  - https://github.com/istio/istio/
   sourceNamespaces:
   - ingress-nginx-system
   - cert-manager-system

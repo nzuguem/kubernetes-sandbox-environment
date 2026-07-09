@@ -48,6 +48,8 @@ It contains configurations and examples for the following components:
   - [Microcks](apim/microcks)
 - Internal Developer Platform
   - [Backtage](idp/backstage)
+- Service Mesh
+  - [Istio](mesh/istio)
 - [Trash](trash/)
 
 ## Launch DevContainer
@@ -68,11 +70,20 @@ It contains configurations and examples for the following components:
 
 ```bash
 git clone https://github.com/nzuguem/kubernetes-sandbox-environment
+cd kubernetes-sandbox-environment
 
-devcontainer up --workspace-folder kubernetes-sandbox-environment
+devcontainer up --remove-existing-container=true --workspace-folder ./
+CONTAINER_ID=$(docker ps -f "ancestor=nzuguem/kubernetes-sandbox-environment:latest" -q)
+docker exec -it -u vscode $CONTAINER_ID bash
+cd /workspaces/kubernetes-sandbox-environment
 ```
 
-You can VS Code on your Browser : http://localhost:8088
+If you need a version of VS Code that you can access via your browser :
+
+```bash
+task start-code-server
+# http://localhost:8088/?folder=/workspaces/kubernetes-sandbox-environment
+```
 
 ### Troubleshooting
 

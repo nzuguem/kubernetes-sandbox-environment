@@ -1,0 +1,14 @@
+version: 3
+
+tasks:
+  istio:install:addons:
+    desc: Install all Istio addons
+    cmds:
+      - kubectl label ns/default istio.io/dataplane-mode=ambient
+      - kubectl apply -n istio-system -f https://raw.githubusercontent.com/istio/istio/refs/tags/1.30.2/samples/addons/prometheus.yaml
+      - kubectl apply -n istio-system -f https://raw.githubusercontent.com/istio/istio/refs/tags/1.30.2/samples/addons/grafana.yaml
+      - kubectl apply -n istio-system -f https://raw.githubusercontent.com/istio/istio/refs/tags/1.30.2/samples/addons/kiali.yaml
+      - kubectl apply -n istio-system -f istio/kiali.ingress.yml
+      - kubectl apply -n istio-system -f istio/grafana.ingress.yml
+
+

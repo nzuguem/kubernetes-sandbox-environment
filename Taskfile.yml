@@ -49,6 +49,9 @@ includes:
   datastores:
     dir: ./datastores
     taskfile: ./datastores
+  mesh:
+    dir: ./mesh
+    taskfile: ./mesh
 tasks:
   default:
     desc: List Tasks.
@@ -113,7 +116,12 @@ tasks:
   start-code-server:
     desc: Start and Start Code Server
     cmd: >-
-      nohup bash -c 'code-server /workspaces/kubernetes-sandbox-environment --bind-addr 0.0.0.0 --port 8088 --accept-server-license-terms --telemetry-level=off --without-connection-token > /tmp/code-server.log 2>&1 &'
+      nohup bash -c 'code-server --host 0.0.0.0 --port 8088 --accept-server-license-terms --disable-telemetry --without-connection-token > /tmp/code-server.log 2>&1 &'
+
+  start:firefox:
+    desc: Start firefox browser
+    cmd: >-
+      docker run -d --name=firefox --net kind -e PUID=1000 -e PGID=1000 -e TZ=Europe/Paris -e LC_ALL=fr_FR.UTF-8 -p 3001:3001 --restart unless-stopped lscr.io/linuxserver/firefox:latest
 
   build-push-devcontainer-image:
     desc: Build base devcontainer Image.

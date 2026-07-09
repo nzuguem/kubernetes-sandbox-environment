@@ -1,0 +1,21 @@
+# https://www.solo.io/blog/istio-ambient-argo-cd-kind-15-minutes
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-ztunnel
+  namespace: argocd-system
+spec:
+  project: platform
+  destination:
+    namespace: istio-system
+    name: in-cluster
+  sources:
+  - chart: ztunnel
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    targetRevision: 1.30.2
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
