@@ -100,27 +100,6 @@ Make sure that the following ports are available :
 
 Execute the command `lsof -i:<PORT>` to identify the PID occupying one of these ports. Then execute the command `kill -9 <PID>` to kill the process
 
-## Manage cluster in DevContainer
-
-### [Kind][kind-doc]
-
-- Start cluster
-
-> ℹ️ Cluster deployed after devContainer startup
-
-```bash
-## Deploy CLuster
-task cluster-kind-deploy
-```
-
-- Delete cluster
-
-> ℹ️ The DevContainer associated with this environment is deleted when the VS Code Dev Container mode is disconnected.
-
-```bash
-task cluster-kind-undeploy
-```
-
 <!-- Links -->
 [kind-doc]:https://kind.sigs.k8s.io/
 [vs-code-dev-container-doc]: https://code.visualstudio.com/docs/devcontainers/containers

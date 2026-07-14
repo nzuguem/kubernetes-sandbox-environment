@@ -28,15 +28,14 @@ To install the add-ons to get some extra features:
 task mesh:istio:install:addons
 ```
 
+- [Kiali](https://kiali.io/) : http://kiali.127.0.0.1.nip.io/kiali
+- Grafana : http://grafana-istio.127.0.0.1.nip.io/
+
 ## Tests
 If you need a browser to access the deployed applications :
 ```bash
 task start:firefox
 # https://localhost:3001
 ```
-
-
-- [Kiali](https://kiali.io/) : http://kiali.127.0.0.1.nip.io/kiali
-- Grafana : http://grafana-istio.127.0.0.1.nip.io/
 
 
