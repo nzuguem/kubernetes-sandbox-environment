@@ -1,0 +1,13 @@
+version: 3
+
+tasks:
+  kyverno:install:
+    desc: Install Kyverno Operator
+    cmds:
+      - helm repo add kyverno https://kyverno.github.io/kyverno/
+      - helm repo update kyverno
+      - helm upgrade --install kyverno kyverno/kyverno
+        --version 3.8.2
+        --create-namespace
+        --namespace kyverno-system
+        -f kyverno/helm.values.yml

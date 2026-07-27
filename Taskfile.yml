@@ -52,6 +52,9 @@ includes:
   mesh:
     dir: ./mesh
     taskfile: ./mesh
+  policies:
+    dir: ./policies
+    taskfile: ./policies
 tasks:
   default:
     desc: List Tasks.

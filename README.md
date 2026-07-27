@@ -50,6 +50,8 @@ It contains configurations and examples for the following components:
   - [Backtage](idp/backstage)
 - Service Mesh
   - [Istio](mesh/istio)
+- Policies
+  - [Kyverno](policies/kyverno)
 - [Trash](trash/)
 
 ## Launch DevContainer

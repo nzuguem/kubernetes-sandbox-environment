@@ -1,0 +1,29 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: require-run-as-non-root
+spec:
+  validationActions: [Deny]
+  evaluation:
+    background:
+      enabled: true
+    admission:
+      enabled: true
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  matchConditions:
+    - name: exclude-system-ns
+      expression: >-
+        !(['kube-system','kyverno'].exists(ns, object.metadata.namespace == ns))
+  validations:
+    - expression: >-
+        object.spec.containers.all(c,
+          has(c.securityContext) &&
+          has(c.securityContext.runAsNonRoot) &&
+          c.securityContext.runAsNonRoot == true
+        )
+      message: "Tous les conteneurs doivent avoir runAsNonRoot: true."

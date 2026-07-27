@@ -1,0 +1,26 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-image-registries
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+    - name: validate-registries
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - ttl-sh
+      validate:
+        message: "Unknown image registry."
+        pattern:
+          spec:
+            =(ephemeralContainers):
+              - image: "ttl.sh/*"
+            =(initContainers):
+              - image: "ttl.sh/*"
+            containers:
+              - image: "ttl.sh/*"

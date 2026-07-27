@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: ttl-sh-exception
+  namespace: ttl-sh
+spec:
+  exceptions:
+    - policyName: restrict-image-registries
+      ruleNames:
+        - validate-registries
+  match:
+    any:
+      - resources:
+          kinds:
+            - Pod
+          namespaces:
+            - ttl-sh
+          names:
+            - nginx-bypass

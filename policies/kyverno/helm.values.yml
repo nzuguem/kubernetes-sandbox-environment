@@ -1,0 +1,15 @@
+cleanupController:
+  rbac:
+    clusterRole:
+      extraResources:
+      - apiGroups: ['']
+        resources: ['pods']
+        verbs: ['get', 'list', 'watch', 'delete']
+      - apiGroups: [ '' ]
+        resources: [ 'configmaps' ]
+        verbs: [ 'get', 'list', 'watch', 'delete' ]
+
+features:
+  policyExceptions:
+    enabled: true
+    namespace: "*"
