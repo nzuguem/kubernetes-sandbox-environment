@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-server-everything
+  labels:
+    app: mcp-server-everything
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mcp-server-everything
+  template:
+    metadata:
+      labels:
+        app: mcp-server-everything
+    spec:
+      containers:
+        - name: mcp-server-everything
+          image: node:20-alpine
+          command: ["npx"]
+          args: ["-y", "@modelcontextprotocol/server-everything", "streamableHttp"]
+          ports:
+            - containerPort: 3001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp-server-everything
+  labels:
+    app: mcp-server-everything
+spec:
+  selector:
+    app: mcp-server-everything
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+      appProtocol: agentgateway.dev/mcp
+  type: ClusterIP

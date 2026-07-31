@@ -1,0 +1,23 @@
+version: 3
+
+tasks:
+  agentgateway:install:
+    desc: Install agentgateway.
+    cmds:
+      ## Install CRDs
+      - helm upgrade --install
+        --create-namespace --namespace agentgateway-system
+        --version v1.4.0 agentgateway-crds
+        oci://cr.agentgateway.dev/charts/agentgateway-crds
+
+      ## Install Control Plane and GatewayClass
+      - helm upgrade --install
+        -n agentgateway-system
+        agentgateway oci://cr.agentgateway.dev/charts/agentgateway
+        --version v1.4.0
+
+  mcp-inspector:start:
+    desc: Launch @modelcontextprotocol/inspector
+    env:
+      MCP_CATALOG_PATH: agentgateway/mcp.json
+    cmd: mise x node -- npx -y @modelcontextprotocol/inspector --tui

@@ -1,0 +1,19 @@
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayBackend
+metadata:
+  name: mcp-backend
+spec:
+  mcp:
+    failureMode: FailOpen
+    targets:
+      - name: mcp-website-fetcher
+        static:
+          backendRef:
+            name: mcp-website-fetcher
+          port: 80
+          protocol: SSE
+      - name: mcp-server-everything
+        selector:
+          services:
+            matchLabels:
+              app: mcp-server-everything

@@ -55,6 +55,9 @@ includes:
   policies:
     dir: ./policies
     taskfile: ./policies
+  ai:
+    dir: ./ai
+    taskfile: ./ai
 tasks:
   default:
     desc: List Tasks.
