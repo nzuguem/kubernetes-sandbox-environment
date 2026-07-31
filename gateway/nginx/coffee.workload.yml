@@ -11,6 +11,7 @@ spec:
     metadata:
       labels:
         app: coffee
+        type: liquid
     spec:
       containers:
       - name: coffee
@@ -44,6 +45,7 @@ spec:
     metadata:
       labels:
         app: tea
+        type: liquid
     spec:
       containers:
       - name: tea
@@ -63,3 +65,18 @@ spec:
     name: http
   selector:
     app: tea
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: liquid
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    type: liquid

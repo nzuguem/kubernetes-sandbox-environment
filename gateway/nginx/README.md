@@ -112,6 +112,31 @@ grpcurl -plaintext -proto gateway/nginx/advanced/grpc/grpc.proto -d '{"name": "v
 grpcurl -plaintext -proto gateway/nginx/advanced/grpc/grpc.proto -d '{"name": "version two color orange"}' -H 'version: two' -H 'color: orange' localhost:9080 helloworld.Greeter/SayHello
 ```
 
+## [GAMMA Initiative(Gateway API for Mesh Management and Administration)](https://gateway-api.sigs.k8s.io/docs/mesh/mesh-overview/)
+
+GAMMA extends Gateway API to support internal service-to-service traffic (east-west traffic). This allows us to use the same Gateway API resources like HTTPRoute and GRPCRoute for both ingress and mesh traffic.
+
+The GAMMA approach of the Gateway API requires a service mesh to be installed, in this cluster, Istio running in Ambient mode.
+
+By default, Ambient mode only operates at Layer 4 (L4), handling basic traffic routing and mTLS without deep application-layer awareness. If Layer 7 (L7) features are needed, such as HTTP-based routing, retries, traffic splitting, or header-based rules, [the Waypoint Proxy must be enabled and properly configured](https://www.solo.io/blog/istio-ambient-waypoint-proxy-deployment-model-explained), as it is responsible for providing L7 capabilities within the Ambient mesh.
+
+### Test
+
+```bash
+# Deploy Waypoint Proxy for L7 features
+k apply -f gateway/nginx/gamma/waypoint.gateway.yml
+
+# Enable Istio/Waypoint Proxy on default NS
+k label ns/default istio.io/dataplane-mode=ambient istio.io/use-waypoint=waypoint
+
+k apply -f gateway/nginx/coffee.workload.yml
+
+k apply -f gateway/nginx/gamma/coffee.routes.yml
+
+k run --rm -it curl --image=curlimages/curl --restart Never -- liquid/coffee
+k run --rm -it curl --image=curlimages/curl --restart Never -- liquid/tea
+```
+
 ## Uninstall
 
 ```bash
