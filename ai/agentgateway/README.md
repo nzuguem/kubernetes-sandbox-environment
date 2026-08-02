@@ -31,6 +31,42 @@ k apply -f ai/agentgateway/mcp
 task ai:mcp-inspector:start
 ```
 
+### [Models Serving](https://agentgateway.dev/docs/kubernetes/latest/llm/)
+
+```bash
+# Install httpbun (he LLM-testing equivalent of httpbin)
+k apply -f ai/agentgateway/models/httpbun.k8s.yml
+
+# Create AgentgatewayModel for Model Serving via Gateway API
+k apply -f ai/agentgateway/models/gpt-4.agentgatewaymodel.yml
+
+# List available models
+curl -s http://$INGRESS_GW_ADDRESS/v1/models
+# {"data":[{"id":"gpt-4","object":"model","created":1785610753,"owned_by":"openai"}],"object":"list"}
+
+# Request for model
+curl -X POST http://$INGRESS_GW_ADDRESS/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4",
+    "messages": [{"role": "user", "content": "Hello!"}],
+    "httpbun": {"content": "Hello from the mock LLM"}
+  }'
+# {"model":"gpt-4","usage":{"prompt_tokens":4,"completion_tokens":6,"total_tokens":10},"choices":[{"message":{"content":"Hello from the mock LLM","role":"assistant"},"finish_reason":"stop","index":0}],"created":1785611907,"id":"chatcmpl-d2b292deca1840fc2d81add5","object":"chat.completion"}
+```
+
+It is also possible to use models hosted by third-party providers (OpenAI, Anthropic, etc.).
+
+In my example below, I will instead use a model available via the OpenRouter interface
+
+```bash
+# Create OpenRouter Secret witch OPENROUTER_API_KEY
+k create secret generic openrouter-secret --from-literal=Authorization=<OPENROUTER_API_KEY> -n agentgateway-system
+
+# Create Agentgatewaymodels
+k apply -f ai/agentgateway/models/openrouter-models.agentgatewaymodel.yml
+```
+
 ## Alternatives
 
 - [LiteLLM](https://www.litellm.ai/)

@@ -15,6 +15,9 @@ tasks:
         -n agentgateway-system
         agentgateway oci://cr.agentgateway.dev/charts/agentgateway
         --version v1.4.0
+        --reuse-values
+        --set agentgatewayModels.enabled=true
+        --wait
 
   mcp-inspector:start:
     desc: Launch @modelcontextprotocol/inspector

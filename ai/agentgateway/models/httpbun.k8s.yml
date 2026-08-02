@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpbun
+  namespace: default
+  labels:
+    app: httpbun
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: httpbun
+  template:
+    metadata:
+      labels:
+        app: httpbun
+    spec:
+      containers:
+        - name: httpbun
+          image: sharat87/httpbun
+          env:
+            - name: HTTPBUN_BIND
+              value: "0.0.0.0:3090"
+          ports:
+            - containerPort: 3090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpbun
+  namespace: default
+  labels:
+    app: httpbun
+spec:
+  selector:
+    app: httpbun
+  ports:
+    - protocol: TCP
+      port: 3090
+      targetPort: 3090
+  type: ClusterIP
