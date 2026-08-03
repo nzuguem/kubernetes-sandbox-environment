@@ -23,7 +23,21 @@ tasks:
       - sleep 3
       - kubectl apply -f temporal/routes.yml -n temporal-system
       - task: temporal-configure-cli
-      - task: temporal:worker-controller:install
+      - task: temporal-worker-controller:install
+  temporal-worker-controller:install:
+    desc: Install Kubernetes Temporal Worker Controller
+    cmds:
+    # 1. Install CRDs
+    - helm install temporal-worker-controller-crds
+      oci://docker.io/temporalio/temporal-worker-controller-crds
+      --version 0.27.1
+      --namespace temporal-system
+      --create-namespace
+    # 2. Install the controller
+    - helm install temporal-worker-controller
+      oci://docker.io/temporalio/temporal-worker-controller
+      --version 0.27.1
+      --namespace temporal-system
 
   temporal-grafana-get-credentials:
     desc: Get Temporal Grafana credentials.
@@ -50,21 +64,6 @@ tasks:
       --timeout 15m
       --namespace temporal-system
       -f temporal/helm.values.workers.yml
-
-  temporal:worker-controller:install:
-    desc: Temporal worker controller for managing the lifecycle of Temporal workers in a Kubernetes cluster.
-    cmds:
-    - helm upgrade --install temporal-worker-controller-crds
-      oci://docker.io/temporalio/temporal-worker-controller-crds
-      --version 0.26.0
-      --namespace temporal-system
-      --create-namespace
-      --wait
-    - helm upgrade --install temporal-worker-controller
-      oci://docker.io/temporalio/temporal-worker-controller
-      --version 0.26.0
-      --namespace temporal-system
-      --wait
 
   temporal-uninstall:
     desc: Uninstall Temporal IO.

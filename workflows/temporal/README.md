@@ -97,6 +97,52 @@ WorkflowServiceStubs service = WorkflowServiceStubs.newServiceStubs(
 
 ### Késako ?
 
+Temporal workflows require deterministic execution, which means updating worker code can break running workflows if the changes aren't backward compatible. Traditional deployment strategies force you to either risk breaking existing workflows or use Temporal's Patching API to maintain compatibility across versions.
+
+Temporal's Worker Versioning feature solves this dilemma by providing programmatic control over worker versions and traffic routing. The Temporal Worker Controller automates a deployment system that uses Worker Versioning on Kubernetes. When you deploy new code, the controller automatically creates a new worker version while keeping the old version running. Existing workflows continue on the old version while new workflows use the new version. This approach eliminates the need for patches in many cases and ensures running workflows are never disrupted.
+
+[**Temporal Worker Controller Architecture Reference**](https://github.com/temporalio/temporal-worker-controller/blob/main/docs/architecture.md)
+
+### Test
+
+```bash
+# Clone temporal example project
+git clone https://github.com/nzuguem/temporal-petstore-ddd.git
+cd temporal-petstore-ddd
+mise install
+VERSION=<VERSION> mise run release+deploy
+
+# ⚠️⚠️ Create Payment Nexus Endpoint on Temporal UI (http://temporal-ui.127.0.0.1.nip.io)⚠️⚠️
+## Name: payment
+## Namespace: default
+## Task Queue: payment-tasks
+
+# Curl Test
+curl -X POST http://petstore-worker.127.0.0.1.nip.io:9080 -H "Content-Type: application/json" -d '{
+  "creditCard": {
+    "cardNumber": "4400123487650987",
+    "cardHolderName": "Homer Simpson",
+    "expiryDate": "12/25",
+    "cvv": "372",
+    "type": "VISA"
+  },
+  "customerEmail": "homer.simpson@springfield.gov",
+  "products": [
+    {
+      "sku": "DOG-COLLAR-001",
+      "quantity": 5,
+      "price": 19.99
+    }
+  ]
+}'
+```
+
+🔥 You can now make changes to the code and explore different versioning strategies for Temporal Workers
+
+Some useful links for managing the rollout manually or taking action in the event of a failed rollout :
+
+- [Rolling out changes with the CLI](https://docs.temporal.io/production-deployment/worker-deployments/worker-versioning#rolling-out-changes-with-the-cli)
+- [Recover pinned Workflows after a bad rollout](https://docs.temporal.io/production-deployment/worker-deployments/recover-pinned-workflows)
 
 ## Uninstall
 
