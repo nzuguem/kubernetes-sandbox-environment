@@ -7,7 +7,7 @@ containerdConfigPatches:
     config_path = "/etc/containerd/certs.d"
 nodes:
 - role: control-plane
-  image: kindest/node:v1.35.1
+  image: kindest/node:v1.36.1
   # Need By Falco : https://gist.github.com/Issif/e17c9294b4e1a76a274db387fe58343c
   extraMounts:
     # Allow Falco to use devices provided by the kernel module
@@ -78,4 +78,4 @@ nodes:
     hostPort: 9443
     protocol: TCP
 - role: worker
-  image: kindest/node:v1.35.1
+  image: kindest/node:v1.36.1
