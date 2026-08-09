@@ -1,0 +1,8 @@
+apiVersion: agentgateway.dev/v1alpha1
+kind: AgentgatewayBackend
+metadata:
+  name: a2a-backend
+spec:
+  a2a:
+    host: a2a-agent.default.svc.cluster.local
+    port: 9090

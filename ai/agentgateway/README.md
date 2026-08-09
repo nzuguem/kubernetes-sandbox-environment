@@ -13,8 +13,6 @@ Agentgateway is part of the Agentic AI Foundation (AAIF), hosted by the Linux Fo
 ```bash
 task ai:agentgateway:install
 
-# Create a Gateway that uses the agentgateway GatewayClass
-k apply -f ai/agentgateway/agentgateway-proxy.yml -n agentgateway-system
 export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system agentgateway-proxy -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
 echo $INGRESS_GW_ADDRESS
 
@@ -67,6 +65,38 @@ k create secret generic openrouter-secret --from-literal=Authorization=<OPENROUT
 
 # Create Agentgatewaymodels
 k apply -f ai/agentgateway/models/openrouter-models.agentgatewaymodel.yml
+```
+
+### [Agent To Agent (A2A)](https://agentgateway.dev/docs/kubernetes/latest/agent/about/)
+
+```bash
+k apply -f ai/agentgateway/a2a
+
+# Show Agent Card
+curl -X GET http://$INGRESS_GW_ADDRESS/myagent/.well-known/agent.json | jq
+
+# Submit a task to Agent
+curl -X POST http://$INGRESS_GW_ADDRESS/myagent \
+  -H "Content-Type: application/json" \
+    -v \
+    -d '{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "method": "tasks/send",
+  "params": {
+    "id": "1",
+    "message": {
+      "role": "user",
+      "parts": [
+        {
+          "type": "text",
+          "text": "hello gateway!"
+        }
+      ]
+    }
+  }
+  }' | jq
+# {"jsonrpc":"2.0","id":"1","result":{"id":"1","sessionId":"a12e7b9ddd864510a42bf64bea5b3c04","status":{"state":"completed","message":{"role":"agent","parts":[{"type":"text","text":"on_send_task received: hello gateway!"}]},"timestamp":"2026-08-09T13:47:31.349135"},"artifacts":[{"parts":[{"type":"text","text":"on_send_task received: hello gateway!"}],"index":0}],"history":[{"role":"user","parts":[{"type":"text","text":"hello gateway!"}]},{"role":"user","parts":[{"type":"text","text":"hello gateway!"}]},{"role":"user","parts":[{"type":"text","text":"hello gateway!"}]}]}}
 ```
 
 ## Alternatives

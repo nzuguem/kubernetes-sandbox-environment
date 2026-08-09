@@ -18,9 +18,10 @@ tasks:
         --reuse-values
         --set agentgatewayModels.enabled=true
         --wait
+      - kubectl apply -f agentgateway/agentgateway-proxy.yml -n agentgateway-system
 
   mcp-inspector:start:
     desc: Launch @modelcontextprotocol/inspector
     env:
-      MCP_CATALOG_PATH: agentgateway/mcp.json
+      MCP_CATALOG_PATH: agentgateway/mcp/mcp.json
     cmd: mise x node -- npx -y @modelcontextprotocol/inspector --tui
