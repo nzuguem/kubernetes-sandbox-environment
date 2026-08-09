@@ -101,4 +101,4 @@ curl -X POST http://$INGRESS_GW_ADDRESS/myagent \
 
 ## Alternatives
 
-- [LiteLLM](https://www.litellm.ai/)
+- [LiteLLM](../litellm/)

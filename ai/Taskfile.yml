@@ -1,5 +1,10 @@
 version: 3
 
+includes:
+  datastores:
+    dir: ../datastores
+    taskfile: ../datastores
+
 tasks:
   agentgateway:install:
     desc: Install agentgateway.
@@ -19,6 +24,38 @@ tasks:
         --set agentgatewayModels.enabled=true
         --wait
       - kubectl apply -f agentgateway/agentgateway-proxy.yml -n agentgateway-system
+
+  litellm:install:
+    desc: Install litellm.
+    deps:
+      - task: datastores:postgres:install
+      - task: datastores:redis:install
+    cmds:
+      - kubectl create namespace litellm-system || true
+      - kubectl create secret generic litellm-masterkey
+        --from-literal=masterkey="sk-$(openssl rand -hex 24)"
+        -n litellm-system || true
+      - kubectl create secret generic litellm-db
+        --from-literal=username=postgres
+        --from-literal=password=postgres
+        -n litellm-system || true
+      - kubectl create secret generic litellm-env
+        --from-literal=LITELLM_SALT_KEY="sk-$(openssl rand -hex 24)"
+        --from-literal=REDIS_PASSWORD=redis
+        -n litellm-system || true
+      - helm upgrade --install litellm
+        oci://ghcr.io/berriai/litellm/chart/litellm
+        --version 1.95.1
+        --namespace litellm-system
+        -f litellm/helm.values.yml
+
+  litellm:get-credentials:
+    desc: Get the credentials for litellm.
+    vars:
+      LITELLM_PASSWORD:
+        sh: kubectl -n litellm-system get secret litellm-masterkey -o
+          jsonpath="{.data.masterkey}" | base64 -d
+    cmd: echo "admin/{{.LITELLM_PASSWORD}}"
 
   mcp-inspector:start:
     desc: Launch @modelcontextprotocol/inspector

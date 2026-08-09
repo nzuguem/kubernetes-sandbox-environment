@@ -1,0 +1,25 @@
+masterKey:
+  secretName: litellm-masterkey
+  secretKey: masterkey
+
+database:
+  writer:
+    host: postgres.postgresql-system.svc.cluster.local
+    port: 5432
+    dbname: litellm
+    passwordSecret:
+      name: litellm-db
+      usernameKey: username
+      passwordKey: password
+
+redis:
+  host: redis-0.redis-system.svc.cluster.local
+  port: 6379
+  passwordSecret:
+    name: litellm-env
+    passwordKey: REDIS_PASSWORD
+
+ingress:
+  enabled: true
+  className: nginx
+  host: litellm.127.0.0.1.nip.io
