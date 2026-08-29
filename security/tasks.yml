@@ -22,6 +22,7 @@ tasks:
       - helm repo add external-secrets https://charts.external-secrets.io
       - helm repo update external-secrets
       - helm upgrade --install external-secrets external-secrets/external-secrets
+        --version 2.9.0
         --create-namespace
         --namespace eso-system
         --set installCRDs=true

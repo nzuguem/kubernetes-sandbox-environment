@@ -1,0 +1,27 @@
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Webhook
+metadata:
+  name: temporal-api-keys-gen
+spec:
+  url: https://saas-api.tmprl.cloud/cloud/api-keys
+  method: POST
+  headers:
+    Content-Type: application/json
+    Authorization: Bearer {{ .apiKey.value }}
+  body: |
+    {
+      "spec": {
+        "description": "Foo bar",
+        "disabled": false,
+        "displayName": "api-key-{{ now | unixEpoch }}",
+        "expiryTime": "{{ now | dateModify "+720h" | date "2006-01-02T15:04:05Z" }}",
+        "ownerId": "1f4f01c9315d4ab0848222cb58765f0f",
+        "ownerType": "OWNER_TYPE_SERVICE_ACCOUNT"
+      }
+    }
+  result:
+    jsonPath: "$"
+  secrets:
+    - name: apiKey
+      secretRef:
+        name: temporal-api-key-root
