@@ -1,13 +1,15 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: kubernetes-stack
+networking:
+  ipFamily: dual
 containerdConfigPatches:
   - |-
     [plugins."io.containerd.grpc.v1.cri".registry]
     config_path = "/etc/containerd/certs.d"
 nodes:
 - role: control-plane
-  image: kindest/node:v1.36.1
+  image: kindest/node:v1.37.0
   # Need By Falco : https://gist.github.com/Issif/e17c9294b4e1a76a274db387fe58343c
   extraMounts:
     # Allow Falco to use devices provided by the kernel module
@@ -26,26 +28,31 @@ nodes:
     containerPath: /etc/kubernetes/policies/audit-policy.yaml
     readOnly: true
   kubeadmConfigPatches:
-  - |
-    kind: InitConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        node-labels: "ingress-ready=true,kourier-ready=true,gateway-ready=true"
-  # Need By Falco : https://gist.github.com/Issif/e17c9294b4e1a76a274db387fe58343c
-  - |
+    - |
+      apiVersion: kubeadm.k8s.io/v1beta4
+      kind: InitConfiguration
+      nodeRegistration:
+        kubeletExtraArgs:
+          - name: node-labels
+            value: "ingress-ready=true,kourier-ready=true,gateway-ready=true"
+    # Need By Falco : https://gist.github.com/Issif/e17c9294b4e1a76a274db387fe58343c
+    - |
+      apiVersion: kubeadm.k8s.io/v1beta4
       kind: ClusterConfiguration
       apiServer:
-          # enable auditing flags on the API server
-          extraArgs:
-            audit-webhook-config-file: /etc/kubernetes/policies/webhook-config.yaml
-            audit-policy-file: /etc/kubernetes/policies/audit-policy.yaml
-          # mount new files / directories on the control plane
-          extraVolumes:
-            - name: audit-policies
-              hostPath: /etc/kubernetes/policies
-              mountPath: /etc/kubernetes/policies
-              readOnly: true
-              pathType: "DirectoryOrCreate"
+        # enable auditing flags on the API server
+        extraArgs:
+          - name: audit-webhook-config-file
+            value: /etc/kubernetes/policies/webhook-config.yaml
+          - name: audit-policy-file
+            value: /etc/kubernetes/policies/audit-policy.yaml
+        # mount new files / directories on the control plane
+        extraVolumes:
+          - name: audit-policies
+            hostPath: /etc/kubernetes/policies
+            mountPath: /etc/kubernetes/policies
+            readOnly: true
+            pathType: "DirectoryOrCreate"
   extraPortMappings:
   # Ingress Nginx : expose port 80 (HostPort) of the node on which Nginx is deployed, to port 80 on the host (DevContainer).
   - containerPort: 80
@@ -78,4 +85,4 @@ nodes:
     hostPort: 9443
     protocol: TCP
 - role: worker
-  image: kindest/node:v1.36.1
+  image: kindest/node:v1.37.0

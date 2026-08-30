@@ -6,7 +6,7 @@ KEDA is a Kubernetes-based Event Driven Autoscaler. With KEDA, you can drive the
 
 **KEDA is an extension of HPA (Horizontal Pod Autoscaling) to enable Scale To/From Zero. HPA applies once Kubernetes has created at least one pod. So KEDA performs Scale From/To 1 via HPA and Scale From/To 0 via its internal controller.**
 
-> ℹ️ If you're just doing Scale From/To 1, an alternative to KEDA would be **Prometheus Metric Adapter** (*although its configuration is counter-intuitive*). This implements the [External][k8s-external-metrics] / [Custom][k8s-custom-metrics] Metrics API of Kubernetes
+> ℹ️ [Since scaleToZero HPA is enabled by default (🏷️ **v1.37 [Beta]**)](https://kubernetes.io/blog/2026/08/26/kubernetes-v1-37-release/#beta-horizontalpodautoscaler-scale-to-zero), it provides an alternative to KEDA for scaling From/To 0. HOWEVER, you will need to install the prometheus stack (Prometheus + Adapter) to expose custom/external metrics to the Kubernetes API Server.
 
 ![KEDA Architecture](../images/keda.png)
 

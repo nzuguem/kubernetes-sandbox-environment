@@ -19,7 +19,7 @@ tasks:
         --create-namespace
         --namespace temporal-system
         -f temporal/helm.values.yml
-        --version 1.2.0
+        --version 1.6.0
       - sleep 3
       - kubectl apply -f temporal/routes.yml -n temporal-system
       - task: temporal-configure-cli
@@ -28,15 +28,15 @@ tasks:
     desc: Install Kubernetes Temporal Worker Controller
     cmds:
     # 1. Install CRDs
-    - helm install temporal-worker-controller-crds
+    - helm upgrade --install temporal-worker-controller-crds
       oci://docker.io/temporalio/temporal-worker-controller-crds
-      --version 0.27.1
+      --version 0.28.0
       --namespace temporal-system
       --create-namespace
     # 2. Install the controller
-    - helm install temporal-worker-controller
+    - helm upgrade --install temporal-worker-controller
       oci://docker.io/temporalio/temporal-worker-controller
-      --version 0.27.1
+      --version 0.28.0
       --namespace temporal-system
 
   temporal-grafana-get-credentials:
