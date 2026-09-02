@@ -30,13 +30,13 @@ tasks:
     # 1. Install CRDs
     - helm upgrade --install temporal-worker-controller-crds
       oci://docker.io/temporalio/temporal-worker-controller-crds
-      --version 0.28.0
+      --version 0.29.0
       --namespace temporal-system
       --create-namespace
     # 2. Install the controller
     - helm upgrade --install temporal-worker-controller
       oci://docker.io/temporalio/temporal-worker-controller
-      --version 0.28.0
+      --version 0.29.0
       --namespace temporal-system
 
   temporal-grafana-get-credentials:

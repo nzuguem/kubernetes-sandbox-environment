@@ -34,6 +34,7 @@
     "ghcr.io/devcontainers-extra/features/vscode-server:1": {},
     "ghcr.io/devcontainers-extra/features/mise:1": {},
     "ghcr.io/devcontainer-community/devcontainer-features/neovim.io:1": {},
+    "ghcr.io/jsburckhardt/devcontainer-features/tmux:1": {},
     "./features/otelgen": {},
     "./features/krew": {},
     "./features/gemini-cli": {},

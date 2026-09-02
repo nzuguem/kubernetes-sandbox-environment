@@ -52,6 +52,7 @@ It contains configurations and examples for the following components:
   - [Istio](mesh/istio)
 - Policies
   - [Kyverno](policies/kyverno)
+- [JVM in Kubernetes](jvm)
 - [Trash](trash/)
 
 ## Launch DevContainer

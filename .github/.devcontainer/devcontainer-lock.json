@@ -130,6 +130,11 @@
       "resolved": "ghcr.io/guiyomh/features/vim@sha256:53c64a458fe88f40862ad5f94ea3f8d7fdf46c3fb42bdaa8a6a09f7d44f182f7",
       "integrity": "sha256:53c64a458fe88f40862ad5f94ea3f8d7fdf46c3fb42bdaa8a6a09f7d44f182f7"
     },
+    "ghcr.io/jsburckhardt/devcontainer-features/tmux:1": {
+      "version": "1.0.0",
+      "resolved": "ghcr.io/jsburckhardt/devcontainer-features/tmux@sha256:f75eb8e2c8f9ea30980729d5303b96071a4f17ad3d5eccab0c75efc5d8271498",
+      "integrity": "sha256:f75eb8e2c8f9ea30980729d5303b96071a4f17ad3d5eccab0c75efc5d8271498"
+    },
     "ghcr.io/rio/features/k9s:1": {
       "version": "1.1.5",
       "resolved": "ghcr.io/rio/features/k9s@sha256:f9aa88374f4b13c06d9fc3626e8ea9db12e6975c5afc0e23fba8fdee59f03f53",
