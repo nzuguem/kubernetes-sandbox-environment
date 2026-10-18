@@ -59,10 +59,13 @@ task control-plane:floci-uninstall
 
 Default Floci Helm values are in `helm.values.yml`:
 - Replicas: 1
-- Image: `hectorvent/floci:latest`
+- Image: `floci/floci:2.3.0` (the `hectorvent/floci` image is no longer updated)
+- Region: `eu-west-3` (`floci.region` → `FLOCI_DEFAULT_REGION`)
+- Base URL: `http://floci.127.0.0.1.nip.io` (`floci.baseUrl` → `FLOCI_BASE_URL`, used in SQS `QueueUrl`, S3 pre-signed URLs, ...)
 - Service Type: ClusterIP
 - Ingress: Enabled with nginx
-- Persistence: 1Gi PVC for data storage
+- Storage: `memory` by default (`storage.mode`: `memory` | `persistent` | `hybrid` | `wal`); set `persistence.enabled: true` to back `/app/data` with a PVC
+- Extra `FLOCI_*` variables: `extraEnv`
 - **Docker-in-Docker Sidecar**: Enabled by default for Lambda, ElastiCache, RDS support
 
 ### Docker-in-Docker Sidecar
@@ -70,9 +73,11 @@ Default Floci Helm values are in `helm.values.yml`:
 To support AWS Lambda, ElastiCache, and RDS services that require container execution, Floci includes an optional Docker-in-Docker (DinD) sidecar container.
 
 The sidecar is configured via:
-- **Environment Variable**: `FLOCI_SERVICES_LAMBDA_DOCKER_HOST=unix:///var/run/docker.sock`
-- **Volume Mount**: Shared `/var/run/docker.sock` between Floci and DinD containers
-- **Security Context**: Privileged mode for DinD container
+- **Environment Variables**: `FLOCI_DOCKER_DOCKER_HOST=unix:///var/run/dind/docker.sock`, `FLOCI_SERVICES_LAMBDA_DOCKER_HOST_OVERRIDE=<pod IP>` (Lambda containers call back the Runtime API through the pod IP)
+- **Volume Mount**: Shared `/var/run/dind` between Floci and DinD containers, `/var/lib/docker` emptyDir for DinD
+- **Security Context**: Privileged mode for DinD container; Floci runs as root (`FLOCI_RUN_AS_ROOT=true`) to access the socket
+
+> ⚠️ RDS/ElastiCache endpoints point to container IPs inside DinD and are not reachable from other pods.
 
 You can disable the DinD sidecar by setting `dind.enabled: false` in your Helm values if you don't need Lambda/ElastiCache/RDS support:
 
@@ -104,7 +109,7 @@ chart/
     ├── deployment.yaml     # Floci deployment
     ├── service.yaml        # Service definition
     ├── ingress.yaml        # Ingress configuration
-    ├── pvc.yaml            # Persistent volume claim
+    ├── pvc.yaml            # Persistent volume claim (persistence.enabled)
     └── serviceaccount.yaml # Service account
 ```
 
@@ -129,20 +134,12 @@ Floci supports 20+ AWS services with full SDK test compatibility (408/408 SDK te
 - STS
 - And more...
 
-## Native Image
+## Image Variants
 
-Floci provides an experimental **native binary** build (~40 MB) for extremely fast startup and minimal memory footprint. This is useful for CI/CD pipelines and resource-constrained environments.
-
-To use the native image:
-
-```yaml
-image:
-  repository: hectorvent/floci-native
-  tag: latest
-```
+`floci/floci` tags: `x.y.z` (standard), `x.y.z-compat` (bundles AWS CLI and boto3), `x.y.z-baseline` (ARM64), `nightly`.
 
 ## Development References
 
-- **Official Repository**: https://github.com/hectorvent/floci
-- **Documentation**: http://hectorvent.dev/floci/
-- **Docker Hub**: https://hub.docker.com/r/hectorvent/floci
+- **Official Repository**: https://github.com/floci-io/floci
+- **Documentation**: https://floci.io/floci/
+- **Docker Hub**: https://hub.docker.com/r/floci/floci

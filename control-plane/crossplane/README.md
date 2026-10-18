@@ -19,8 +19,8 @@ task control-plane:crossplane-install
 ## Install Provider
 kubectl apply -f control-plane/crossplane/s3.provider.yml
 
-## Configure AWS Provider (LocalStack)
-kubectl apply -f control-plane/crossplane/localstack.providerconfig.yml
+## Configure AWS Provider (Floci)
+kubectl apply -f control-plane/crossplane/floci.providerconfig.yml
 ```
 
 ### Create a managed resource

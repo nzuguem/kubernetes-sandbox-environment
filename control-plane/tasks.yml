@@ -8,6 +8,7 @@ tasks:
       - helm repo add crossplane-stable https://charts.crossplane.io/stable
       - helm repo update crossplane-stable
       - helm upgrade --install crossplane
+        --version 2.4.2
         --namespace crossplane-system
         --create-namespace crossplane-stable/crossplane
 
@@ -28,18 +29,8 @@ tasks:
     desc: Uninstall Floci AWS emulator.
     cmds:
       - helm del floci
-      - rm -Rf $HOME/.aws
-
-  localstack-install:
-    desc: Install Localstack Operator (deprecated - use floci-install instead).
-    cmds:
-      - helm repo add localstack-charts https://localstack.github.io/helm-charts
-      - helm repo update localstack-charts
-      - helm upgrade --install localstack  localstack-charts/localstack -f aws/helm.values.yml
-      - mkdir -p $HOME/.aws && cp aws/config/* $HOME/.aws
-
-  localstack-uninstall:
-    desc: Uninstall Localstack Operator.
-    cmds:
-      - helm del localstack
+      - |
+        kubectl get cm coredns -n kube-system -o yaml \
+          | awk '!/floci\.default\.svc\.cluster\.local/' \
+          | kubectl apply -f -
       - rm -Rf $HOME/.aws

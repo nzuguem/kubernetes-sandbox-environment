@@ -2,8 +2,29 @@ replicaCount: 1
 
 image:
   repository: floci/floci
-  pullPolicy: Always
-  tag: latest
+  pullPolicy: IfNotPresent
+  tag: "2.3.0"
+
+floci:
+  region: eu-west-3
+  # Embedded in responses (SQS QueueUrl, S3 pre-signed URLs, ...)
+  baseUrl: http://floci.127.0.0.1.nip.io
+  # The image runs as UID 1001 by default; the DinD socket is root-only
+  runAsRoot: true
+
+# memory | persistent | hybrid | wal
+storage:
+  mode: memory
+
+persistence:
+  enabled: false
+  size: 1Gi
+  storageClassName: ""
+
+# Additional FLOCI_* environment variables
+extraEnv: []
+#  - name: FLOCI_SERVICES_UI_ENABLED
+#    value: "false"
 
 # Docker-in-Docker sidecar for Lambda, ElastiCache, RDS support
 dind:
@@ -14,11 +35,11 @@ dind:
     tag: dind
   resources:
     limits:
-      cpu: 1000m
-      memory: 512Mi
+      cpu: 2000m
+      memory: 2Gi
     requests:
       cpu: 250m
-      memory: 128Mi
+      memory: 256Mi
 
 service:
   type: ClusterIP
@@ -39,8 +60,8 @@ ingress:
 
 resources:
   limits:
-    cpu: 500m
-    memory: 256Mi
+    cpu: 1000m
+    memory: 512Mi
   requests:
-    cpu: 100m
-    memory: 64Mi
+    cpu: 200m
+    memory: 128Mi

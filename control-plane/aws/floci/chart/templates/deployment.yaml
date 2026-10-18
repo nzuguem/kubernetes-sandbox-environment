@@ -6,6 +6,10 @@ metadata:
     {{- include "floci.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  {{- if .Values.persistence.enabled }}
+  strategy:
+    type: Recreate
+  {{- end }}
   selector:
     matchLabels:
       {{- include "floci.selectorLabels" . | nindent 6 }}
@@ -15,27 +19,46 @@ spec:
         {{- include "floci.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "floci.fullname" . }}
+      # Service links would inject FLOCI_PORT=tcp://... (Service "floci"), clashing with Floci's config
+      enableServiceLinks: false
       containers:
       - name: floci
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{- if .Values.floci.runAsRoot }}
         securityContext:
           runAsUser: 0
+        {{- end }}
         ports:
         - name: http
           containerPort: 4566
           protocol: TCP
         env:
-        - name: AWS_DEFAULT_REGION
-          value: "eu-west-3"
+        - name: FLOCI_DEFAULT_REGION
+          value: {{ .Values.floci.region | quote }}
+        - name: FLOCI_BASE_URL
+          value: {{ .Values.floci.baseUrl | quote }}
+        - name: FLOCI_RUN_AS_ROOT
+          value: {{ .Values.floci.runAsRoot | quote }}
+        - name: FLOCI_STORAGE_MODE
+          value: {{ .Values.storage.mode | quote }}
+        - name: FLOCI_STORAGE_PERSISTENT_PATH
+          value: /app/data
+        {{- if .Values.dind.enabled }}
+        - name: FLOCI_DOCKER_DOCKER_HOST
+          value: unix:///var/run/dind/docker.sock
         - name: FLOCI_SERVICES_LAMBDA_DOCKER_HOST_OVERRIDE
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        {{- end }}
+        {{- with .Values.extraEnv }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
         volumeMounts:
         {{- if .Values.dind.enabled }}
         - name: docker-socket
-          mountPath: /var/run/
+          mountPath: /var/run/dind
         {{- end }}
         - name: data
           mountPath: /app/data
@@ -43,13 +66,13 @@ spec:
           {{- toYaml .Values.resources | nindent 10 }}
         livenessProbe:
           httpGet:
-            path: /
+            path: /_floci/health
             port: http
           initialDelaySeconds: 10
           periodSeconds: 10
         readinessProbe:
           httpGet:
-            path: /
+            path: /_floci/health
             port: http
           initialDelaySeconds: 5
           periodSeconds: 5
@@ -59,27 +82,41 @@ spec:
         image: "{{ .Values.dind.image.repository }}:{{ .Values.dind.image.tag }}"
         imagePullPolicy: {{ .Values.dind.image.pullPolicy }}
         restartPolicy: Always
+        args:
+        - --host=unix:///var/run/dind/docker.sock
+        env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
         securityContext:
           privileged: true
         volumeMounts:
         - name: docker-socket
-          mountPath: /var/run
+          mountPath: /var/run/dind
+        - name: docker-storage
+          mountPath: /var/lib/docker
         resources:
           {{- toYaml .Values.dind.resources | nindent 10 }}
-      {{- end }}
         startupProbe:
           exec:
             command:
               - sh
               - -c
-              - test -S /var/run/docker.sock
+              - test -S /var/run/dind/docker.sock
           initialDelaySeconds: 5
           periodSeconds: 5
           failureThreshold: 12
+      {{- end }}
       volumes:
       {{- if .Values.dind.enabled }}
       - name: docker-socket
         emptyDir: {}
+      - name: docker-storage
+        emptyDir: {}
       {{- end }}
       - name: data
+      {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ include "floci.fullname" . }}-data
+      {{- else }}
         emptyDir: {}
+      {{- end }}

@@ -2,8 +2,8 @@ apiVersion: v2
 name: floci
 description: A Kubernetes chart for Floci AWS emulator
 type: application
-version: 1.0.0
-appVersion: latest
+version: 1.1.0
+appVersion: "2.3.0"
 keywords:
   - floci
   - aws

@@ -1,10 +1,10 @@
-apiVersion: s3.aws.upbound.io/v1beta1
+apiVersion: s3.aws.m.upbound.io/v1beta1
 kind: Bucket
 metadata:
   generateName: crossplane-bucket-
 spec:
-  deletionPolicy: Delete
   forProvider:
     region: eu-west-3
   providerConfigRef:
-    name: localstack
+    kind: ClusterProviderConfig
+    name: floci
