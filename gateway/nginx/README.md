@@ -10,7 +10,7 @@ NGINX Gateway Fabric is an open source project that provides an implementation o
 
 ```bash
 ## Install CRD and Implementation (Nginx Gateway Fabric) of Kubernetes Gateway API -  By Cluster Operator
-task gateway:nginx-install
+mise run gateway:nginx:install
 ```
 
 > ℹ️ When Nginx Gateway Fabric is installed, a **GatewayClass** `nginx` is provisioned for us.
@@ -140,7 +140,7 @@ k run --rm -it curl --image=curlimages/curl --restart Never -- liquid/tea
 ## Uninstall
 
 ```bash
-task gateway:nginx-uninstall
+mise run gateway:nginx:uninstall
 ```
 <!-- Links -->
 [nginx-gateway-fabric-doc]: https://docs.nginx.com/nginx-gateway-fabric/

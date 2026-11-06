@@ -15,7 +15,7 @@ Falco operates in both *kernel and user space*. In kernel space, Linux system ca
 ## Install
 
 ```bash
-task security:falco-install
+mise run security:falco:install
 ```
 
 ### Details of how to install rules and plugins
@@ -97,7 +97,7 @@ In this example, we will use the [default rules][falco-talon-default-rules] prov
 
 ```bash
 ## Install Falco Talon Instance
-task security:falco-talon-install
+mise run security:falco-talon:install
 
 ## Shell into the running container and run the uptime command. This will trigger Falco to send an Alert.
 kubectl exec -it alpine -- sh -c "uptime"
@@ -115,8 +115,8 @@ kubectl get po/alpine -o yaml
 ## Uninstall
 
 ```bash
-task security:falco-uninstall
-task security:falco-talon-uninstall
+mise run security:falco:uninstall
+mise run security:falco-talon:uninstall
 ```
 
 ## Resources

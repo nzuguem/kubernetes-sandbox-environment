@@ -9,7 +9,7 @@
         "ms-kubernetes-tools.kind-vscode",
         "redhat.vscode-yaml",
         "DavidAnson.vscode-markdownlint",
-        "task.vscode-task",
+        "hverlin.mise-vscode",
         "golang.go",
         "EditorConfig.EditorConfig",
         "github.vscode-github-actions",
@@ -31,6 +31,7 @@
     5001,
     3001
   ],
+  "postCreateCommand": "bash .devcontainer/scripts/postCreateCommand.sh",
   "postStartCommand": "bash .devcontainer/scripts/postStartCommand.sh",
-  "onCreateCommand": "bash  .devcontainer/scripts/onCreateCommand.sh"
+  "onCreateCommand": "bash .devcontainer/scripts/onCreateCommand.sh"
 }

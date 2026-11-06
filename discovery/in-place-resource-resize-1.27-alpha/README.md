@@ -16,7 +16,7 @@ Instead of manually patching (`kubectl patch ...`), we can use the Kubernetes op
 ## Install *Kube Startup CPU Boost*
 
 ```bash
-task discovery:kube-startup-cpu-boost-install
+mise run discovery:kube-startup-cpu-boost:install
 ```
 
 ## Test with Java Application

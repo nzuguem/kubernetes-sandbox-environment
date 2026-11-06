@@ -29,7 +29,6 @@
     "ghcr.io/rio/features/vcluster:1": {},
     "ghcr.io/devcontainers-extra/features/claude-code:1": {},
     "ghcr.io/devcontainers/features/copilot-cli:1": {},
-    "ghcr.io/devcontainers-extra/features/go-task:1": {},
     "ghcr.io/devcontainers-extra/features/devcontainers-cli:1": {},
     "ghcr.io/devcontainers-extra/features/vscode-server:1": {},
     "ghcr.io/devcontainers-extra/features/mise:1": {},

@@ -8,7 +8,7 @@ Kyverno is a Kubernetes-native policy engine that operates directly within the c
 ## Install - **Version 1.18.2**
 
 ```bash
-task policies:kyverno:install
+mise run policies:kyverno:install
 ```
 
 > ⚠️ **Warning: The Operational Cost of Kyverno** Do not treat Kyverno as just a simple YAML tool; it is a highly sensitive control plane component. By installing it, you are physically inserting a webhook directly between the Kubernetes API server and all cluster write operations

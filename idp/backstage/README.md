@@ -15,7 +15,7 @@ Backstage is part of the Developer Control Plane section of the [Internal Develo
 ## Install
 
 ```bash
-task idp:backstage:install
+mise run idp:backstage:install
 ```
 
 Visit <http://backstage.127.0.0.1.nip.io:9080>

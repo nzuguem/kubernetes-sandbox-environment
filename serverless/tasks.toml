@@ -1,0 +1,105 @@
+["serverless:knative-serving:install"]
+description = "📦 Install Knative Serving"
+dir = "{{config_root}}/serverless"
+run = '''
+kubectl apply -f https://github.com/knative/serving/releases/download/knative-{{vars.knative_serving_version}}/serving-crds.yaml
+kubectl apply -f https://github.com/knative/serving/releases/download/knative-{{vars.knative_serving_version}}/serving-core.yaml
+
+# Install Network Layer
+kubectl apply -f knative/serving/kourier.yml
+kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n kourier-system
+kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n knative-serving
+
+# Configure Knative Serving to use Kourier by default
+kubectl patch configmap/config-network \
+  --namespace knative-serving \
+  --type merge \
+  --patch '{"data":{"ingress-class":"kourier.ingress.networking.knative.dev"}}'
+
+# Configure DNS
+kubectl patch configmap/config-domain \
+  --namespace knative-serving \
+  --patch '{"data":{"127.0.0.1.nip.io":""}}'
+'''
+
+["serverless:knative-serving:uninstall"]
+description = "🧹 Uninstall Knative Serving"
+dir = "{{config_root}}/serverless"
+run = '''
+kubectl delete -f knative/serving/kourier.yml
+kubectl delete -f https://github.com/knative/serving/releases/download/knative-{{vars.knative_serving_version}}/serving-core.yaml
+kubectl delete -f https://github.com/knative/serving/releases/download/knative-{{vars.knative_serving_version}}/serving-crds.yaml
+'''
+
+["serverless:knative-eventing:install"]
+description = "📦 Install Knative Eventing"
+dir = "{{config_root}}/serverless"
+depends = ["serverless:knative-serving:install"]
+run = '''
+# Install the required custom resource definitions (CRDs)
+kubectl apply -f https://github.com/knative/eventing/releases/download/knative-{{vars.knative_eventing_version}}/eventing-crds.yaml
+kubectl wait --for=condition=Established --all crd
+
+# Install the core components of Eventing
+kubectl apply -f https://github.com/knative/eventing/releases/download/knative-{{vars.knative_eventing_version}}/eventing-core.yaml
+kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n knative-eventing
+
+# Install a default Channel (messaging) layer : In Memory
+kubectl apply -f https://github.com/knative/eventing/releases/download/knative-{{vars.knative_eventing_version}}/in-memory-channel.yaml
+kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n knative-eventing
+
+# Install a Broker layer : MT Channel Based
+kubectl apply -f https://github.com/knative/eventing/releases/download/knative-{{vars.knative_eventing_version}}/mt-channel-broker.yaml
+kubectl wait pod --timeout=-1s --for=condition=Ready -l '!job-name' -n knative-eventing
+
+# Install Default Broker
+kubectl apply -f knative/eventing/brokers-triggers/default.broker.yml
+'''
+
+["serverless:knative-eventing:uninstall"]
+description = "🧹 Uninstall Knative Eventing"
+dir = "{{config_root}}/serverless"
+run = '''
+kubectl delete -f knative/eventing/source-to-service || true
+kubectl delete -f knative/eventing/channels-subscribers || true
+kubectl delete -f knative/eventing/sink-binding || true
+kubectl delete -f https://github.com/knative/eventing/releases/download/knative-{{vars.knative_eventing_version}}/mt-channel-broker.yaml
+kubectl delete -f https://github.com/knative/eventing/releases/download/knative-{{vars.knative_eventing_version}}/in-memory-channel.yaml
+kubectl delete -f https://github.com/knative/eventing/releases/download/knative-{{vars.knative_eventing_version}}/eventing-core.yaml
+kubectl delete -f https://github.com/knative/eventing/releases/download/knative-{{vars.knative_eventing_version}}/eventing-crds.yaml
+'''
+
+["serverless:rabbitmq:install"]
+description = "📦 Install RabbitMQ"
+hide = true
+run = '''
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update bitnami
+helm upgrade --install rabbitmq bitnami/rabbitmq \
+  --version 15.3.2 \
+  --set auth.username=rmquser --set auth.password=rmqpassword
+'''
+
+["serverless:keda:install"]
+description = "📦 Install KEDA (with RabbitMQ and Temporal for the demos)"
+depends = ["serverless:rabbitmq:install", "workflows:temporal:install"]
+run = '''
+helm repo add kedacore https://kedacore.github.io/charts
+helm repo update kedacore
+helm upgrade --install keda kedacore/keda \
+  --version 2.20.2 \
+  --namespace keda-system \
+  --create-namespace
+helm upgrade --install http-add-on kedacore/keda-add-ons-http \
+  --namespace keda-system \
+  --version 0.15.0
+'''
+
+["serverless:keda:uninstall"]
+description = "🧹 Uninstall KEDA"
+run = '''
+kubectl delete so --all
+helm del keda -n keda-system
+helm del http-add-on -n keda-system
+helm del rabbitmq
+'''

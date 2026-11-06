@@ -1,0 +1,87 @@
+["workflows:temporal:install"]
+description = "📦 Install Temporal IO"
+dir = "{{config_root}}/workflows"
+depends = ["datastores:postgres:install"]
+run = [
+  '''
+  helm repo add temporal https://go.temporal.io/helm-charts
+  helm repo update temporal
+  helm upgrade --install temporal temporal/temporal \
+    --timeout 15m \
+    --create-namespace \
+    --namespace temporal-system \
+    -f temporal/helm.values.yml \
+    --version 1.6.0
+  sleep 3
+  kubectl apply -f temporal/routes.yml -n temporal-system
+  ''',
+  { task = "workflows:temporal:configure-cli" },
+  { task = "workflows:temporal-worker-controller:install" },
+]
+
+["workflows:temporal:uninstall"]
+description = "🧹 Uninstall Temporal IO"
+run = '''
+helm del -n temporal-system temporal
+rm -f "$HOME/.sandbox.d/temporal.sh"
+'''
+
+["workflows:temporal:configure-cli"]
+description = "🔧 Configure Temporal CLI (TLS CA + address, loaded in new shells)"
+run = '''
+mkdir -p "$HOME/.sandbox.d"
+kubectl get secret temporal-gateway.127.0.0.1.nip.io-tls -n temporal-system -o jsonpath="{['data']['ca\.crt']}" | base64 --decode > "$HOME/temporal-ing-ca.crt"
+cat > "$HOME/.sandbox.d/temporal.sh" <<TEMPORAL
+export TEMPORAL_TLS_CA=$HOME/temporal-ing-ca.crt
+export TEMPORAL_ADDRESS=temporal-gateway.127.0.0.1.nip.io:443
+TEMPORAL
+echo "Open a new shell (or 'source $HOME/.sandbox.d/temporal.sh') to use the Temporal CLI"
+'''
+
+["workflows:temporal:grafana-credentials"]
+description = "🔑 Get Temporal Grafana credentials"
+run = '''echo "admin/$(kubectl -n temporal-system get secret temporal-grafana -o jsonpath='{.data.admin-password}' | base64 -d)"'''
+
+["workflows:temporal-worker-controller:install"]
+description = "📦 Install Kubernetes Temporal Worker Controller"
+run = '''
+# 1. Install CRDs
+helm upgrade --install temporal-worker-controller-crds \
+  oci://docker.io/temporalio/temporal-worker-controller-crds \
+  --version 0.29.0 \
+  --namespace temporal-system \
+  --create-namespace
+# 2. Install the controller
+helm upgrade --install temporal-worker-controller \
+  oci://docker.io/temporalio/temporal-worker-controller \
+  --version 0.29.0 \
+  --namespace temporal-system
+'''
+
+["workflows:temporal-benchmark-workers:install"]
+description = "📦 Install Temporal benchmark workers for load testing and performance evaluation of a Temporal cluster"
+dir = "{{config_root}}/workflows"
+run = '''
+helm upgrade --install benchmark-workers oci://ghcr.io/temporalio/charts/benchmark-workers \
+  --timeout 15m \
+  --namespace temporal-system \
+  -f temporal/helm.values.workers.yml
+'''
+
+["workflows:kestra:install"]
+description = "📦 Install Kestra"
+dir = "{{config_root}}/workflows"
+run = '''
+helm repo add kestra https://helm.kestra.io/
+helm repo update kestra
+helm upgrade --install kestra kestra/kestra \
+  --timeout 15m \
+  --create-namespace \
+  --namespace kestra-system \
+  -f kestra/helm.values.yml \
+  --version 0.22.10
+'''
+
+["workflows:kestra:uninstall"]
+description = "🧹 Uninstall Kestra"
+run = "helm del -n kestra-system kestra"

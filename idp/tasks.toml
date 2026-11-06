@@ -1,0 +1,20 @@
+["idp:backstage:install"]
+description = "📦 Install Backstage"
+dir = "{{config_root}}/idp"
+run = [
+  '''
+  helm repo add backstage https://backstage.github.io/charts
+  helm repo update backstage
+  helm upgrade --install backstage --version 2.6.3 \
+    --namespace backstage-system \
+    -f backstage/helm.values.yml \
+    --create-namespace backstage/backstage
+  ''',
+  { task = "idp:backstage-route:install" },
+]
+
+["idp:backstage-route:install"]
+description = "📦 Install Backstage Gateway API HTTPRoute"
+hide = true
+dir = "{{config_root}}/idp"
+run = "kubectl apply -f backstage/routes.yml -n backstage-system"

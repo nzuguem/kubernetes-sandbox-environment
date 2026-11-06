@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-task observability:coroot-install
+mise run observability:coroot:install
 ```
 
 Visit http://coroot.127.0.0.1.nip.io
@@ -28,7 +28,7 @@ Visit this URL to generate Traces http://hello-coroot.127.0.0.1.nip.io/hello/Kev
 ## Uninstall
 
 ```bash
-task observability:coroot-uninstall
+mise run observability:coroot:uninstall
 
 kubectl delete -f observability/coroot/otelcol.sidecar.yml
 kubectl delete -f observability/coroot/otel.inst.yml

@@ -15,6 +15,8 @@
 
 set -o errexit
 
+cluster_name="${KIND_CLUSTER_NAME:-kubernetes-stack}"
+
 # 1. Create registry container unless it already exists
 reg_name='kind-registry'
 reg_port='5001'
@@ -35,7 +37,7 @@ fi
 # https://github.com/kubernetes-sigs/kind/issues/2875
 # https://github.com/containerd/containerd/blob/main/docs/cri/config.md#registry-configuration
 # See: https://github.com/containerd/containerd/blob/main/docs/hosts.md
-kind create cluster --config kind.yml
+kind create cluster --name "${cluster_name}" --config kind.yml
 
 # 3. Add the registry config to the nodes
 #
@@ -46,7 +48,7 @@ kind create cluster --config kind.yml
 # We want a consistent name that works from both ends, so we tell containerd to
 # alias localhost:${reg_port} to the registry container when pulling images
 REGISTRY_DIR="/etc/containerd/certs.d/localhost:${reg_port}"
-for node in $(kind get nodes --name kubernetes-stack); do
+for node in $(kind get nodes --name "${cluster_name}"); do
   docker exec "${node}" mkdir -p "${REGISTRY_DIR}"
   cat <<EOF | docker exec -i "${node}" cp /dev/stdin "${REGISTRY_DIR}/hosts.toml"
 [host."http://${reg_name}:5000"]

@@ -1,0 +1,189 @@
+["security:cert-manager:install"]
+description = "📦 Install Cert Manager"
+run = '''
+helm repo add jetstack https://charts.jetstack.io
+helm repo update jetstack
+helm upgrade --install cert-manager jetstack/cert-manager \
+  --version 1.15.3 \
+  --create-namespace \
+  --namespace cert-manager-system \
+  --set crds.enabled=true
+'''
+
+["security:cert-manager:uninstall"]
+description = "🧹 Uninstall Cert Manager"
+run = "helm del -n cert-manager-system cert-manager"
+
+["security:eso:install"]
+description = "📦 Install External Secrets Operator"
+dir = "{{config_root}}/security"
+run = '''
+helm repo add external-secrets https://charts.external-secrets.io
+helm repo update external-secrets
+helm upgrade --install external-secrets external-secrets/external-secrets \
+  --version 2.9.0 \
+  --create-namespace \
+  --namespace eso-system \
+  --set installCRDs=true \
+  -f ESO/helm.values.yml
+kubectl wait -n eso-system \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/instance=external-secrets \
+  --timeout=90s
+'''
+
+["security:eso:uninstall"]
+description = "🧹 Uninstall External Secrets Operator"
+run = "helm del -n eso-system external-secrets"
+
+["security:sealed-secrets:install"]
+description = "📦 Install Sealed Secrets Operator"
+dir = "{{config_root}}/security"
+run = '''
+helm repo add bitnami-labs https://bitnami-labs.github.io/sealed-secrets
+helm repo update bitnami-labs
+helm upgrade --install sealed-secrets bitnami-labs/sealed-secrets \
+  --version 2.15.4 \
+  --namespace kube-system \
+  -f sealed-secret/helm.values.yml
+'''
+
+["security:sealed-secrets:uninstall"]
+description = "🧹 Uninstall Sealed Secrets Operator"
+run = "helm del -n kube-system sealed-secrets"
+
+["security:neuvector:install"]
+description = "📦 Install NeuVector"
+dir = "{{config_root}}/security"
+run = '''
+helm repo add neuvector https://neuvector.github.io/neuvector-helm/
+helm repo update neuvector
+helm upgrade --install neuvector neuvector/core \
+  --version 2.7.7 \
+  --create-namespace \
+  --namespace neuvector-system \
+  -f neuvector/helm.values.yml
+# Wait for NeuVector to be ready.
+kubectl wait -n neuvector-system \
+  --for=condition=ready pod \
+  --selector=release=neuvector \
+  --timeout=90s
+echo "Credentials -> admin/admin"
+'''
+
+["security:neuvector:uninstall"]
+description = "🧹 Uninstall NeuVector"
+run = "helm del -n neuvector-system neuvector"
+
+["security:falco:install"]
+description = "📦 Install Falco"
+dir = "{{config_root}}/security"
+run = '''
+helm repo add falcosecurity https://falcosecurity.github.io/charts
+helm repo update falcosecurity
+helm upgrade --install falco falcosecurity/falco \
+  --version 4.6.0 \
+  --create-namespace \
+  --namespace falco \
+  -f falco/helm.values.yml
+# Wait for Falco to be ready.
+kubectl wait -n falco \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/instance=falco \
+  --timeout=180s
+'''
+
+["security:falco:uninstall"]
+description = "🧹 Uninstall Falco"
+run = "helm del -n falco falco"
+
+["security:falco-talon:install"]
+description = "📦 Install Falco Talon"
+dir = "{{config_root}}/security"
+run = '''
+git clone https://github.com/Falco-Talon/falco-talon.git || true
+cd falco-talon/deployment/helm/
+helm upgrade --install falco-talon . --namespace falco
+'''
+
+["security:falco-talon:uninstall"]
+description = "🧹 Uninstall Falco Talon"
+run = "helm del -n falco falco-talon"
+
+["security:vault:install"]
+description = "📦 Install Vault"
+dir = "{{config_root}}/security"
+depends = ["security:eso:install"]
+run = '''
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm repo update hashicorp
+helm upgrade --install vault hashicorp/vault \
+  --version 0.28.1 \
+  --create-namespace \
+  --namespace vault-system \
+  -f vault/helm.values.yml
+# Loaded by .devcontainer/config/bashrc.sh in new shells
+mkdir -p "$HOME/.sandbox.d"
+cat > "$HOME/.sandbox.d/vault.sh" <<'VAULT'
+export VAULT_ADDR=http://vault.127.0.0.1.nip.io
+export VAULT_TOKEN=root
+VAULT
+echo "Sign in to Vault -> Token/root"
+'''
+
+["security:vault:uninstall"]
+description = "🧹 Uninstall Vault"
+depends = ["security:eso:uninstall"]
+run = '''
+helm del -n vault-system vault
+rm -f "$HOME/.sandbox.d/vault.sh"
+'''
+
+["security:asma:create-secret"]
+description = "🔐 Create AWS Secrets Manager secret for the ASMA demo (needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY)"
+env = { AWS_DEFAULT_REGION = "eu-west-3" }
+run = '''
+: "${AWS_ACCESS_KEY_ID:?AWS_ACCESS_KEY_ID is required}"
+: "${AWS_SECRET_ACCESS_KEY:?AWS_SECRET_ACCESS_KEY is required}"
+aws secretsmanager create-secret \
+  --name asma-key \
+  --secret-string '{"key":"value"}' || true
+kubectl create secret generic aws-secrets \
+  --from-literal=AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
+  --from-literal=AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
+'''
+
+["security:oauth2-proxy:install"]
+description = "📦 Install OAuth2 Proxy (needs GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET)"
+dir = "{{config_root}}/security"
+depends = ["security:oauth2-proxy:create-secret"]
+run = '''
+helm repo add oauth2-proxy https://oauth2-proxy.github.io/manifests
+helm repo update oauth2-proxy
+helm upgrade --install oauth2-proxy oauth2-proxy/oauth2-proxy \
+  --version 10.1.4 \
+  --create-namespace \
+  --namespace oauth2-proxy-system \
+  -f oauth2-proxy/helm.values.yml
+'''
+
+["security:oauth2-proxy:uninstall"]
+description = "🧹 Uninstall OAuth2 Proxy"
+run = '''
+kubectl delete secret oauth2-proxy-secret -n oauth2-proxy-system || true
+helm del -n oauth2-proxy-system oauth2-proxy
+'''
+
+["security:oauth2-proxy:create-secret"]
+description = "🔐 Create Secret for the OAuth2 Proxy GitHub provider (needs GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET)"
+run = '''
+: "${GITHUB_CLIENT_ID:?GITHUB_CLIENT_ID is required}"
+: "${GITHUB_CLIENT_SECRET:?GITHUB_CLIENT_SECRET is required}"
+COOKIE_SECRET=$(openssl rand -base64 32 | head -c 32 | base64)
+kubectl create namespace oauth2-proxy-system || true
+kubectl create secret generic oauth2-proxy-secret \
+  --namespace oauth2-proxy-system \
+  --from-literal=client-id="$GITHUB_CLIENT_ID" \
+  --from-literal=client-secret="$GITHUB_CLIENT_SECRET" \
+  --from-literal=cookie-secret="$COOKIE_SECRET" || true
+'''

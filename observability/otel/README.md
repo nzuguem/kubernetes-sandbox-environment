@@ -33,7 +33,7 @@ telemetrygen logs --otlp-endpoint=otel-http-lgtm.127.0.0.1.nip.io --otlp-http --
 ## Install OpenTelemetry Collector via Kubernetes OpenTelemetry Controller
 
 ```bash
-task observability:opentelemetry-install
+mise run observability:otel:install
 ```
 
 ## Test
@@ -181,7 +181,7 @@ kubectl delete -f observability/otel/otelcol.daemonset.yml
 
 kubectl delete -f observability/otel/otelcol-ta.statefulset.yml
 
-task observability:opentelemetry-uninstall
+mise run observability:otel:uninstall
 ```
 
 ## Resources

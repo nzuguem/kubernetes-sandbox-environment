@@ -1,0 +1,24 @@
+["discovery:kube-startup-cpu-boost:install"]
+description = "📦 Install Kube Startup CPU Boost"
+run = "kubectl apply -f https://github.com/google/kube-startup-cpu-boost/releases/download/v0.17.1/manifests.yaml"
+
+["discovery:kube-startup-cpu-boost:uninstall"]
+description = "🧹 Uninstall Kube Startup CPU Boost"
+run = "kubectl delete -f https://github.com/google/kube-startup-cpu-boost/releases/download/v0.17.1/manifests.yaml"
+
+["discovery:kubernetes-goat:update"]
+description = "🔄 Update Kubernetes Goat submodule"
+run = "git submodule update --init discovery/kubernetes-goat"
+
+["discovery:kubernetes-goat:setup"]
+description = "🔧 Setup Kubernetes Goat"
+dir = "{{config_root}}/discovery/kubernetes-goat"
+run = '''
+bash setup-kubernetes-goat.sh
+bash access-kubernetes-goat.sh
+'''
+
+["discovery:kubernetes-goat:teardown"]
+description = "🧹 Teardown Kubernetes Goat"
+dir = "{{config_root}}/discovery/kubernetes-goat"
+run = "bash teardown-kubernetes-goat.sh"

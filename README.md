@@ -46,14 +46,26 @@ It contains configurations and examples for the following components:
   - [Kestra](workflows/kestra)
 - API Management (apim)
   - [Microcks](apim/microcks)
+- AI
+  - [agentgateway](ai/agentgateway)
+  - [LiteLLM](ai/litellm)
+- Datastores
+  - [PostgreSQL](datastores/postgresql)
+  - [Redis](datastores/redis)
+  - [Elasticsearch](datastores/elasticsearch)
+  - [Kafka (Strimzi)](datastores/kafka)
+- CI/CD
+  - [GitLab Runner](ci-cd/gitlab-runner)
+- Kubernetes UI
+  - [Radar](k8s-ui/radar)
 - Internal Developer Platform
-  - [Backtage](idp/backstage)
+  - [Backstage](idp/backstage)
 - Service Mesh
   - [Istio](mesh/istio)
 - Policies
   - [Kyverno](policies/kyverno)
 - [JVM in Kubernetes](jvm)
-- [Trash](trash/)
+- [Trash](trash/) : one-shot manifests, used on various occasions
 
 ## Launch DevContainer
 
@@ -76,15 +88,17 @@ git clone https://github.com/nzuguem/kubernetes-sandbox-environment
 cd kubernetes-sandbox-environment
 
 devcontainer up --remove-existing-container=true --workspace-folder ./
-CONTAINER_ID=$(docker ps -f "ancestor=nzuguem/kubernetes-sandbox-environment:latest" -q)
+CONTAINER_ID=$(docker ps -f "ancestor=ghcr.io/nzuguem/kubernetes-sandbox-environment:latest" -q)
 docker exec -it -u vscode $CONTAINER_ID bash
 cd /workspaces/kubernetes-sandbox-environment
 ```
 
+Or, if [mise](https://mise.jdx.dev/) is installed on your host : `mise run sandbox:devcontainer:run`
+
 If you need a version of VS Code that you can access via your browser :
 
 ```bash
-task start-code-server
+mise run sandbox:code-server:start
 # http://localhost:8088/?folder=/workspaces/kubernetes-sandbox-environment
 ```
 
@@ -102,6 +116,18 @@ Make sure that the following ports are available :
 - `9443`: Nginx Gateway Fabric - HTTPS
 
 Execute the command `lsof -i:<PORT>` to identify the PID occupying one of these ports. Then execute the command `kill -9 <PID>` to kill the process
+
+## Tasks
+
+Tasks are run with [mise](https://mise.jdx.dev/tasks/). Global tasks (sandbox, cluster, environment) are declared in [mise.toml](mise.toml), and each module declares its own in `<module>/tasks.toml`, named `<module>:<component>:<action>`.
+
+```bash
+mise tasks                              # List tasks
+mise run gitops:argocd:install          # Run a task
+mise run cluster:socat-expose --help    # Show the arguments of a task
+```
+
+Secrets used by some tasks (e.g. Ngrok) are loaded from a `.env` file : copy [.env.example](.env.example) to `.env` and fill it.
 
 <!-- Links -->
 [kind-doc]:https://kind.sigs.k8s.io/

@@ -9,7 +9,7 @@ HashiCorp Vault is an identity-based secrets and encryption management system. A
 ## Install
 
 ```bash
-task security:vault-install
+mise run security:vault:install
 ```
 
 The Vault access endpoint is <http://vault.127.0.0.1.nip.io>
@@ -111,7 +111,7 @@ kubectl get secret/aws-config-secret -o jsonpath="{.data.AWS_ACCESS_SECRET_KEY}"
 ## Uninstall
 
 ```bash
-task security:vault-uninstall
+mise run security:vault:uninstall
 ```
 
 <!-- Links -->

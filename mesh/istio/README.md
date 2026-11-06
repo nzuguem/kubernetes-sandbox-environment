@@ -25,7 +25,7 @@ The entire Istio infrastructure layer is deployed in GitOps mode via ArgoCD when
 To install the add-ons to get some extra features:
 
 ```bash
-task mesh:istio:install:addons
+mise run mesh:istio-addons:install
 ```
 
 - [Kiali](https://kiali.io/) : http://kiali.127.0.0.1.nip.io/kiali
@@ -34,7 +34,7 @@ task mesh:istio:install:addons
 ## Tests
 If you need a browser to access the deployed applications :
 ```bash
-task start:firefox
+mise run sandbox:firefox:start
 # https://localhost:3001
 ```
 

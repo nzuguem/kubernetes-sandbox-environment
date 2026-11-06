@@ -10,7 +10,7 @@ External Secrets Operator is a Kubernetes operator that integrates external secr
 
 ```bash
 ## Install External Secret Operator
-task security:eso-install
+mise run security:eso:install
 ```
 
 > ℹ️ Our tests will use the AWS Secret Manager, and to simulate it, we'll use LocalStack. See this [guide to installing LocalStack in a Kubernetes cluster](../../control-plane/aws/INSTALL.md)
@@ -89,7 +89,7 @@ kubectl get secret temporal-api-key -o jsonpath="{.data.token}" | base64 -d
 kubectl delete -f security/ESO/secretmanager.store.yml
 kubectl delete -f security/ESO/password.secret.yml
 
-task security:eso-uninstall
+mise run security:eso:uninstall
 ```
 
 ## Resources

@@ -11,10 +11,10 @@ Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
 ## Install
 
 ```bash
-task gitops:argocd-install
+mise run gitops:argocd:install
 
 ## Get credentials
-task gitops:argocd-get-credentials
+mise run gitops:argocd:credentials
 ```
 
 Visit <http://argocd.127.0.0.1.nip.io>
@@ -42,7 +42,7 @@ Go to ArgoCD Web UI, access the application and force synchronization 🏆
 ## Uninstall
 
 ```bash
-task gitops:argocd-uninstall
+mise run gitops:argocd:uninstall
 ```
 
 ## Resources

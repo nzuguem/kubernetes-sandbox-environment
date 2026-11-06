@@ -9,7 +9,7 @@ kgateway is the most mature and widely deployed Envoy-based gateway in the marke
 ## Install
 
 ```bash
-task gateway:kgateway-install
+mise run gateway:kgateway:install
 ```
 
 ## Test
@@ -69,7 +69,7 @@ curl -i ${IP}:${PORT}/v1/completions -H 'Content-Type: application/json' -d '{
 ## Uninstall
 
 ```bash
-task gateway:kgateway-uninstall
+mise run gateway:kgateway:uninstall
 ```
 
 ## Resources

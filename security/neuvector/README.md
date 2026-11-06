@@ -8,7 +8,7 @@ Founded in 2015, acquired in October 2021 by SUSE and made OpenSource in January
 
 ```bash
 ## Install NeuVector Operator
-task security:neuvector-install
+mise run security:neuvector:install
 ```
 
 NeuVector WenUI : https://neuvector.127.0.0.1.nip.io/
@@ -16,7 +16,7 @@ NeuVector WenUI : https://neuvector.127.0.0.1.nip.io/
 ## Uninstall
 
 ```bash
-task security:neuvector-uninstall
+mise run security:neuvector:uninstall
 ```
 
 ## Alternatives

@@ -20,7 +20,7 @@ Floci is a modern replacement for LocalStack Community Edition, which reached en
 ### Install Floci
 
 ```bash
-task control-plane:floci-install
+mise run control-plane:floci:install
 ```
 
 This will:
@@ -50,7 +50,7 @@ aws sqs list-queues
 ### Uninstall Floci
 
 ```bash
-task control-plane:floci-uninstall
+mise run control-plane:floci:uninstall
 ```
 
 ## Configuration

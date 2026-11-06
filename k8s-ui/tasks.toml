@@ -1,0 +1,18 @@
+["k8s-ui:radar:install"]
+description = "📦 Install Radar in cluster"
+dir = "{{config_root}}/k8s-ui"
+run = '''
+helm repo add skyhook https://skyhook-io.github.io/helm-charts
+helm repo update skyhook
+helm upgrade --install --version 0.7.6 \
+  --create-namespace \
+  --namespace radar-system radar skyhook/radar \
+  -f radar/helm.values.yml
+'''
+
+["k8s-ui:radar:start-local"]
+description = "🚀 Run Radar locally (krew plugin)"
+run = '''
+kubectl krew install radar
+kubectl radar --no-browser &
+'''

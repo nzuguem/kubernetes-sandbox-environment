@@ -6,3 +6,8 @@
 .DS_Store
 nohup.out
 .idea
+
+# Standalone repositories cloned next to the sandbox (not part of it)
+/istio/
+/formation-kubernetes-user/
+/temporal-petstore-ddd/

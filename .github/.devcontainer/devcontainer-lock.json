@@ -25,11 +25,6 @@
       "resolved": "ghcr.io/devcontainers-extra/features/fzf@sha256:dbac92d89862c0f266453772ea0e73089d520ff66544f9c146480677fc2dbf7d",
       "integrity": "sha256:dbac92d89862c0f266453772ea0e73089d520ff66544f9c146480677fc2dbf7d"
     },
-    "ghcr.io/devcontainers-extra/features/go-task:1": {
-      "version": "1.0.6",
-      "resolved": "ghcr.io/devcontainers-extra/features/go-task@sha256:4d1db153919976cadd3209ca05d655a761a01707767716994dad677b4538dc1b",
-      "integrity": "sha256:4d1db153919976cadd3209ca05d655a761a01707767716994dad677b4538dc1b"
-    },
     "ghcr.io/devcontainers-extra/features/helmfile:1": {
       "version": "1.0.0",
       "resolved": "ghcr.io/devcontainers-extra/features/helmfile@sha256:b8c6d84d533062242ad71c42448f027aaf6bfca680701d6c42e31e43680cfc86",
@@ -129,6 +124,11 @@
       "version": "0.0.1",
       "resolved": "ghcr.io/guiyomh/features/vim@sha256:53c64a458fe88f40862ad5f94ea3f8d7fdf46c3fb42bdaa8a6a09f7d44f182f7",
       "integrity": "sha256:53c64a458fe88f40862ad5f94ea3f8d7fdf46c3fb42bdaa8a6a09f7d44f182f7"
+    },
+    "ghcr.io/jsburckhardt/devcontainer-features/herdr:1": {
+      "version": "1.0.0",
+      "resolved": "ghcr.io/jsburckhardt/devcontainer-features/herdr@sha256:6cd1417ff2af435e4b320612f494288b219d3f5dd4ce5f967b510897f5c663f2",
+      "integrity": "sha256:6cd1417ff2af435e4b320612f494288b219d3f5dd4ce5f967b510897f5c663f2"
     },
     "ghcr.io/jsburckhardt/devcontainer-features/tmux:1": {
       "version": "1.0.0",

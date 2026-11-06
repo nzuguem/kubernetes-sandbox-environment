@@ -1,0 +1,35 @@
+["control-plane:crossplane:install"]
+description = "📦 Install Crossplane Operator"
+run = '''
+helm repo add crossplane-stable https://charts.crossplane.io/stable
+helm repo update crossplane-stable
+helm upgrade --install crossplane \
+  --version 2.4.2 \
+  --namespace crossplane-system \
+  --create-namespace crossplane-stable/crossplane
+'''
+
+["control-plane:crossplane:uninstall"]
+description = "🧹 Uninstall Crossplane Operator"
+run = "helm del -n crossplane-system crossplane"
+
+["control-plane:floci:install"]
+description = "📦 Install Floci AWS emulator (replaces LocalStack)"
+dir = "{{config_root}}/control-plane"
+run = '''
+helm upgrade --install floci \
+  --namespace default \
+  aws/floci/chart \
+  -f aws/floci/helm.values.yml
+mkdir -p "$HOME/.aws" && cp aws/config/* "$HOME/.aws"
+'''
+
+["control-plane:floci:uninstall"]
+description = "🧹 Uninstall Floci AWS emulator"
+run = '''
+helm del floci
+kubectl get cm coredns -n kube-system -o yaml \
+  | awk '!/floci\.default\.svc\.cluster\.local/' \
+  | kubectl apply -f -
+rm -Rf "$HOME/.aws"
+'''

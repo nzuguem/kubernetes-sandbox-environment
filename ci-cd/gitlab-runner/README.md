@@ -8,7 +8,7 @@ Installation begins by [create a runner][gitlab-runner-create] via the Gitlab GU
 After you create a runner and its configuration, you receive a runner authentication token that you use to register the runner.
 
 ```bash
-task ci-cd:gitlab-runner-register/<AUTH_TOKEN>
+mise run ci-cd:gitlab-runner:register <AUTH_TOKEN>
 ```
 
 ## Test
@@ -16,7 +16,7 @@ task ci-cd:gitlab-runner-register/<AUTH_TOKEN>
 ## Uninstall
 
 ```bash
-task ci-cd:gitlab-runner-register/<AUTH_TOKEN>
+mise run ci-cd:gitlab-runner:register <AUTH_TOKEN>
 ```
 
 ## Resources

@@ -8,7 +8,7 @@ Knative Eventing uses ***standard HTTP POST requests to send and receive events 
 ## Install
 
 ```bash
-task serverless:knative-eventing-install
+mise run serverless:knative-eventing:install
 ```
 
 ## Scenarios
@@ -204,7 +204,7 @@ stern eventing-hello-service-sb -c user-container
 ## Uninstall
 
 ```bash
-task serverless:knative-eventing-uninstall
+mise run serverless:knative-eventing:uninstall
 ```
 
 <!-- Links -->

@@ -9,7 +9,7 @@ Temporal is a distributed, scalable, durable, and highly available orchestration
 ## Install
 
 ```bash
-task workflows:temporal-install
+mise run workflows:temporal:install
 ```
 
 > ⚠️ Installation can take several minutes
@@ -147,7 +147,7 @@ Some useful links for managing the rollout manually or taking action in the even
 ## Uninstall
 
 ```bash
-task discovery:temporal-uninstall
+mise run workflows:temporal:uninstall
 ```
 
 ## Resources

@@ -19,7 +19,7 @@ In our demo, we're going to use it as a [sidecar container](../../discovery/side
 
 ```bash
 ## Create KLey on AWS Secret Manager
-AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID> AWS_ACCESS_SECRET_KEY=<AWS_ACCESS_SECRET_KEY> task security:asma-create-secret
+AWS_ACCESS_KEY_ID=<AWS_ACCESS_KEY_ID> AWS_SECRET_ACCESS_KEY=<AWS_SECRET_ACCESS_KEY> mise run security:asma:create-secret
 
 ## Creata ConfigMap for ASMA Config
 kubectl apply -f security/aws-secret-manager-agent/asma.cm.yml

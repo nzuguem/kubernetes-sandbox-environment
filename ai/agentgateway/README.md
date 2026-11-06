@@ -11,7 +11,7 @@ Agentgateway is part of the Agentic AI Foundation (AAIF), hosted by the Linux Fo
 ## Install - Version 1.4
 
 ```bash
-task ai:agentgateway:install
+mise run ai:agentgateway:install
 
 export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system agentgateway-proxy -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
 echo $INGRESS_GW_ADDRESS
@@ -28,7 +28,7 @@ echo $INGRESS_GW_ADDRESS
 k apply -f ai/agentgateway/mcp
 
 # Show Tools/Resources/Prompts via MCP Inspector (TUI)
-task ai:mcp-inspector:start
+mise run ai:mcp-inspector:start
 ```
 
 ### [Models Serving](https://agentgateway.dev/docs/kubernetes/latest/llm/)

@@ -1,0 +1,79 @@
+["observability:otel:install"]
+description = "📦 Install OTel Operator"
+run = '''
+helm repo add otel https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo update otel
+helm upgrade --install --version 0.79.0 \
+  --create-namespace \
+  --namespace otel-system otel otel/opentelemetry-operator \
+  --set admissionWebhooks.certManager.enabled=false \
+  --set manager.collectorImage.repository=otel/opentelemetry-collector-contrib
+'''
+
+["observability:otel:uninstall"]
+description = "🧹 Uninstall OTel Operator"
+run = "helm del -n otel-system otel"
+
+["observability:otel-demo:install"]
+description = "📦 Install OpenTelemetry Demo Application"
+dir = "{{config_root}}/observability"
+run = '''
+helm repo add otel https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo update otel
+helm upgrade --install --version 0.40.3 \
+  --create-namespace \
+  --namespace otel-demo otel otel/opentelemetry-demo \
+  -f otel/helm.demo-application.values.yml
+'''
+
+["observability:otel-k8s-discovery:try"]
+description = "🧪 Try OTel Collector with K8s Discovery"
+dir = "{{config_root}}/observability"
+run = '''
+kubectl apply -f otel/otelcol.sa.yml
+kubectl apply -f otel/otelcol.deployment.yml
+kubectl apply -f otel/otelcol.daemonset.yml
+kubectl apply -f otel/lgtm.yml
+kubectl apply -f otel/cloud-events.otelcol-k8s-discovery.deploy.yml
+'''
+
+["observability:coroot:install"]
+description = "📦 Install Coroot Observability"
+dir = "{{config_root}}/observability"
+run = '''
+helm repo add coroot https://coroot.github.io/helm-charts
+helm repo update coroot
+helm upgrade --install --namespace coroot-system --create-namespace coroot coroot/coroot -f coroot/helm.values.yml
+'''
+
+["observability:coroot:uninstall"]
+description = "🧹 Uninstall Coroot Observability"
+run = "helm del -n coroot-system coroot"
+
+["observability:prometheus:install"]
+description = "📦 Install Prometheus Operator (kube-prometheus-stack)"
+dir = "{{config_root}}/observability"
+run = [
+  '''
+  helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  helm repo update prometheus-community
+  helm upgrade --install prometheus-operator prometheus-community/kube-prometheus-stack \
+    --version 72.1.0 \
+    --namespace monitoring \
+    --create-namespace \
+    -f prometheus/helm.values.yml
+  ''',
+  { task = "observability:grafana:credentials" },
+]
+
+["observability:prometheus:uninstall"]
+description = "🧹 Uninstall Prometheus Operator"
+run = "helm del -n monitoring prometheus-operator"
+
+["observability:grafana:credentials"]
+description = "🔑 Get credentials of Grafana"
+run = '''
+GRAFANA_USER=$(kubectl -n monitoring get secret prometheus-operator-grafana -o jsonpath='{.data.admin-user}' | base64 -d)
+GRAFANA_PASSWORD=$(kubectl -n monitoring get secret prometheus-operator-grafana -o jsonpath='{.data.admin-password}' | base64 -d)
+echo "$GRAFANA_USER/$GRAFANA_PASSWORD"
+'''

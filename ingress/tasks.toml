@@ -1,0 +1,52 @@
+["ingress:ingress-nginx:install"]
+description = "📦 Install Ingress Nginx"
+run = '''
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update ingress-nginx
+helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx \
+  --version 4.10.1 \
+  --namespace ingress-nginx-system \
+  --create-namespace \
+  --values https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/hack/manifest-templates/provider/kind/values.yaml
+# Wait for Nginx controller deployment to be Ready
+kubectl rollout status -n ingress-nginx-system deploy/ingress-nginx-controller --timeout 90s
+'''
+
+["ingress:ingress-nginx:uninstall"]
+description = "🧹 Uninstall Ingress Nginx"
+run = "helm del -n ingress-nginx-system ingress-nginx"
+
+["ingress:nginx-ingress:install"]
+description = "📦 Install Nginx Ingress"
+dir = "{{config_root}}/ingress"
+run = '''
+helm repo add nginx-ingress https://helm.nginx.com/stable
+helm repo update nginx-ingress
+helm upgrade --install nginx-ingress nginx-ingress/nginx-ingress \
+  --version 2.4.4 \
+  --namespace nginx-ingress-system \
+  --create-namespace \
+  --values nginx/helm.nginx-ingress.values.yml
+'''
+
+["ingress:nginx-ingress:uninstall"]
+description = "🧹 Uninstall Nginx Ingress"
+run = "helm del -n nginx-ingress-system nginx-ingress"
+
+["ingress:ngrok:install"]
+description = "📦 Install Ngrok Ingress Controller (needs NGROK_API_KEY and NGROK_AUTHTOKEN, see .env.example)"
+run = '''
+: "${NGROK_API_KEY:?NGROK_API_KEY is required (see .env.example)}"
+: "${NGROK_AUTHTOKEN:?NGROK_AUTHTOKEN is required (see .env.example)}"
+helm repo add ingress-ngrok https://ngrok.github.io/kubernetes-ingress-controller
+helm repo update ingress-ngrok
+helm upgrade --install ngrok-ingress-controller ingress-ngrok/kubernetes-ingress-controller \
+  --namespace ingress-ngrok-system \
+  --create-namespace \
+  --set credentials.apiKey="$NGROK_API_KEY" \
+  --set credentials.authtoken="$NGROK_AUTHTOKEN"
+'''
+
+["ingress:ngrok:uninstall"]
+description = "🧹 Uninstall Ngrok Ingress Controller"
+run = "helm del -n ingress-ngrok-system ngrok-ingress-controller"

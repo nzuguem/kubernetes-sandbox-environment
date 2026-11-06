@@ -9,10 +9,10 @@ Prometheus is a popular open-source monitoring and alerting solution, and has ov
 ## Install
 
 ```bash
-task observability:prometheus-install
+mise run observability:prometheus:install
 
 ## Get Grafana credentials
-task observability:grafana-get-credentials
+mise run observability:grafana:credentials
 ```
 
 Grafana : <http://grafana.127.0.0.1.nip.io>
@@ -24,7 +24,7 @@ Alert Manager Dashboard : <http://alert-manager.127.0.0.1.nip.io>
 ## Uninstall
 
 ```bash
-task observability:prometheus-uninstall
+mise run observability:prometheus:uninstall
 ```
 
 ## Resources

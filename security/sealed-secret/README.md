@@ -13,7 +13,7 @@ Once a secret has been created and encrypted, only the Kubernetes cluster can de
 ## Install
 
 ```bash
-task security:sealed-secrets-install
+mise run security:sealed-secrets:install
 ```
 
 ## Test
@@ -74,7 +74,7 @@ It is possible to retrieve sealed-secret metrics via the famous `/metrics` expos
 ```bash
 kubectl delete -f security/sealed-secret/my-secret.yaml
 
-task sealed-secrets-uninstall
+mise run security:sealed-secrets:uninstall
 ```
 
 ## Resources

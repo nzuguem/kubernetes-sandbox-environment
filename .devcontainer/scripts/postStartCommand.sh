@@ -1,12 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Runs on every container start: (re)create the Kind cluster and the GitOps platform.
 
-set -e
+set -euo pipefail
 
-task env:configure:shell
-task lazyvim:install
-task mise:global:install
-task pre-commit-install
-task cluster-kind-deploy
-task platform-install-with-gitops-mode
-# task start:firefox
-# task start-code-server
+mise run cluster:create
+mise run platform:gitops:install
+# mise run sandbox:firefox:start
+# mise run sandbox:code-server:start

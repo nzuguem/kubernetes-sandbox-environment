@@ -12,7 +12,7 @@ Modern Kubernetes visibility. Topology, event timeline, and service traffic — 
 
 ```bash
 # In Cluster
-task k8s-ui:install:radar:in-cluster
+mise run k8s-ui:radar:install
 ```
 
 Visit http://radar.127.0.0.1.nip.io
@@ -21,7 +21,7 @@ Visit http://radar.127.0.0.1.nip.io
 
 ```bash
 # In local
-task k8s-ui:install:radar:in-local
+mise run k8s-ui:radar:start-local
 ```
 
 Visit http://localhost:9280

@@ -9,7 +9,7 @@ Cert-Manager is a very popular open source *certificate management tool*, specif
 ## Install
 
 ```bash
-task security:cert-manager-install
+mise run security:cert-manager:install
 ```
 
 ## Deploy ClusterIssuer
@@ -45,7 +45,7 @@ Visit this URL https://nginx-cert-manager-ing-shim.127.0.0.1.nip.io
 ## Uninstall
 
 ```bash
-task security:cert-manager-uninstall
+mise run security:cert-manager:uninstall
 
 kubectl delete -f security/cert-manager/self.clusterissuer.yml
 kubectl delete -f security/cert-manager/nginx.certificate.yml

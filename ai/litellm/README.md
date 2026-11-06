@@ -9,10 +9,10 @@ LiteLLM is a unified gateway for LLMs, agents, and MCP — you don't need a sepa
 ## Install - version 1.95.1
 
 ```bash
-task ai:litellm:install
+mise run ai:litellm:install
 
 # Get credentials
-task ai:litellm:get-credentials
+mise run ai:litellm:credentials
 ```
 
 Open LiteLLM UI : http://litellm.127.0.0.1.nip.io/

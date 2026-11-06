@@ -20,7 +20,7 @@ KEDA is a Kubernetes-based Event Driven Autoscaler. With KEDA, you can drive the
 ## Install
 
 ```bash
-task serverless:keda-install
+mise run serverless:keda:install
 ```
 
 ## Test
@@ -64,7 +64,7 @@ for i in {1..1000}; do curl http://hello-keda-http.127.0.0.1.nip.io/hello/Keda &
 ## Uninstall
 
 ```bash
-task serverless:keda-uninstall
+mise run serverless:keda:uninstall
 ```
 
 ## Resources

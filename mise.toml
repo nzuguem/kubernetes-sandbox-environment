@@ -1,21 +1,163 @@
 [tools]
-devcontainer-cli = "0.88.0"
-kyverno = "1.19.0"
+devcontainer-cli = "0.89.0"
+kyverno = "1.19.1"
 popeye = "0.22.1"
-pre-commit = "4.6.2"
-task = "3.53.1"
+pre-commit = "4.7.0"
+usage = "7.2.0" # Required by `mise completion` and tasks `usage` specs
 
-[tasks."sandbox:run:devcontainer"]
-description = "Run sandbox in devcontainer"
+[env]
+_.file = ".env" # Optional, see .env.example
+KIND_CLUSTER_NAME = "kubernetes-stack"
+
+[vars]
+devcontainer_image = "nzuguem/kubernetes-sandbox-environment:latest"
+cloud_provider_kind_version = "v0.12.0"
+gateway_api_version = "v1.4.1"
+knative_serving_version = "v1.13.1"
+knative_eventing_version = "v1.14.1"
+
+[settings]
+quiet = true # Hide the `[task] $ cmd` header (like Task's `silent`); `task.quiet` needs mise >= 2026.11
+
+[task_config]
+# Each module declares its tasks (`<module>:<component>:<action>`) in its own tasks.toml.
+# Included tasks run from the repository root unless they set `dir`.
+includes = ["*/tasks.toml"]
+
+################################################################################
+# Sandbox (host side)
+################################################################################
+
+[tasks."sandbox:devcontainer:run"]
+description = "🚀 Run sandbox in devcontainer"
 run = '''
 devcontainer up --remove-existing-container=true --workspace-folder ./
-CONTAINER_ID=$(docker ps -f "ancestor=nzuguem/kubernetes-sandbox-environment:latest" -q)
-docker exec -it -u vscode $CONTAINER_ID bash
+CONTAINER_ID=$(docker ps -f "ancestor={{vars.devcontainer_image}}" -q)
+docker exec -it -u vscode "$CONTAINER_ID" bash
 '''
 
-[tasks."sandbox:build-push:devcontainer"]
-description = "Build base devcontainer Image."
+[tasks."sandbox:devcontainer:build-push"]
+description = "🐳 Build and push base devcontainer image"
 run = '''
 docker buildx create --name container-builder --driver docker-container --bootstrap --use || docker buildx use container-builder
-devcontainer build --workspace-folder .github/ --image-name nzuguem/kubernetes-sandbox-environment:latest --platform linux/amd64,linux/arm64 --push
+devcontainer build --workspace-folder .github/ --image-name {{vars.devcontainer_image}} --platform linux/amd64,linux/arm64 --push
+'''
+
+[tasks."sandbox:code-server:start"]
+description = "🚀 Start Code Server (http://localhost:8088)"
+run = "nohup bash -c 'code-server --host 0.0.0.0 --port 8088 --accept-server-license-terms --disable-telemetry --without-connection-token > /tmp/code-server.log 2>&1 &'"
+
+[tasks."sandbox:firefox:start"]
+description = "🚀 Start Firefox browser (http://localhost:3001)"
+run = '''
+docker rm -f firefox >/dev/null 2>&1 || true
+docker run -d --name=firefox --net kind \
+  -e PUID=1000 -e PGID=1000 -e TZ=Europe/Paris -e LC_ALL=fr_FR.UTF-8 \
+  -p 3001:3001 --restart unless-stopped lscr.io/linuxserver/firefox:latest
+'''
+
+################################################################################
+# Environment (inside the devcontainer, run once from postCreateCommand)
+################################################################################
+
+[tasks."env:setup"]
+description = "🔧 Configure the devcontainer environment (idempotent)"
+run = [
+  { task = "env:shell:configure" },
+  { task = "env:lazyvim:install" },
+  { task = "env:krew-plugins:install" },
+  { task = "env:helm-plugins:install" },
+  { task = "env:pre-commit:install" },
+]
+
+[tasks."env:shell:configure"]
+description = "🔧 Source .devcontainer/config/bashrc.sh from ~/.bashrc"
+run = '''
+LINE='source {{config_root}}/.devcontainer/config/bashrc.sh'
+grep -qxF "$LINE" "$HOME/.bashrc" || echo "$LINE" >> "$HOME/.bashrc"
+mkdir -p "$HOME/.kube" "$HOME/.sandbox.d"
+cp .devcontainer/config/kuberc "$HOME/.kube/"
+'''
+
+[tasks."env:lazyvim:install"]
+description = "📦 Install LazyVim"
+run = '''
+if [ -f "$HOME/.config/nvim/lua/config/lazy.lua" ]; then
+  echo "LazyVim already installed"
+  exit 0
+fi
+for d in "$HOME/.config/nvim" "$HOME/.local/share/nvim" "$HOME/.local/state/nvim" "$HOME/.cache/nvim"; do
+  if [ -e "$d" ]; then mv "$d" "$d.bak"; fi
+done
+git clone https://github.com/LazyVim/starter "$HOME/.config/nvim"
+rm -rf "$HOME/.config/nvim/.git"
+'''
+
+[tasks."env:krew-plugins:install"]
+description = "📦 Install krew plugins through mise"
+run = '''
+mise plugin install krew https://github.com/soupglasses/mise-krew || true
+mise use -g krew:explore@latest
+'''
+
+[tasks."env:helm-plugins:install"]
+description = "📦 Install Helm plugins"
+run = "helm plugin list | grep -q '^diff' || helm plugin install --verify=false https://github.com/databus23/helm-diff"
+
+[tasks."env:pre-commit:install"]
+description = "📦 Install pre-commit hooks"
+run = "pre-commit install"
+
+################################################################################
+# Cluster
+################################################################################
+
+[tasks."cluster:create"]
+description = "🧱 Create Kind cluster (with local registry and cloud-provider-kind)"
+run = '''
+test -f kind.yml || { echo "Kind's manifest not provided"; exit 1; }
+kind delete cluster --name "$KIND_CLUSTER_NAME" || true
+./.devcontainer/scripts/kind-with-registry.sh
+kubectl cluster-info --context "kind-$KIND_CLUSTER_NAME"
+cp "$HOME/.kube/config" "$HOME/.kube/config-argocd"
+kubectl config set-context --current --namespace=argocd-system --kubeconfig "$HOME/.kube/config-argocd"
+# Running LoadBalancer for KIND
+# https://github.com/kubernetes-sigs/cloud-provider-kind#allowing-load-balancers-access-to-control-plane-nodes
+docker rm -f cloud-provider-kind >/dev/null 2>&1 || true
+docker run -d --name cloud-provider-kind --restart unless-stopped --network kind \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  registry.k8s.io/cloud-provider-kind/cloud-controller-manager:{{vars.cloud_provider_kind_version}}
+'''
+
+[tasks."cluster:delete"]
+description = "🧹 Delete Kind cluster"
+run = '''
+docker rm -f cloud-provider-kind >/dev/null 2>&1 || true
+kind delete cluster --name "$KIND_CLUSTER_NAME"
+'''
+
+# https://pluto.docs.fairwinds.com/
+[tasks."cluster:breaking-changes:check"]
+description = "🔍 Check Kubernetes breaking changes against a target version"
+usage = 'arg "<k8s_version>" help="Target Kubernetes version, e.g. v1.38.0"'
+run = 'pluto detect-all-in-cluster -t "k8s=${usage_k8s_version}"'
+
+[tasks."cluster:socat-expose"]
+description = "🔌 Expose a container port on the host via socat"
+usage = '''
+arg "<container_name>"
+arg "<container_port>"
+arg "<host_port>"
+'''
+run = '''
+docker run --rm --net kind -it -p "${usage_host_port}:${usage_container_port}" --link "${usage_container_name}:target" \
+  alpine/socat "tcp-listen:${usage_container_port},fork,reuseaddr" "tcp-connect:target:${usage_container_port}"
+'''
+
+[tasks."platform:gitops:install"]
+description = "📦 Install all the components required for the kubernetes platform, with GitOps mode"
+depends = ["gitops:argocd:install"]
+run = '''
+kubectl apply -f gitops/argocd/platform/project.yml
+kubectl apply -f gitops/argocd/platform/apps.yml
 '''

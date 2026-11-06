@@ -19,7 +19,7 @@ Kestra is an open-source, event-driven orchestration platform that makes both sc
 > Others [Deployment Architecture](https://kestra.io/docs/architecture/deployment-architecture)
 
 ```bash
-task workflows:kestra-install
+mise run workflows:kestra:install
 ```
 
 > ⚠️ It takes a little time, so you have to be patient.
@@ -37,7 +37,7 @@ To test, you can run the Flows already present in the Namespace `tutorial` or si
 ## Uninstall
 
 ```bash
-task workflows:kestra-uninstall
+mise run workflows:kestra:uninstall
 ```
 
 ## Resources

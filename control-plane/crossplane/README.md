@@ -4,7 +4,7 @@ Crossplane is an open-source multi-cloud control plane. As an add-on to Kubernet
 
 ## Install
 ```bash
-task control-plane:crossplane-install
+mise run control-plane:crossplane:install
 ```
 
 > ℹ️ Our tests will use the AWS provider, and to simulate it, we'll use LocalStack. See this [guide to installing LocalStack in a Kubernetes cluster](../aws/INSTALL.md)
@@ -70,7 +70,7 @@ aws s3 ls
 ## Uninstall
 
 ```bash
-task control-plane:crossplane-uninstall
+mise run control-plane:crossplane:uninstall
 ```
 
 ## Resources

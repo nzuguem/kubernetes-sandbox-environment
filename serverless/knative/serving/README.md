@@ -7,7 +7,7 @@ Knative Serving is ideal for running your application services inside Kubernetes
 ## Install
 
 ```bash
-task serverless:knative-serving-install
+mise run serverless:knative-serving:install
 ```
 
 ## Test
@@ -42,7 +42,7 @@ By default, the PA (Pod Autoscaler) used is the one integrated into Knative Serv
 ```bash
 kubectl delete -f serverless/knative/serving/hello.service.yml
 
-task serverless:knative-serving-uninstall
+mise run serverless:knative-serving:uninstall
 ```
 
 <!-- Links -->

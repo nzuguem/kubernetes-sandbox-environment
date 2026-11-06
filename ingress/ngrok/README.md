@@ -13,7 +13,7 @@ The ngrok Ingress Controller adds secure internet access to Kubernetes workloads
 - `NGROK_AUTHTOKEN`
 
 ```bash
-task ingress:ngrok-install
+mise run ingress:ngrok:install
 ```
 
 ## Test
@@ -32,7 +32,7 @@ Visit this URL : `https://<NGROK_EDGE_HOST_DOMAIN>`
 ```bash
 kubectl delete -f ingress/ngrok/game-2048.yml
 
-task ingress:ngrok-uninstall
+mise run ingress:ngrok:uninstall
 ```
 
 ## Resources

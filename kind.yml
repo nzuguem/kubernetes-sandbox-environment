@@ -72,7 +72,7 @@ nodes:
   - containerPort: 31080
     hostPort: 8080
     protocol: TCP
-  # Nginx Gateway Fabric  : expose port 30080 (NodePort) of all k8s nodes, to port 9080 on the host (DevContainer), later to be use by kourier.
+  # Nginx Gateway Fabric  : expose port 30080 (NodePort) of all k8s nodes, to port 9080 on the host (DevContainer).
   - containerPort: 30080
     hostPort: 9080
     protocol: TCP
@@ -80,7 +80,7 @@ nodes:
   - containerPort: 31443
     hostPort: 8443
     protocol: TCP
-  # Nginx Gateway Fabric : expose port 30443 (NodePort) of all k8s nodes, to port 9443 on the host (DevContainer), later to be use by kourier.
+  # Nginx Gateway Fabric : expose port 30443 (NodePort) of all k8s nodes, to port 9443 on the host (DevContainer).
   - containerPort: 30443
     hostPort: 9443
     protocol: TCP
