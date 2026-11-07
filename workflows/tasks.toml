@@ -11,12 +11,14 @@ run = [
     --create-namespace \
     --namespace temporal-system \
     -f temporal/helm.values.yml \
-    --version 1.6.0
+    --version 1.8.0
   sleep 3
   kubectl apply -f temporal/routes.yml -n temporal-system
   ''',
   { task = "workflows:temporal:configure-cli" },
   { task = "workflows:temporal-worker-controller:install" },
+  { task = "workflows:temporal-proxy:install" },
+  { task = "workflows:temporal-benchmark-workers:install" },
 ]
 
 ["workflows:temporal:uninstall"]
@@ -48,14 +50,33 @@ run = '''
 # 1. Install CRDs
 helm upgrade --install temporal-worker-controller-crds \
   oci://docker.io/temporalio/temporal-worker-controller-crds \
-  --version 0.29.0 \
+  --version 0.33.0 \
   --namespace temporal-system \
   --create-namespace
 # 2. Install the controller
 helm upgrade --install temporal-worker-controller \
   oci://docker.io/temporalio/temporal-worker-controller \
-  --version 0.29.0 \
+  --version 0.33.0 \
   --namespace temporal-system
+'''
+
+["workflows:temporal-proxy:install"]
+description = "📦 Install Kubernetes Temporal Proxy"
+dir = "{{config_root}}/workflows"
+run = '''
+helm upgrade --install temporal-proxy temporal-proxy \
+  --repo https://go.temporal.io/helm-charts \
+  --version 0.3.0 \
+  --namespace temporal-system \
+  --create-namespace \
+  -f temporal/helm.values.proxy.yml
+'''
+
+["workflows:temporal-proxy:uninstall"]
+description = "🧹 Uninstall Kubernetes Temporal Proxy"
+run = '''
+helm del -n temporal-system temporal-proxy
+helm plugin uninstall temporal-proxy-probes || true
 '''
 
 ["workflows:temporal-benchmark-workers:install"]

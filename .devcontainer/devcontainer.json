@@ -1,6 +1,22 @@
 {
   "name": "kubernetes-stack",
   "image": "nzuguem/kubernetes-sandbox-environment:latest",
+  "mounts": [
+    {
+      "source": "mise-data-volume",
+      "target": "/mnt/mise-data",
+      "type": "volume"
+    }
+  ],
+  "containerEnv": {
+    "MISE_DATA_DIR": "/mnt/mise-data",
+    "MISE_ENV": "devcontainer",
+    "SHELL": "/bin/bash",
+    "MISE_GLOBAL_CONFIG_FILE": "/workspaces/${localWorkspaceFolderBasename}/.devcontainer/config/tools.toml"
+  },
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/mnt/mise-data/shims"
+  },
   "customizations": {
     "vscode": {
       "extensions": [
@@ -12,8 +28,7 @@
         "hverlin.mise-vscode",
         "golang.go",
         "EditorConfig.EditorConfig",
-        "github.vscode-github-actions",
-        "temporal-technologies.temporalio"
+        "github.vscode-github-actions"
       ]
     }
   },
@@ -29,7 +44,7 @@
     8088,
     9280,
     5001,
-    3001
+    "127.0.0.1:1080:1080"
   ],
   "postCreateCommand": "bash .devcontainer/scripts/postCreateCommand.sh",
   "postStartCommand": "bash .devcontainer/scripts/postStartCommand.sh",

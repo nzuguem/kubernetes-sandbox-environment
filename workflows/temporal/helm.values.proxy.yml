@@ -1,0 +1,57 @@
+config:
+  # https://docs.temporal.io/production-deployment/temporal-proxy/configure#route-requests
+  routing:
+    default: default
+    rules:
+      - match:
+          namespace: 'cloud-*'
+          metadata:
+            tenant: cloud
+        upstream: cloud
+  upstreams:
+    - name: default
+      hostPort: srv:///_grpc-rpc._tcp.temporal-frontend.temporal-system.svc.cluster.local # https://docs.temporal.io/production-deployment/temporal-proxy/configure#discover-upstreams-through-dns-srv-records
+      insecure: true
+    - name: cloud
+      hostPort: '{{ .RemoteNamespace }}.tmprl.cloud:7233'
+      namespaces:
+        rules:
+          suffix: .${TEMPORAL_CLOUD_ACCOUNT_ID}
+      # https://docs.temporal.io/production-deployment/temporal-proxy/deploy-kubernetes#supply-credentials-from-a-secret
+      credentials:
+        static:
+          apiKey: placeholder
+          #  secretKeyRef:
+          #    name: temporal-cloud
+          #    key: api-key
+  # https://docs.temporal.io/production-deployment/temporal-proxy/configure#restrict-forwarded-services
+  allowedServices:
+    - temporal.api.workflowservice.v1.WorkflowService
+    - temporal.api.operatorservice.v1.OperatorService
+    - grpc.reflection.v1.ServerReflection
+
+env:
+  - name: TEMPORAL_CLOUD_ACCOUNT_ID
+    value: placeholder
+
+service:
+  port: 7233
+
+extraObjects:
+  - |
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: GRPCRoute
+    metadata:
+      name: temporal-proxy-grpc-route
+      namespace: {{ .Release.Namespace }}
+    spec:
+      hostnames:
+      - temporal-proxy.127.0.0.1.nip.io
+      parentRefs:
+      - name: kubernetes-sandbox-gateway
+        namespace: nginx-gateway-system
+        sectionName: http
+      rules:
+      - backendRefs:
+        - name: {{ include "temporal-proxy.fullname" . }}
+          port: 7233

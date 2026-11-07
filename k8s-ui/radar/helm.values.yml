@@ -6,6 +6,11 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+    # Set at install time to radar.<kind control plane IP>.nip.io (see k8s-ui:radar:install in k8s-ui/tasks.toml)
+    - host: radar.CONTROL_PLANE_IP.nip.io
+      paths:
+        - path: /
+          pathType: Prefix
 
 rbac:
   secrets: true      # Keep disabled unless needed

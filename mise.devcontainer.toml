@@ -1,0 +1,165 @@
+# Devcontainer only (on top of mise.toml): env, vars and tasks, including the modules tasks.
+# Loaded when MISE_ENV=devcontainer (set in .devcontainer/devcontainer.json), so that
+# the host does not list these tasks.
+# The devcontainer tools are in .devcontainer/config/tools.toml (container global config).
+
+[env]
+_.file = ".env" # Optional, see .env.example
+KIND_CLUSTER_NAME = "kubernetes-stack"
+
+[vars]
+cloud_provider_kind_version = "v0.12.0"
+gateway_api_version = "v1.4.1"
+knative_serving_version = "v1.13.1"
+knative_eventing_version = "v1.14.1"
+
+[task_config]
+# Each module declares its tasks (`<module>:<component>:<action>`) in its own tasks.toml.
+# Included tasks run from the repository root unless they set `dir`.
+includes = ["*/tasks.toml"]
+
+################################################################################
+# Sandbox (inside the devcontainer)
+################################################################################
+
+# Same extensions as VS Code: read from .devcontainer/devcontainer.json
+[tasks."sandbox:code-server:extensions"]
+description = "📦 Install the devcontainer VS Code extensions in Code Server"
+run = '''
+set --
+for ext in $(jq -r '.customizations.vscode.extensions[]' .devcontainer/devcontainer.json); do
+  set -- "$@" --install-extension "$ext"
+done
+code-server "$@" || echo "⚠️  Some extensions could not be installed (see above)"
+'''
+
+[tasks."sandbox:code-server:start"]
+description = "🚀 Start Code Server (http://localhost:8088)"
+depends = ["sandbox:code-server:extensions"]
+run ="nohup bash -c 'code-server --host 0.0.0.0 --port 8088 --accept-server-license-terms --disable-telemetry --without-connection-token > /tmp/code-server.log 2>&1 &'"
+
+# SOCKS5 proxy on the kind network, to reach it from the host browser (configure it with
+# .devcontainer/config/kind-proxy.pac, see README "Browse the cluster services")
+[tasks."sandbox:socks-proxy:start"]
+description = "🚀 Start SOCKS5 proxy to the kind network (socks5h://localhost:1080)"
+run = '''
+docker rm -f socks-proxy >/dev/null 2>&1 || true
+docker run -d --name=socks-proxy --net kind -e REQUIRE_AUTH=false \
+  -p 1080:1080 --restart unless-stopped serjs/go-socks5-proxy
+'''
+
+################################################################################
+# Environment (inside the devcontainer, run once from postCreateCommand)
+################################################################################
+
+[tasks."env:setup"]
+description = "🔧 Configure the devcontainer environment (idempotent)"
+run = [
+  { task = "env:shell:configure" },
+  { task = "env:lazyvim:install" },
+  { task = "env:krew:install" },
+  { task = "env:helm-plugins:install" },
+  { task = "env:herdr-integrations:install" },
+  { task = "env:pre-commit:install" },
+]
+
+[tasks."env:shell:configure"]
+description = "🔧 Source .devcontainer/config/bashrc.sh from ~/.bashrc"
+run = '''
+LINE='source {{config_root}}/.devcontainer/config/bashrc.sh'
+grep -qxF "$LINE" "$HOME/.bashrc" || echo "$LINE" >> "$HOME/.bashrc"
+mkdir -p "$HOME/.kube" "$HOME/.sandbox.d"
+cp .devcontainer/config/kuberc "$HOME/.kube/"
+'''
+
+[tasks."env:lazyvim:install"]
+description = "📦 Install LazyVim"
+run = '''
+if [ -f "$HOME/.config/nvim/lua/config/lazy.lua" ]; then
+  echo "LazyVim already installed"
+  exit 0
+fi
+for d in "$HOME/.config/nvim" "$HOME/.local/share/nvim" "$HOME/.local/state/nvim" "$HOME/.cache/nvim"; do
+  if [ -e "$d" ]; then mv "$d" "$d.bak"; fi
+done
+git clone https://github.com/LazyVim/starter "$HOME/.config/nvim"
+rm -rf "$HOME/.config/nvim/.git"
+'''
+
+# mise only ships the `krew` binary: let it install itself as the `kubectl krew` plugin (in ~/.krew/bin)
+[tasks."env:krew:install"]
+description = "📦 Install krew as a kubectl plugin"
+run = 'test -x "${KREW_ROOT:-$HOME/.krew}/bin/kubectl-krew" || krew install krew'
+
+# Herdr detects agents by their config directory, which only exists once the agent has run:
+# create them so the integrations (agent state hooks) can be installed right away
+[tasks."env:herdr-integrations:install"]
+description = "📦 Install Herdr integrations for the AI agents (claude, copilot, antigravity-cli)"
+run = '''
+mkdir -p "$HOME/.claude" "$HOME/.copilot" "$HOME/.gemini/config"
+for agent in claude copilot antigravity-cli; do
+  herdr integration install "$agent"
+done
+'''
+
+[tasks."env:helm-plugins:install"]
+description = "📦 Install Helm plugins"
+run = "helm plugin list | grep -q '^diff' || helm plugin install --verify=false https://github.com/databus23/helm-diff"
+
+[tasks."env:pre-commit:install"]
+description = "📦 Install pre-commit hooks"
+run = "pre-commit install"
+
+################################################################################
+# Cluster
+################################################################################
+
+[tasks."cluster:create"]
+description = "🧱 Create Kind cluster (with local registry and cloud-provider-kind)"
+run = '''
+test -f kind.yml || { echo "Kind's manifest not provided"; exit 1; }
+kind delete cluster --name "$KIND_CLUSTER_NAME" || true
+./.devcontainer/scripts/kind-with-registry.sh
+kubectl cluster-info --context "kind-$KIND_CLUSTER_NAME"
+cp "$HOME/.kube/config" "$HOME/.kube/config-argocd"
+kubectl config set-context --current --namespace=argocd-system --kubeconfig "$HOME/.kube/config-argocd"
+# Running LoadBalancer for KIND
+# https://github.com/kubernetes-sigs/cloud-provider-kind#allowing-load-balancers-access-to-control-plane-nodes
+docker rm -f cloud-provider-kind >/dev/null 2>&1 || true
+docker run -d --name cloud-provider-kind --restart unless-stopped --network kind \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  registry.k8s.io/cloud-provider-kind/cloud-controller-manager:{{vars.cloud_provider_kind_version}}
+'''
+
+[tasks."cluster:delete"]
+description = "🧹 Delete Kind cluster"
+run = '''
+docker rm -f cloud-provider-kind >/dev/null 2>&1 || true
+kind delete cluster --name "$KIND_CLUSTER_NAME"
+'''
+
+# https://pluto.docs.fairwinds.com/
+[tasks."cluster:breaking-changes:check"]
+description = "🔍 Check Kubernetes breaking changes against a target version"
+usage = 'arg "<k8s_version>" help="Target Kubernetes version, e.g. v1.38.0"'
+run = 'pluto detect-all-in-cluster -t "k8s=${usage_k8s_version}"'
+
+[tasks."cluster:socat-expose"]
+description = "🔌 Expose a container port on the host via socat"
+usage = '''
+arg "<container_name>"
+arg "<container_port>"
+arg "<host_port>"
+'''
+run = '''
+docker run --rm --net kind -it -p "${usage_host_port}:${usage_container_port}" --link "${usage_container_name}:target" \
+  alpine/socat "tcp-listen:${usage_container_port},fork,reuseaddr" "tcp-connect:target:${usage_container_port}"
+'''
+
+[tasks."platform:gitops:install"]
+description = "📦 Install all the components required for the kubernetes platform, with GitOps mode"
+depends = ["gitops:argocd:install"]
+run = '''
+kubectl apply -f gitops/argocd/platform/project.yml
+kubectl apply -f gitops/argocd/platform/apps.yml
+'''

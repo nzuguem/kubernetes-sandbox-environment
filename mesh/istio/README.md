@@ -32,10 +32,6 @@ mise run mesh:istio-addons:install
 - Grafana : http://grafana-istio.127.0.0.1.nip.io/
 
 ## Tests
-If you need a browser to access the deployed applications :
-```bash
-mise run sandbox:firefox:start
-# https://localhost:3001
-```
+To access the deployed applications from your browser, configure your browser with the PAC file, see [Browse the cluster services](../../README.md#browse-the-cluster-services).
 
 

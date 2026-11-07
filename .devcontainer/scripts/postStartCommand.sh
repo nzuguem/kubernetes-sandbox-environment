@@ -5,5 +5,5 @@ set -euo pipefail
 
 mise run cluster:create
 mise run platform:gitops:install
-# mise run sandbox:firefox:start
+mise run sandbox:socks-proxy:start
 # mise run sandbox:code-server:start

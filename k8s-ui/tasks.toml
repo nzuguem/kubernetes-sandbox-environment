@@ -4,10 +4,15 @@ dir = "{{config_root}}/k8s-ui"
 run = '''
 helm repo add skyhook https://skyhook-io.github.io/helm-charts
 helm repo update skyhook
-helm upgrade --install --version 0.7.6 \
-  --create-namespace \
-  --namespace radar-system radar skyhook/radar \
-  -f radar/helm.values.yml
+# Second ingress host: the kind control plane IP (ingress-nginx listens on it), reachable through the SOCKS proxy
+# (jq rather than `docker inspect --format`, whose Go template braces clash with mise templating)
+CONTROL_PLANE_IP=$(docker inspect "$KIND_CLUSTER_NAME-control-plane" | jq -r '.[0].NetworkSettings.Networks.kind.IPAddress')
+export CONTROL_PLANE_IP
+yq '.ingress.hosts[1].host = "radar." + strenv(CONTROL_PLANE_IP) + ".nip.io"' radar/helm.values.yml | \
+  helm upgrade --install --version 1.20.0 \
+    --create-namespace \
+    --namespace radar-system radar skyhook/radar \
+    -f -
 '''
 
 ["k8s-ui:radar:start-local"]

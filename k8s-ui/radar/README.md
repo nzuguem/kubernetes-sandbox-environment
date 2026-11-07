@@ -17,6 +17,8 @@ mise run k8s-ui:radar:install
 
 Visit http://radar.127.0.0.1.nip.io
 
+Or http://radar.<kind control plane IP>.nip.io (set at install time), through the SOCKS proxy : see [Browse the cluster services](../../README.md#browse-the-cluster-services).
+
 ### In Local
 
 ```bash

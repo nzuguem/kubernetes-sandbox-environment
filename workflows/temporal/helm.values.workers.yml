@@ -6,7 +6,7 @@ temporal:
   activityTaskPollers: "8"
 
 soakTest:
-  enabled: true
+  enabled: false
   replicaCount: 1
   concurrentWorkflows: "10"
   workflowType: "ExecuteActivity"

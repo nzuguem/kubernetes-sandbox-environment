@@ -3,6 +3,8 @@
 
 set -euo pipefail
 
+# The mise-data-volume is created root-owned
+sudo chown -R vscode:vscode "$MISE_DATA_DIR"
 mise trust --yes .
-mise install
+mise install --verbose
 mise run env:setup

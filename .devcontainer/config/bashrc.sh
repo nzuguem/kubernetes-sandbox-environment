@@ -1,9 +1,10 @@
 # Sandbox shell configuration, sourced from ~/.bashrc (see `mise run env:shell:configure`).
 # Keep this file idempotent: it is evaluated by every new shell.
 
-export PATH="/usr/local/krew/bin:${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 command -v mise >/dev/null && eval "$(mise activate bash)" && source <(mise completion bash)
+command -v kubectl >/dev/null && source <(kubectl completion bash) # Also used by the `k` alias below
 command -v fzf >/dev/null && source <(fzf --bash)
 command -v argocd >/dev/null && source <(argocd completion bash)
 command -v pluto >/dev/null && source <(pluto completion bash)
